@@ -1,1 +1,1 @@
-# syngle-client
+# syngle
