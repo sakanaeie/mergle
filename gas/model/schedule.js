@@ -20,14 +20,26 @@ var Schedule = (function() {
   }
 
   // 情報を取得する
-  Schedule.prototype.getFuture = function () {
+  Schedule.prototype.getStatus = function () {
     var futureList = [];
     for (var i in this.dataList) {
       if (this.dataList[i].endAt > this.now) {
         futureList.push(this.dataList[i])
       }
     }
-    return futureList;
+
+    var diff = futureList[0].startAt - this.now, gap = offset = 0;
+    if (0 < diff) {
+      gap    = diff;      // 再生までの待ち時間
+    } else {
+      offset = diff * -1; // 再生経過時間
+    }
+
+    return {
+      id:     futureList[0].data.id,
+      gap:    gap,
+      offset: offset,
+    };
   }
 
   // private -------------------------------------------------------------------

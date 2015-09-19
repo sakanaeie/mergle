@@ -1,3 +1,3 @@
 function doGet(e) {
-  return MyUnit.responseJson(new Schedule().getFuture());
+  return MyUtil.responseJsonp(e.parameters.callback, new Schedule().getStatus());
 }

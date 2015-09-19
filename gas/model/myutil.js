@@ -4,15 +4,15 @@ var MyUtil = (function() {
     return Math.floor(new Date().getTime() / 1000);
   }
 
-  // jsonレスポンスを返す
-  function responseJson(obj) {
+  // jsonpレスポンスを返す
+  function responseJsonp(callbackName, obj) {
     return ContentService.createTextOutput(
-      JSON.stringify(obj)
-    ).setMimeType(ContentService.MimeType.JSON);
+      callbackName + '(' + JSON.stringify(obj) + ')'
+    ).setMimeType(ContentService.MimeType.JAVASCRIPT);
   }
 
   return {
-    getNow:       getNow,
-    responseJson: responseJson,
+    getNow:        getNow,
+    responseJsonp: responseJsonp,
   };
 })();
