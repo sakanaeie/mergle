@@ -4,7 +4,15 @@ var MyUtil = (function() {
     return Math.floor(new Date().getTime() / 1000);
   }
 
+  // jsonレスポンスを返す
+  function responseJson(obj) {
+    return ContentService.createTextOutput(
+      JSON.stringify(obj)
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+
   return {
-    getNow: getNow,
+    getNow:       getNow,
+    responseJson: responseJson,
   };
 })();

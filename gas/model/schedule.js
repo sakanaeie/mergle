@@ -19,6 +19,17 @@ var Schedule = (function() {
     this.save_();
   }
 
+  // 情報を取得する
+  Schedule.prototype.getFuture = function () {
+    var futureList = [];
+    for (var i in this.dataList) {
+      if (this.dataList[i].endAt > this.now) {
+        futureList.push(this.dataList[i])
+      }
+    }
+    return futureList;
+  }
+
   // private -------------------------------------------------------------------
   // 最後の情報を取得する
   Schedule.prototype.getLast_ = function () {
