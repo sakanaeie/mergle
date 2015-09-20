@@ -1,24 +1,25 @@
 var Sheet = (function() {
   // constructor ---------------------------------------------------------------
-  function Sheet(id, name, column) {
-    var ss = SpreadsheetApp.openById(id); // TODO シングルトン化
+  function Sheet() {
+    this.ss = SpreadsheetApp.openById(SheetInfo.id);
 
-    this.sheet    = ss.getSheetByName(name);
-    this.dataList = this.sheet.getDataRange().getValues();
-    this.column   = column;
+    this.sheetDelete = this.sheetLog = null;
+    this.sheetMaster = this.ss.getSheetByName(SheetInfo.nameMaster);
+    this.rowList     = this.sheetMaster.getDataRange().getValues();
   }
 
   // public --------------------------------------------------------------------
   // ランダムにひとつ要素を取得する
   Sheet.prototype.getOneAtRandom = function() {
-    return this.toHash_(this.dataList[Math.floor(Math.random() * this.dataList.length)]);
+    var rand = Math.floor(Math.random() * this.rowList.length);
+    return this.toHash_(rand, this.rowList[rand]);
   };
 
   // 重複するかどうか
   Sheet.prototype.isDuplicate = function(id) {
-    key = this.column.id;
-    for (var i in this.dataList) {
-      if (id === this.dataList[i][key]) {
+    key = SheetInfo.column.id;
+    for (var i in this.rowList) {
+      if (id === this.rowList[i][key]) {
         return true;
       }
     }
@@ -28,7 +29,6 @@ var Sheet = (function() {
   // 追加する
   Sheet.prototype.add = function(video) {
     var row = [
-        this.dataList.length + 1,
         video.provider,
         video.id,
         video.url,
@@ -37,20 +37,53 @@ var Sheet = (function() {
     ];
 
     // シートと配列に追加する
-    this.sheet.appendRow(row);
-    this.dataList.push(row);
+    this.sheetMaster.appendRow(row);
+    this.rowList.push(row);
   };
+
+  // マスタシートから削除シートへ移動する
+  Sheet.prototype.remove = function(index) {
+    var row = this.rowList[index];
+
+    // 削除シートに追加する
+    this.getSheetDelete_().appendRow(row);
+
+    // マスタシートと配列から削除する
+    this.sheetMaster.deleteRow(index * 1 + 1);
+    this.rowList.splice(index, 1);
+  }
+
+  // ログを残す
+  Sheet.prototype.log = function(mixData) {
+    this.getSheetLog_().appendRow([new Date(), JSON.stringify(mixData)]);
+  }
 
   // private -------------------------------------------------------------------
   // 連想配列化する
-  Sheet.prototype.toHash_ = function(data) {
-    var key, hash = {};
-    for (var name in this.column) {
-      key        = this.column[name];
-      hash[name] = ('undefined' !== typeof data[key]) ? data[key] : null;
+  Sheet.prototype.toHash_ = function(index, row) {
+    var key, hash = {index: index};
+    for (var name in SheetInfo.column) {
+      key        = SheetInfo.column[name];
+      hash[name] = ('undefined' !== typeof row[key]) ? row[key] : null;
     }
     return hash;
   };
+
+  // 削除シートを取得する
+  Sheet.prototype.getSheetDelete_ = function(hash) {
+    if (null === this.sheetDelete) {
+      this.sheetDelete = this.ss.getSheetByName(SheetInfo.nameDelete);
+    }
+    return this.sheetDelete;
+  }
+
+  // ログシートを取得する
+  Sheet.prototype.getSheetLog_ = function() {
+    if (null === this.sheetLog) {
+      this.sheetLog = this.ss.getSheetByName(SheetInfo.nameLog);
+    }
+    return this.sheetLog;
+  }
 
   return Sheet;
 })();

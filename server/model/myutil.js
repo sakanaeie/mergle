@@ -1,10 +1,8 @@
 var MyUtil = (function() {
   // デバッグ用ロガー
-  function log(data) {
-    SpreadsheetApp
-      .openById(SheetInfo.id)
-      .getSheetByName(SheetInfo.nameLog)
-      .appendRow([JSON.stringify(data)]);
+  function log(mixData) {
+    var sheet = new Sheet();
+    sheet.log([new Date(), JSON.stringify(mixData)]);
   }
 
   // 現在時刻を取得する

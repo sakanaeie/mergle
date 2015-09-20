@@ -15,7 +15,7 @@ var GetController = (function() {
   function requestUrl(url, password, isAddOnly) {
     isAddOnly = ('true' === isAddOnly) ? true : false;
 
-    if (config.password !== password) {
+    if (Config.password !== password) {
       return {'message': 'パスワードが違います'};
     }
 
@@ -33,7 +33,7 @@ var GetController = (function() {
       return {message: '指定の動画は埋め込みできません'};
     }
 
-    var sheet = new Sheet(SheetInfo.id, SheetInfo.nameMaster, SheetInfo.column);
+    var sheet = new Sheet();
     if (!sheet.isDuplicate(video.id)) {
       sheet.add(video);
       return {message: 'マスタに追加しました'};

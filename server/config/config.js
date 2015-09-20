@@ -12,11 +12,10 @@ var SheetInfo = {
   nameBad:    'bad',    // 不愉快用のシート名
   nameLog:    'log',    // ログ用のシート名
   column: {
-    index:    0,
-    provider: 1,
-    id:       2,
-    url:      3,
-    title:    4,
-    duration: 5,
+    provider: 0,
+    id:       1,
+    url:      2,
+    title:    3,
+    duration: 4,
   },
 };

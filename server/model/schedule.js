@@ -11,9 +11,33 @@ var Schedule = (function() {
   Schedule.prototype.update = function() {
     this.refresh_();
 
-    var sheet = new Sheet(SheetInfo.id, SheetInfo.nameMaster, SheetInfo.column);
+    var sheet = new Sheet();
     while (!this.isFill_()) {
-      this.add_(sheet.getOneAtRandom(), false);
+      // TODO リクエストを取得
+
+      if (true) {
+        // リクエストがないとき
+
+        // マスタから取得する
+        var rowHash = sheet.getOneAtRandom();
+
+        // TODO 履歴を確認する
+
+        // URLを検証する
+        var video = new Youtube(rowHash.id);
+        if (video.tooManyRecentCalls) {
+          MyUtil.log('tooManyRecentCallsが検出されました');
+          return;
+        }
+
+        if (video.hasProblem()) {
+          // 問題があるとき、マスタシートから削除する
+          sheet.remove(rowHash.index);
+          continue;
+        }
+      }
+
+      this.add_(rowHash, false);
     }
 
     this.save_();
@@ -28,6 +52,8 @@ var Schedule = (function() {
       }
     }
 
+    // TODO 空であるときの例外処理
+
     var diff = futureList[0].startAt - this.now, gap = offset = 0;
     if (0 < diff) {
       gap    = diff;      // 再生までの待ち時間
@@ -36,8 +62,8 @@ var Schedule = (function() {
     }
 
     return {
-      id:        futureList[0].data.id,
-      isRequest: futureList[0].data.isRequest,
+      id:        futureList[0].rowHash.id,
+      isRequest: futureList[0].rowHash.isRequest,
       gap:       gap,
       offset:    offset,
     };
@@ -56,7 +82,7 @@ var Schedule = (function() {
   };
 
   // 情報を足す
-  Schedule.prototype.add_ = function(data, isRequest) {
+  Schedule.prototype.add_ = function(rowHash, isRequest) {
     var last = this.getLast_();
     if (null !== last) {
       var startAt   = last.endAt + Config.gapSec;
@@ -66,9 +92,9 @@ var Schedule = (function() {
     }
 
     this.dataList.push({
-      data:      data,
+      rowHash:   rowHash,
       startAt:   startAt,
-      endAt:     startAt + data.duration,
+      endAt:     startAt + rowHash.duration,
       isRequest: isRequest,
     });
   };

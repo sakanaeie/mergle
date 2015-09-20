@@ -30,7 +30,7 @@ var Youtube = (function() {
         }
       } catch (e) {
         // 動画が削除されたときなど
-        MyUnit.log(['削除判定されたときの例外キャッチ', e, new Date()]);
+        MyUnit.log(['YoutubeServiceで例外が発生しました', e]);
         if (null !== e.message.match('too_many_recent_calls')) {
           // APIアクセス過多警告, この場合は全体の処理を停止するべきである
           this.tooManyRecentCalls = true;
@@ -39,6 +39,12 @@ var Youtube = (function() {
       Utilities.sleep(1000); // too_many_recent_callsが発生しないよう、少し休む
     }
   }
+
+  // public --------------------------------------------------------------------
+  // 問題があるかどうか
+  Youtube.prototype.hasProblem = function() {
+    return (null === this.id || null === this.response || !this.canEmbed);
+  };
 
   // public static -------------------------------------------------------------
   // urlからインスタンスを生成する
