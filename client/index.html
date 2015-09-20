@@ -15,28 +15,33 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
 <!-- other -->
-<script src="./js/main.js"></script>
+<link rel="stylesheet" href="./css/index.css">
+<script src="./js/index.js"></script>
 </head>
 <body>
-  <div id="youtube-player">
-    <span class="myred">数秒でプレイヤーが描画されないときは、ページをリロードしてください</span>
-  </div>
-  <div>
-    ステータス : <span id="player-status" class="myred">初期状態 (再生ボタンをクリック後 "正常" にならないときは、ページをリロードしてください)</span>
-  </div>
-  <div>
-    # リクエスト機能
-    <div>
-      <input id="request-url" type="text" placeholder="例: http://www.youtube.com/watch?v=51CH3dPaWXc">
-      <input id="request-password" type="password">
+  <h1>syngle</h1>
+  <div id="content">
+    <div id="youtube-player">
+      <span class="myred">数秒でプレイヤーが描画されないときは、ページをリロードしてください</span>
     </div>
-    <div>
-      <button id="request-button"  class="request-button">リクエスト送信</button>
-      <button id="add-only-button" class="request-button">追加するだけ送信</button>
+    <div id="player-status">
+      プレイヤーの状態 - 
+      <span id="player-status-wait">待機 (動画上の再生ボタンをクリック後 "正常" にならないときは、ページをリロードしてください)</span>
+      <span id="player-status-error"   class="myred"   style="display:none;">異常</span>
+      <span id="player-status-healthy" class="mygreen" style="display:none;">正常</span>
     </div>
-    <div>
-      <span id="request-result"></span>
-      <span id="request-animate"></span>
+    <div id="request">
+      <h2>*Request</h2>
+      <div>
+        <input id="request-url"      class="form-control" type="text"     placeholder="ex. http://www.youtube.com/watch?v=r8OipmKFDeM">
+        <input id="request-password" class="form-control" type="password" placeholder="password">
+        <button id="request-button"  class="btn btn-default">Request</button>
+        <button id="add-only-button" class="btn btn-default">Add Only</button>
+        <span id="request-animate"></span>
+      </div>
+      <div>
+        <span id="request-result"></span>
+      </div>
     </div>
   </div>
 </body>

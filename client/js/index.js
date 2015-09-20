@@ -22,9 +22,9 @@
       window.onYouTubeIframeAPIReady = function() {
         // プレイヤーを作成する
         playerYoutube = new YT.Player('youtube-player', {
-          height:  '390',
-          width:   '640',
-          videoId: 'fJ9rUzIMcZQ',
+          height:  '480',
+          width:   '854',
+          videoId: 'r8OipmKFDeM',
           events: {
             'onStateChange': onPlayerStateChange,
           },
@@ -36,7 +36,8 @@
   // プレイヤーの状態変化時に呼ばれるメソッド
   function onPlayerStateChange(event) {
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
-      $('#player-status').html('正常');
+      $('#player-status-wait').hide();
+      $('#player-status-healthy').show();
       isAgree = true;
       syncPlayer();
     }
@@ -67,8 +68,8 @@
     });
   }
 
-  // URLを送信する
-  function sendUrl(isAddOnly) {
+  // リクエストを送信する
+  function requestUrl(isAddOnly) {
     isAddOnly = isAddOnly || false;
 
     // 入力を取得する
@@ -90,7 +91,7 @@
       type:     'GET',
       dataType: 'jsonp',
       data: {
-        api:       'sendUrl',
+        api:       'requestUrl',
         url:       url,
         password:  password,
         isAddOnly: isAddOnly,
@@ -114,12 +115,14 @@
   $(window).load(function () {
     // 動画をリクエストする
     $('#request-button').click(function() {
-      sendUrl(false);
+      requestUrl(false);
     });
 
     // 動画をマスタに追加する
     $('#add-only-button').click(function() {
-      sendUrl(true);
+      requestUrl(true);
     });
   });
+
+  $('#title-hide').hide();
 })(jQuery);

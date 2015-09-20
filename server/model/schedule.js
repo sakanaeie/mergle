@@ -36,9 +36,10 @@ var Schedule = (function() {
     }
 
     return {
-      id:     futureList[0].data.id,
-      gap:    gap,
-      offset: offset,
+      id:        futureList[0].data.id,
+      isRequest: futureList[0].data.isRequest,
+      gap:       gap,
+      offset:    offset,
     };
   };
 
