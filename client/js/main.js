@@ -1,6 +1,17 @@
 (function($) {
   var playerYoutube;
   var isAgree = false;
+  var apiUrl  = 'https://script.google.com/macros/s/' + getGetParams()['api'] + '/exec';
+
+  // getパラメータを取得する
+  function getGetParams() {
+    var data, params = {}, blocks = location.search.substring(1).split('&');
+    for (var i in blocks) {
+      data = blocks[i].split('=');
+      params[data[0]] = data[1];
+    }
+    return params;
+  }
 
   // APIコードを読み込む
   $.ajax({
@@ -22,16 +33,6 @@
     },
   });
 
-  // getパラメータを取得する
-  function getGetParams() {
-    var data, params = {}, blocks = location.search.substring(1).split('&');
-    for (var i in blocks) {
-      data = blocks[i].split('=');
-      params[data[0]] = data[1];
-    }
-    return params;
-  }
-
   // プレイヤーの状態変化時に呼ばれるメソッド
   function onPlayerStateChange(event) {
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
@@ -52,7 +53,7 @@
   // サーバと同期する
   function syncPlayer() {
     $.ajax({
-      url:      'https://script.google.com/macros/s/' + getGetParams()['api'] + '/exec',
+      url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
       success: function(response) {
@@ -65,4 +66,60 @@
       },
     });
   }
+
+  // URLを送信する
+  function sendUrl(isAddOnly) {
+    isAddOnly = isAddOnly || false;
+
+    // 入力を取得する
+    var url      = $('#request-url').val();
+    var password = $('#request-password').val();
+    if ('' === url || '' === password) {
+      return; // 入力がなければ無言で終了
+    }
+
+    // ボタンを押せなくする
+    $('#request-button').attr( 'disabled', true);
+    $('#add-only-button').attr('disabled', true);
+
+    // くるくるを出す
+    $('#request-animate').addClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+
+    $.ajax({
+      url:      apiUrl,
+      type:     'GET',
+      dataType: 'jsonp',
+      data: {
+        api:       'sendUrl',
+        url:       url,
+        password:  password,
+        isAddOnly: isAddOnly,
+      },
+      success: function(response) {
+        // レスポンスのメッセージを表示させる
+        $('#request-result').html(response.message + ' (' + url + ')');
+      },
+      complete: function() {
+        // ボタンを押せるようにする
+        $('#request-button').attr( 'disabled', false);
+        $('#add-only-button').attr('disabled', false);
+
+        // くるくるを消す
+        $('#request-animate').removeClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+      },
+    });
+  }
+
+  // binding -------------------------------------------------------------------
+  $(window).load(function () {
+    // 動画をリクエストする
+    $('#request-button').click(function() {
+      sendUrl(false);
+    });
+
+    // 動画をマスタに追加する
+    $('#add-only-button').click(function() {
+      sendUrl(true);
+    });
+  });
 })(jQuery);

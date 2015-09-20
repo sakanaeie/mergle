@@ -1,4 +1,12 @@
 var MyUtil = (function() {
+  // デバッグ用ロガー
+  function log(data) {
+    SpreadsheetApp
+      .openById(SheetInfo.id)
+      .getSheetByName(SheetInfo.nameLog)
+      .appendRow([JSON.stringify(data)]);
+  }
+
   // 現在時刻を取得する
   function getNow() {
     return Math.floor(new Date().getTime() / 1000);
@@ -12,6 +20,7 @@ var MyUtil = (function() {
   }
 
   return {
+    log:           log,
     getNow:        getNow,
     responseJsonp: responseJsonp,
   };

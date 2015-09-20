@@ -24,5 +24,20 @@
   <div>
     ステータス : <span id="player-status" class="myred">初期状態 (再生ボタンをクリック後 "正常" にならないときは、ページをリロードしてください)</span>
   </div>
+  <div>
+    # リクエスト機能
+    <div>
+      <input id="request-url" type="text" placeholder="例: http://www.youtube.com/watch?v=51CH3dPaWXc">
+      <input id="request-password" type="password">
+    </div>
+    <div>
+      <button id="request-button"  class="request-button">リクエスト送信</button>
+      <button id="add-only-button" class="request-button">追加するだけ送信</button>
+    </div>
+    <div>
+      <span id="request-result"></span>
+      <span id="request-animate"></span>
+    </div>
+  </div>
 </body>
 </html>

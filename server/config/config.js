@@ -1,16 +1,16 @@
-var config = {
+var Config = {
   makeSec:      60 * 20,
   gapSec:       6,
   historyCount: 50,
   password:     'hogefuga',
 };
 
-var sheetInfo = {
+var SheetInfo = {
   id: 'hogefuga',
   nameMaster: 'master', // 追加用のシート名
   nameDelete: 'delete', // 削除用のシート名
   nameBad:    'bad',    // 不愉快用のシート名
-  nameError:  'error',  // エラーメッセージ用のシート名
+  nameLog:    'log',    // ログ用のシート名
   column: {
     index:    0,
     provider: 1,
