@@ -3,16 +3,6 @@
   var isAgree = isLoop = isMute = false;
   var apiUrl  = 'https://script.google.com/macros/s/' + getGetParams()['api'] + '/exec';
 
-  // getパラメータを取得する
-  function getGetParams() {
-    var data, params = {}, blocks = location.search.substring(1).split('&');
-    for (var i in blocks) {
-      data = blocks[i].split('=');
-      params[data[0]] = data[1];
-    }
-    return params;
-  }
-
   // APIコードを読み込む
   $.ajax({
     url:      'https://www.youtube.com/player_api',
@@ -33,7 +23,21 @@
     },
   });
 
-  // プレイヤーの状態変化時に呼ばれるメソッド
+  /**
+   * getパラメータを取得する
+   */
+  function getGetParams() {
+    var data, params = {}, blocks = location.search.substring(1).split('&');
+    for (var i in blocks) {
+      data = blocks[i].split('=');
+      params[data[0]] = data[1];
+    }
+    return params;
+  }
+
+  /**
+   * プレイヤーの状態変化時に呼ばれるメソッド
+   */
   function onPlayerStateChange(event) {
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
       $('#player-status-wait').hide();
@@ -55,7 +59,9 @@
     }
   }
 
-  // サーバと同期する
+  /**
+   * サーバと同期する
+   */
   function syncPlayer() {
     $('#sync-button').attr('disabled', true);
 
@@ -83,7 +89,9 @@
     });
   }
 
-  // リクエストを送信する
+  /**
+   * 動画のリクエストを送信する
+   */
   function requestUrl(isAddOnly) {
     isAddOnly = isAddOnly || false;
 
@@ -126,14 +134,18 @@
     });
   }
 
-  // ミュートにする
+  /**
+   * ミュートにする
+   */
   function toMute() {
     $('#mute-label').html('On').removeClass().addClass('mygreen');
     playerYoutube.mute();
     isMute = true;
   }
 
-  // ミュートを解除する
+  /**
+   * ミュートを解除する
+   */
   function toUnMute() {
     $('#mute-label').html('Off').removeClass().addClass('myred');
     playerYoutube.unMute();
@@ -172,6 +184,4 @@
       requestUrl(true);
     });
   });
-
-  $('#title-hide').hide();
 })(jQuery);

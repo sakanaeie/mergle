@@ -1,3 +1,6 @@
+/**
+ * スケジュール
+ */
 var Schedule = (function() {
   // constructor ---------------------------------------------------------------
   function Schedule() {
@@ -7,13 +10,17 @@ var Schedule = (function() {
   }
 
   // public --------------------------------------------------------------------
-  // 情報を追加する
+  /**
+   * 情報を追加する
+   */
   Schedule.prototype.push = function(rowHash) {
     this.add_(rowHash, true);
     this.save_();
   };
 
-  // 情報を更新する
+  /**
+   * 情報を更新する
+   */
   Schedule.prototype.update = function() {
     this.refresh_();
 
@@ -43,7 +50,9 @@ var Schedule = (function() {
     this.save_();
   };
 
-  // 重複するかどうか
+  /**
+   * 重複するかどうか
+   */
   Schedule.prototype.isDuplicate = function(rowHash) {
     for (var i in this.dataList) {
       if (rowHash.provider === this.dataList[i].rowHash.provider && rowHash.id === this.dataList[i].rowHash.id ) {
@@ -53,7 +62,9 @@ var Schedule = (function() {
     return false;
   };
 
-  // 情報を取得する
+  /**
+   * 情報を取得する
+   */
   Schedule.prototype.getStatus = function() {
     var past, futureList = [];
     for (var i in this.dataList) {
@@ -83,18 +94,24 @@ var Schedule = (function() {
   };
 
   // private -------------------------------------------------------------------
-  // 最後の情報を取得する
+  /**
+   * 最後の情報を取得する
+   */
   Schedule.prototype.getLast_ = function() {
     return (null !== this.dataList) ? this.dataList[this.dataList.length - 1] : null;
   };
 
-  // 必要な情報が満たされているか
+  /**
+   * 必要な情報が満たされているか
+   */
   Schedule.prototype.isFill_ = function() {
     var last = this.getLast_();
     return (null !== last && last.endAt >= this.now + Config.makeSec);
   };
 
-  // 情報を足す
+  /**
+   * 情報を足す
+   */
   Schedule.prototype.add_ = function(rowHash, isRequest) {
     var last = this.getLast_();
     if (null !== last) {
@@ -112,12 +129,16 @@ var Schedule = (function() {
     });
   };
 
-  // キャッシュを更新する
+  /**
+   * キャッシュを更新する
+   */
   Schedule.prototype.save_ = function() {
     this.cache.put('schedule', JSON.stringify(this.dataList), 60 * 30);
   };
 
-  // 不要な情報を消す
+  /**
+   * 不要な情報を消す
+   */
   Schedule.prototype.refresh_ = function() {
     var pastList = [];
     for (var i in this.dataList) {

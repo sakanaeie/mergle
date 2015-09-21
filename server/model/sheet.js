@@ -1,3 +1,6 @@
+/**
+ * シート
+ */
 var Sheet = (function() {
   // constructor ---------------------------------------------------------------
   function Sheet() {
@@ -9,13 +12,17 @@ var Sheet = (function() {
   }
 
   // public --------------------------------------------------------------------
-  // ランダムにひとつ要素を取得する
+  /**
+   * ランダムにひとつ要素を取得する
+   */
   Sheet.prototype.getOneAtRandom = function() {
     var rand = Math.floor(Math.random() * this.rowList.length);
     return toHash_(rand, this.rowList[rand]);
   };
 
-  // 重複するかどうか
+  /**
+   * 重複するかどうか
+   */
   Sheet.prototype.isDuplicate = function(id) {
     key = SheetInfo.column.id;
     for (var i in this.rowList) {
@@ -26,7 +33,9 @@ var Sheet = (function() {
     return false;
   };
 
-  // 追加する
+  /**
+   * 追加する
+   */
   Sheet.prototype.add = function(video) {
     var row = Sheet.makeRowFromVideo(video);
 
@@ -35,7 +44,9 @@ var Sheet = (function() {
     this.rowList.push(row);
   };
 
-  // マスタシートから削除シートへ移動する
+  /**
+   * マスタシートから削除シートへ移動する
+   */
   Sheet.prototype.remove = function(index) {
     var row = this.rowList[index];
 
@@ -47,13 +58,17 @@ var Sheet = (function() {
     this.rowList.splice(index, 1);
   }
 
-  // ログを残す
+  /**
+   * ログを残す
+   */
   Sheet.prototype.log = function(mixData) {
     this.getSheetLog_().appendRow([new Date(), JSON.stringify(mixData)]);
   }
 
   // private -------------------------------------------------------------------
-  // 削除シートを取得する
+  /**
+   * 削除シートを取得する
+   */
   Sheet.prototype.getSheetDelete_ = function() {
     if (null === this.sheetDelete) {
       this.sheetDelete = this.ss.getSheetByName(SheetInfo.nameDelete);
@@ -61,7 +76,9 @@ var Sheet = (function() {
     return this.sheetDelete;
   }
 
-  // ログシートを取得する
+  /**
+   * ログシートを取得する
+   */
   Sheet.prototype.getSheetLog_ = function() {
     if (null === this.sheetLog) {
       this.sheetLog = this.ss.getSheetByName(SheetInfo.nameLog);
@@ -70,7 +87,9 @@ var Sheet = (function() {
   }
 
   // public static -------------------------------------------------------------
-  // 行データに整形する
+  /**
+   * 行データに整形する
+   */
   Sheet.makeRowFromVideo = function(video) {
     return [
         video.provider,
@@ -81,13 +100,17 @@ var Sheet = (function() {
     ];
   }
 
-  // 連想配列化された行データに整形する
+  /**
+   * 連想配列化された行データに整形する
+   */
   Sheet.makeRowHashFromVideo = function(video) {
     return toHash_(null, Sheet.makeRowFromVideo(video));
   }
 
   // private static ------------------------------------------------------------
-  // 連想配列化する
+  /**
+   * 連想配列化する
+   */
   function toHash_(index, row) {
     var key, hash = {index: index};
     for (var name in SheetInfo.column) {

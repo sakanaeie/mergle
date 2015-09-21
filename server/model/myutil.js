@@ -1,16 +1,25 @@
+/**
+ * ユーティリティ
+ */
 var MyUtil = (function() {
-  // デバッグ用ロガー
+  /**
+   * デバッグ用ロガー
+   */
   function log(mixData) {
     var sheet = new Sheet();
     sheet.log([new Date(), JSON.stringify(mixData)]);
   }
 
-  // 現在時刻を取得する
+  /**
+   * 現在時刻を取得する
+   */
   function getNow() {
     return Math.floor(new Date().getTime() / 1000);
   }
 
-  // jsonpレスポンスを返す
+  /**
+   * jsonpレスポンスを返す
+   */
   function responseJsonp(callbackName, obj) {
     return ContentService.createTextOutput(
       callbackName + '(' + JSON.stringify(obj) + ')'

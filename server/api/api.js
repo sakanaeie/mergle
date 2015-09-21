@@ -1,3 +1,6 @@
+/**
+ * GET Request
+ */
 function doGet(e) {
   switch (e.parameter.api) {
     case 'requestUrl':
@@ -11,7 +14,13 @@ function doGet(e) {
   return MyUtil.responseJsonp(e.parameter.callback, result);
 }
 
+/**
+ * controller
+ */
 var GetController = (function() {
+  /**
+   * 動画のリクエストを受信する
+   */
   function requestUrl(url, password, isAddOnly) {
     isAddOnly = ('true' === isAddOnly) ? true : false;
 

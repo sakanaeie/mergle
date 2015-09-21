@@ -1,4 +1,6 @@
 /**
+ * YouTubeAPI
+ *
  * @see YouTubeService https://developers.google.com/apps-script/advanced/youtube
  * @see YouTubeAPI v3  https://developers.google.com/youtube/v3/?hl=ja
  * @see API Response   https://developers.google.com/youtube/v3/docs/videos?hl=ja
@@ -41,30 +43,40 @@ var Youtube = (function() {
   }
 
   // public --------------------------------------------------------------------
-  // 問題があるかどうか
+  /**
+   * 問題があるかどうか
+   */
   Youtube.prototype.hasProblem = function() {
     return (null === this.id || null === this.response || !this.canEmbed);
   };
 
   // public static -------------------------------------------------------------
-  // urlからインスタンスを生成する
+  /**
+   * urlからインスタンスを生成する
+   */
   Youtube.fromUrl = function(url) {
     return new Youtube(parseUrl(url));
   };
 
   // private static ------------------------------------------------------------
-  // urlからidを取り出す
+  /**
+   * urlからidを取り出す
+   */
   function parseUrl(url) {
     var found = url.match(/^https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9-_]+)/);
     return (null === found) ? null : found[1];
   }
 
-  // idからurlを作る
+  /**
+   * idからurlを作る
+   */
   function buildUrl(id) {
     return 'https://www.youtube.com/watch?v=' + id;
   }
 
-  // YouTubeAPIを叩き、動画の情報を取得する
+  /**
+   * YouTubeAPIを叩き、動画の情報を取得する
+   */
   function callAPI(id) {
     var response = YouTube.Videos.list('snippet, contentDetails, status', {
       id: id,
