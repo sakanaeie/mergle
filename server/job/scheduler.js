@@ -1,11 +1,11 @@
 function scheduler() {
-//  CacheService.getScriptCache().remove('schedule');
-
   var schedule = new Schedule();
   schedule.update();
+}
 
-  var schedule = new Schedule(); // cacheとりなおし
-  for (var index in schedule.dataList) {
-    Logger.log(schedule.dataList[index]);
+function loggingSchedule() {
+  var schedule = new Schedule();
+  for (var i in schedule.dataList) {
+    Logger.log(schedule.dataList[i]);
   }
 }

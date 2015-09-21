@@ -119,6 +119,17 @@ var Schedule = (function() {
 
   // 不要な情報を消す
   Schedule.prototype.refresh_ = function() {
+    var pastList = [];
+    for (var i in this.dataList) {
+      if (this.dataList[i].endAt <= this.now) {
+        pastList.push(this.dataList[i])
+      }
+    }
+
+    var delCount = pastList.length - Config.historyCount;
+    for (var i = 0; i < delCount; i++) {
+      this.pastList.shift();
+    }
   };
 
   return Schedule;
