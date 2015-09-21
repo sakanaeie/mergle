@@ -35,11 +35,11 @@ var GetController = (function() {
     if (null === video.id) {
       return {message: 'URLが不正です'};
     }
-    if (null === video.response) {
-      return {message: '指定の動画は削除されています'};
-    }
     if (!video.canEmbed) {
       return {message: '指定の動画は埋め込みできません'};
+    }
+    if (video.hasProblem()) {
+      return {message: '指定の動画は削除されています'};
     }
 
     if (!isAddOnly) {

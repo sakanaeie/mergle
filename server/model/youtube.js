@@ -10,18 +10,20 @@ var Youtube = (function() {
   function Youtube(id) {
     this.provider = 'youtube';
     this.id       = id;
-    this.url      = buildUrl(id);
+    this.url      = buildUrl_(id);
     this.title    = '';
     this.duration = null;
     this.response = null;
+    this.status   = null;
     this.canEmbed = false;
     this.tooManyRecentCalls = false;
 
     if (null !== this.id) {
       try {
-        this.response = callAPI(this.id);
+        this.response = callAPI_(this.id);
         if (null !== this.response) {
           this.title    = this.response.snippet.title;
+          this.status   = this.response.status.uploadStatus;
           this.canEmbed = this.response.status.embeddable; // 埋め込み可能であるかどうか
 
           // PT#M#Sの形式であるため、分と秒を分離し、動画再生時間(秒単位)を算出する
@@ -47,22 +49,36 @@ var Youtube = (function() {
    * 問題があるかどうか
    */
   Youtube.prototype.hasProblem = function() {
-    return (null === this.id || null === this.response || !this.canEmbed);
+    return (null === this.id || null === this.response || !this.canEmbed || this.isStatusProblem_());
   };
+
+  // private -------------------------------------------------------------------
+  /**
+   * status.uploadStatusに問題があるかどうか
+   * deleted, failed, processed, rejected, uploaded のいずれかである
+   */
+  Youtube.prototype.isStatusProblem_ = function() {
+    if ('deleted' === this.status || 'failed' === this.status || 'rejected' === this.status) {
+      MyUtil.log(['問題のある動画が検出されました', this]);
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   // public static -------------------------------------------------------------
   /**
    * urlからインスタンスを生成する
    */
   Youtube.fromUrl = function(url) {
-    return new Youtube(parseUrl(url));
+    return new Youtube(parseUrl_(url));
   };
 
   // private static ------------------------------------------------------------
   /**
    * urlからidを取り出す
    */
-  function parseUrl(url) {
+  function parseUrl_(url) {
     var found = url.match(/^https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9-_]+)/);
     return (null === found) ? null : found[1];
   }
@@ -70,14 +86,14 @@ var Youtube = (function() {
   /**
    * idからurlを作る
    */
-  function buildUrl(id) {
+  function buildUrl_(id) {
     return 'https://www.youtube.com/watch?v=' + id;
   }
 
   /**
    * YouTubeAPIを叩き、動画の情報を取得する
    */
-  function callAPI(id) {
+  function callAPI_(id) {
     var response = YouTube.Videos.list('snippet, contentDetails, status', {
       id: id,
       regionCode: 'JP',
