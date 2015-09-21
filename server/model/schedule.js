@@ -55,10 +55,12 @@ var Schedule = (function() {
 
   // 情報を取得する
   Schedule.prototype.getStatus = function() {
-    var futureList = [];
+    var past, futureList = [];
     for (var i in this.dataList) {
       if (this.dataList[i].endAt > this.now) {
         futureList.push(this.dataList[i])
+      } else {
+        past = this.dataList[i];
       }
     }
 
@@ -72,10 +74,11 @@ var Schedule = (function() {
     }
 
     return {
-      id:        futureList[0].rowHash.id,
-      isRequest: futureList[0].rowHash.isRequest,
-      gap:       gap,
-      offset:    offset,
+      future: futureList[1],
+      now:    futureList[0],
+      past:   past,
+      gap:    gap,
+      offset: offset,
     };
   };
 

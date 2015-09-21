@@ -24,7 +24,7 @@
   </div>
 
   <div id="content">
-    <h2>Player</h2>
+    <h2><span class="glyphicon glyphicon-film"></span>Player</h2>
 
     <div id="player-frame">
       <div id="youtube-player">
@@ -40,11 +40,44 @@
       <span id="player-status-healthy" class="mygreen" style="display:none;">正常</span>
     </div>
 
-    <h2>Request</h2>
+    <div id="player-control">
+      <button class="btn btn-default"><span class="glyphicon glyphicon-repeat"></span>Loop</button>
+      <button class="btn btn-default"><span class="glyphicon glyphicon-volume-off"></span>Mute</button>
+      <button class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
+    </div>
+
+    <h2><span class="glyphicon glyphicon-calendar"></span>Schedule</h2>
+
+    <div id="schedule">
+      <table>
+        <tr>
+          <td><span class="glyphicon glyphicon-music"></span></td>
+          <th>Title</th>
+          <th>Info</th>
+        </tr>
+        <tr id="schedule-past">
+          <th>Past</th>
+          <td class="schedule-title">-</td>
+          <td class="schedule-info">-</td>
+        </tr>
+        <tr id="schedule-now">
+          <th class="myred">Now</th>
+          <td class="schedule-title">-</td>
+          <td class="schedule-info">-</td>
+        </tr>
+        <tr id="schedule-future">
+          <th>Future</th>
+          <td class="schedule-title">-</td>
+          <td class="schedule-info">-</td>
+        </tr>
+      </table>
+    </div>
+
+    <h2><span class="glyphicon glyphicon-cloud-upload"></span>Request</h2>
 
     <div id="request">
       <div>
-        <input id="request-url"      class="form-control" type="text"     placeholder="ex. http://www.youtube.com/watch?v=r8OipmKFDeM">
+        <input id="request-url"      class="form-control" type="text"     placeholder="ex. http://www.youtube.com/watch?v=iVstp5Ozw2o">
         <input id="request-password" class="form-control" type="password" placeholder="password">
         <button id="request-button"  class="btn btn-default">Request</button>
         <button id="add-only-button" class="btn btn-default">Add Only</button>

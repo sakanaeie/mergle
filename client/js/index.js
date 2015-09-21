@@ -24,7 +24,7 @@
         playerYoutube = new YT.Player('youtube-player', {
           height:  '360',
           width:   '640',
-          videoId: 'r8OipmKFDeM',
+          videoId: 'iVstp5Ozw2o',
           events: {
             'onStateChange': onPlayerStateChange,
           },
@@ -60,7 +60,15 @@
       success: function(response) {
         // 取得したidで、動画を読み込み再生する
         setTimeout(function() {
-          playerYoutube.loadVideoById(response.id, response.offset || 0);
+          playerYoutube.loadVideoById(response.now.rowHash.id, response.offset || 0);
+
+          var tr, key, keys = ['past', 'now', 'future'];
+          for (var i in keys) {
+            key = keys[i];
+            tr  = $('#schedule-' + key);
+            tr.children('.schedule-title').html(response[key].rowHash.title);
+            tr.children('.schedule-info').html(response[key].isRequest ? 'Request' : 'Random');
+          }
         }, response.gap || 0);
       },
       complete: function() {
