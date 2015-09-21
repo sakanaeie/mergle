@@ -78,8 +78,13 @@
           for (var i in keys) {
             key = keys[i];
             tr  = $('#schedule-' + key);
-            tr.children('.schedule-title').html(response[key].rowHash.title);
-            tr.children('.schedule-info').html(response[key].isRequest ? 'Request' : 'Random');
+            if ('undefined' !== typeof response[key]) {
+              tr.children('.schedule-title').html(response[key].rowHash.title);
+              tr.children('.schedule-info').html(response[key].isRequest ? 'Request' : 'Random');
+            } else {
+              tr.children('.schedule-title').html('-');
+              tr.children('.schedule-info').html('-');
+            }
           }
         }, response.gap || 0);
       },
