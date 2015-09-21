@@ -28,7 +28,7 @@ h2 span {
   margin-right: 7px;
 }
 
-button span {
+button span.glyphicon {
   color: #555;
   margin-right: 7px;
   vertical-align: -1px;

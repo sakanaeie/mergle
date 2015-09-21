@@ -41,9 +41,13 @@
     </div>
 
     <div id="player-control">
-      <button class="btn btn-default"><span class="glyphicon glyphicon-repeat"></span>Loop</button>
-      <button class="btn btn-default"><span class="glyphicon glyphicon-volume-off"></span>Mute</button>
-      <button class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
+      <button id="loop-button" class="btn btn-default">
+        <span class="glyphicon glyphicon-repeat"></span>Loop - <span id="loop-label" class="myred">Off</span>
+      </button>
+      <button id="mute-button" class="btn btn-default">
+        <span class="glyphicon glyphicon-volume-off"></span>Mute - <span id="mute-label" class="myred">Off</span>
+      </button>
+      <button id="sync-button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
     </div>
 
     <h2><span class="glyphicon glyphicon-calendar"></span>Schedule</h2>

@@ -1,6 +1,6 @@
 (function($) {
   var playerYoutube;
-  var isAgree = false;
+  var isAgree = isLoop = isMute = false;
   var apiUrl  = 'https://script.google.com/macros/s/' + getGetParams()['api'] + '/exec';
 
   // getパラメータを取得する
@@ -43,16 +43,22 @@
     }
 
     if (event.data == YT.PlayerState.ENDED) {
-      if ($('#loop').hasClass('loop-on')) {
+      if (isLoop) {
         playerYoutube.seekTo(0); // 冒頭にシークする
       } else {
         syncPlayer();
+      }
+
+      if (isMute) {
+        toUnMute();
       }
     }
   }
 
   // サーバと同期する
   function syncPlayer() {
+    $('#sync-button').attr('disabled', true);
+
     $.ajax({
       url:      apiUrl,
       type:     'GET',
@@ -72,6 +78,7 @@
         }, response.gap || 0);
       },
       complete: function() {
+        $('#sync-button').attr('disabled', false);
       },
     });
   }
@@ -119,8 +126,42 @@
     });
   }
 
+  // ミュートにする
+  function toMute() {
+    $('#mute-label').html('On').removeClass().addClass('mygreen');
+    playerYoutube.mute();
+    isMute = true;
+  }
+
+  // ミュートを解除する
+  function toUnMute() {
+    $('#mute-label').html('Off').removeClass().addClass('myred');
+    playerYoutube.unMute();
+    isMute = false;
+  }
+
   // binding -------------------------------------------------------------------
   $(window).load(function () {
+    // サーバと同期する
+    $('#sync-button').click(function() {
+      syncPlayer();
+    });
+
+    // ループする
+    $('#loop-button').click(function() {
+      if (isLoop) {
+        $('#loop-label').html('Off').removeClass().addClass('myred');
+      } else {
+        $('#loop-label').html('On').removeClass().addClass('mygreen');
+      }
+      isLoop = !isLoop;
+    });
+
+    // ミュートを切り替える
+    $('#mute-button').click(function() {
+      (isMute) ? toUnMute() : toMute();
+    });
+
     // 動画をリクエストする
     $('#request-button').click(function() {
       requestUrl(false);
