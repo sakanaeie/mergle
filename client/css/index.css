@@ -22,7 +22,7 @@ h1 {
 
 h2 {
   font-size: 26px;
-  padding: 0 120px;
+  padding: 0 0 0 120px;
 }
 
 h2 span.glyphicon {
@@ -44,24 +44,24 @@ button.btn {
 #header {
   background-color: #111;
   border-bottom: 1px solid #333;
-  padding: 0 116px 10px;
+  padding: 0 0 10px 116px ;
   margin-bottom: 20px;
 }
 
 #player-frame {
-  padding: 0 146px;
+  padding: 0 0 0 146px;
 }
 
 #player-control {
-  padding: 4px 146px 0;
+  padding: 4px 0 0 146px;
 }
 
 #player-status {
-  padding: 4px 146px 0;
+  padding: 4px 0 0 146px;
 }
 
 #schedule {
-  padding: 0 146px;
+  padding: 0 0 0 146px;
 }
 
 #schedule table, tr, th, td {
@@ -82,7 +82,7 @@ button.btn {
 }
 
 #request {
-  padding: 0 146px;
+  padding: 0 0 0 146px;
 }
 
 #request button {
