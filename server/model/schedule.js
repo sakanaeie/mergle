@@ -26,11 +26,16 @@ var Schedule = (function() {
     this.refresh_();
 
     var sheet = new Sheet();
+    var retry = 0;
     while (!this.isFill_()) {
       // マスタから取得する
       var rowHash = sheet.getOneAtRandom();
 
-      // TODO 履歴を確認する
+      // 履歴を確認する
+      if (retry < 20 && this.isDuplicate(rowHash)) {
+        retry++;  // 母数が不足しているときなどに発生しうる無限ループを抑止
+        continue;
+      }
 
       // URLを検証する
       var video = new Youtube(rowHash.id);
