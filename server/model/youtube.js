@@ -32,7 +32,7 @@ var Youtube = (function() {
         }
       } catch (e) {
         // 動画が削除されたときなど
-        MyUnit.log(['YoutubeServiceで例外が発生しました', e]);
+        MyUtil.log(['YoutubeServiceで例外が発生しました', e]);
         if (null !== e.message.match('too_many_recent_calls')) {
           // APIアクセス過多警告, この場合は全体の処理を停止するべきである
           this.tooManyRecentCalls = true;
