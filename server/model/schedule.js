@@ -14,6 +14,7 @@ var Schedule = (function() {
    * 情報を追加する
    */
   Schedule.prototype.push = function(rowHash) {
+    this.refresh_();
     this.add_(rowHash, true);
     this.save_();
   };
@@ -140,16 +141,18 @@ var Schedule = (function() {
    * 不要な情報を消す
    */
   Schedule.prototype.refresh_ = function() {
-    var pastList = [];
+    // 過去の情報の数を算出する
+    var pastCount = 0;
     for (var i in this.dataList) {
       if (this.dataList[i].endAt <= this.now) {
-        pastList.push(this.dataList[i])
+        pastCount++;
       }
     }
 
-    var delCount = pastList.length - Config.historyCount;
+    // 履歴としても使われない分を取り除く
+    var delCount = pastCount - Config.historyCount;
     for (var i = 0; i < delCount; i++) {
-      this.pastList.shift();
+      this.dataList.shift();
     }
   };
 
