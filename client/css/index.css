@@ -6,33 +6,46 @@
 }
 
 body {
-  background-color: #1c1c1c;
+  background-color: #1e1e1e;
 }
 
 h1, h2 {
-  color: transparent;
   font-family: 'Courier';
-  text-shadow: 0px 0px 1px #fff;
 }
 
 h1 {
-  background-color: #111;
-  border-bottom: 1px solid #333;
+  color: transparent;
   font-size: 60px;
-  padding: 2px 160px 10px;
-  margin-bottom: 20px;
+  text-shadow: 0px 0px 1px #fff;
 }
 
 h2 {
+  color: #fff;
   font-size: 30px;
+  padding: 0 120px;
 }
 
-#content {
+#header {
+  background-color: #111;
+  border-bottom: 1px solid #333;
+  padding: 0 120px 10px;
+  margin-bottom: 20px;
+}
+
+#player-frame {
   padding: 0 160px;
 }
 
 #player-status {
-  margin: 4px 8px 0;
+  padding: 4px 160px 0;
+}
+
+#request {
+  padding: 0 160px;
+}
+
+#request-status {
+  padding: 4px 0 0;
 }
 
 #request-url {

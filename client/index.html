@@ -19,20 +19,30 @@
 <script src="./js/index.js"></script>
 </head>
 <body>
-  <h1>syngle</h1>
+  <div id="header">
+    <h1>syngle</h1>
+  </div>
+
   <div id="content">
-    <div id="youtube-player">
-      <span class="myred">数秒でプレイヤーが描画されないときは、ページをリロードしてください</span>
+    <h2>Player</h2>
+
+    <div id="player-frame">
+      <div id="youtube-player">
+        <span class="myred">数秒でプレイヤーが描画されないときは、ページをリロードしてください</span>
+      </div>
     </div>
+
     <div id="player-status">
       <span class="glyphicon glyphicon-info-sign"></span>
-      プレイヤーの状態 - 
+      プレイヤーの状態 -
       <span id="player-status-wait">待機 (動画上の再生ボタンをクリック後 "正常" にならないときは、ページをリロードしてください)</span>
       <span id="player-status-error"   class="myred"   style="display:none;">異常</span>
       <span id="player-status-healthy" class="mygreen" style="display:none;">正常</span>
     </div>
+
+    <h2>Request</h2>
+
     <div id="request">
-      <h2>*Request</h2>
       <div>
         <input id="request-url"      class="form-control" type="text"     placeholder="ex. http://www.youtube.com/watch?v=r8OipmKFDeM">
         <input id="request-password" class="form-control" type="password" placeholder="password">
@@ -40,10 +50,12 @@
         <button id="add-only-button" class="btn btn-default">Add Only</button>
         <span id="request-animate"></span>
       </div>
-      <div>
+      <div id="request-status">
+        <span class="glyphicon glyphicon-info-sign"></span>
         <span id="request-result"></span>
       </div>
     </div>
+
   </div>
 </body>
 </html>

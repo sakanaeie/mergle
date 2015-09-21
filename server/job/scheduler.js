@@ -1,4 +1,4 @@
-function test() {
+function scheduler() {
 //  CacheService.getScriptCache().remove('schedule');
 
   var schedule = new Schedule();

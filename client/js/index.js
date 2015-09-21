@@ -22,8 +22,8 @@
       window.onYouTubeIframeAPIReady = function() {
         // プレイヤーを作成する
         playerYoutube = new YT.Player('youtube-player', {
-          height:  '480',
-          width:   '854',
+          height:  '360',
+          width:   '640',
           videoId: 'r8OipmKFDeM',
           events: {
             'onStateChange': onPlayerStateChange,

@@ -7,40 +7,50 @@ var Schedule = (function() {
   }
 
   // public --------------------------------------------------------------------
+  // 情報を追加する
+  Schedule.prototype.push = function(rowHash) {
+    this.add_(rowHash, true);
+    this.save_();
+  };
+
   // 情報を更新する
   Schedule.prototype.update = function() {
     this.refresh_();
 
     var sheet = new Sheet();
     while (!this.isFill_()) {
-      // TODO リクエストを取得
+      // マスタから取得する
+      var rowHash = sheet.getOneAtRandom();
 
-      if (true) {
-        // リクエストがないとき
+      // TODO 履歴を確認する
 
-        // マスタから取得する
-        var rowHash = sheet.getOneAtRandom();
+      // URLを検証する
+      var video = new Youtube(rowHash.id);
+      if (video.tooManyRecentCalls) {
+        MyUtil.log('tooManyRecentCallsが検出されました');
+        return;
+      }
 
-        // TODO 履歴を確認する
-
-        // URLを検証する
-        var video = new Youtube(rowHash.id);
-        if (video.tooManyRecentCalls) {
-          MyUtil.log('tooManyRecentCallsが検出されました');
-          return;
-        }
-
-        if (video.hasProblem()) {
-          // 問題があるとき、マスタシートから削除する
-          sheet.remove(rowHash.index);
-          continue;
-        }
+      if (video.hasProblem()) {
+        // 問題があるとき、マスタシートから削除する
+        sheet.remove(rowHash.index);
+        continue;
       }
 
       this.add_(rowHash, false);
     }
 
     this.save_();
+  };
+
+  // 重複するかどうか
+  Schedule.prototype.isDuplicate = function(rowHash) {
+    for (var i in this.dataList) {
+      if (rowHash.provider === this.dataList[i].rowHash.provider && rowHash.id === this.dataList[i].rowHash.id ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   // 情報を取得する
