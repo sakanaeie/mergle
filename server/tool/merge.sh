@@ -3,4 +3,5 @@
 cd `dirname $0`
 cd ..
 
-cat api/* job/* model/* > tmp/merged.js
+# jobを先頭にすること
+cat job/* api/* model/* > tmp/merged.js
