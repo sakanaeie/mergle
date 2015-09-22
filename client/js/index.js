@@ -247,6 +247,16 @@
       $('#youtube-player').toggle();
     });
 
+    // 音量を中にする
+    $('#volume-middle').click(function() {
+      playerYoutube.setVolume(50);
+    });
+
+    // 音量を大にする
+    $('#volume-max').click(function() {
+      playerYoutube.setVolume(100);
+    });
+
     // 動画をリクエストする
     $('#request-button').click(function() {
       requestUrl(false);
