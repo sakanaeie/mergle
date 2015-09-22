@@ -1,8 +1,11 @@
+/** ----------------------------------------------------------------------------
+ * 全般
+ */
 *, h1 {
   color: #ccc;
   font-size: 14px;
   font-family: 'Courier', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', 'Lucida Grande', Meiryo, メイリオ, sans-serif;
-  margin: 0;
+  margin:  0;
   padding: 0;
 }
 
@@ -11,7 +14,7 @@ body {
   padding-bottom: 200px; /* ページ下部に空間を作る */
 }
 
-h1, h2 {
+h1, h2, h3, h4 {
   color: #fff;
   font-weight: bold;
 }
@@ -22,9 +25,31 @@ h1 {
 
 h2 {
   font-size: 26px;
-  padding: 0 0 0 120px;
 }
 
+button.btn {
+  font-weight: bold;
+}
+
+input.form-control {
+  color: #111;
+}
+
+input.form-control::-webkit-input-placeholder {
+  color: #999;
+}
+
+.myred {
+  color: #dc143c;
+}
+
+.mygreen {
+  color: #008080;
+}
+
+/** ----------------------------------------------------------------------------
+ * グラフィコン
+ */
 h2 span.glyphicon {
   color: #fff;
   font-size: 20px;
@@ -37,31 +62,58 @@ button span.glyphicon {
   vertical-align: -1px;
 }
 
-button.btn {
-  font-weight: bold;
+.glyphicon-refresh-animate {
+  -webkit-animation: spin .9s infinite linear;
 }
 
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); }
+  to   { -webkit-transform: rotate(360deg); }
+}
+
+/** ----------------------------------------------------------------------------
+ * ヘッダー
+ */
 #header {
   background-color: #111;
   border-bottom: 1px solid #333;
-  padding: 0 0 10px 116px ;
-  margin-bottom: 20px;
+  padding-left:   116px;
+  padding-bottom: 10px;
+  margin-bottom:  20px;
 }
 
+h2 {
+  padding-left: 120px;
+}
+
+/** ----------------------------------------------------------------------------
+ * player-frame
+ */
 #player-frame {
-  padding: 0 0 0 146px;
+  padding-left: 146px;
 }
 
-#player-control {
-  padding: 4px 0 0 146px;
-}
-
+/** ----------------------------------------------------------------------------
+ * player-status
+ */
 #player-status {
-  padding: 4px 0 0 146px;
+  padding-top:  4px;
+  padding-left: 146px;
 }
 
+/** ----------------------------------------------------------------------------
+ * player-control
+ */
+#player-control {
+  padding-top:  4px;
+  padding-left: 146px;
+}
+
+/** ----------------------------------------------------------------------------
+ * schedule
+ */
 #schedule {
-  padding: 0 0 0 146px;
+  padding-left: 146px;
 }
 
 #schedule table, tr, th, td {
@@ -78,11 +130,18 @@ button.btn {
 }
 
 .schedule-title {
-  min-width: 300px;
+  min-width: 400px;
 }
 
+.schedule-info {
+  min-width: 100px;
+}
+
+/** ----------------------------------------------------------------------------
+ * request
+ */
 #request {
-  padding: 0 0 0 146px;
+  padding-left: 146px;
 }
 
 #request button {
@@ -105,34 +164,39 @@ button.btn {
 }
 
 #request-status {
-  padding: 4px 0 0;
+  padding-top: 4px;
 }
 
-#request-result {
-  margin-top: 4px;
+/** ----------------------------------------------------------------------------
+ * youtube-search
+ */
+#youtube-search {
+  padding-left: 146px;
 }
 
-.glyphicon-refresh-animate {
-  -webkit-animation: spin .9s infinite linear;
+#youtube-search-word {
+  display: inline;
+  width: 440px;
 }
 
-@-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); }
-  to   { -webkit-transform: rotate(360deg); }
+#youtube-search-list {
+  width: 880px;
+  margin-top: 18px;
 }
 
-input.form-control {
-  color: #000;
+#youtube-search-list .media {
+  margin: 0;
 }
 
-input.form-control::-webkit-input-placeholder {
-  color: #999;
+#youtube-search-list hr {
+  border-color: #444;
 }
 
-.myred {
-  color: #dc143c;
+#youtube-search-list .media-body {
+  vertical-align: middle;
 }
 
-.mygreen {
-  color: #008080;
+.youtube-search-img {
+  border: 1px solid #444;
+  margin-right: 6px;
 }

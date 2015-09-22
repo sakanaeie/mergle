@@ -188,5 +188,62 @@
     $('#add-only-button').click(function() {
       requestUrl(true);
     });
+
+    // youtube検索する
+    $('#youtube-search-word').keypress(function(e) {
+      if (13 === e.which) {
+        // Enterが押されたとき
+
+        // くるくるを出す
+        $('#youtube-search-animate').addClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+
+        $.ajax({
+          url:      apiUrl,
+          type:     'GET',
+          dataType: 'jsonp',
+          data: {
+            api:  'searchYoutube',
+            word: $(this).val(),
+          },
+          success: function(response) {
+            $('#youtube-search-list').children().remove();
+
+            // 結果リストを追加する
+            $.each(response.items, function(i, item) {
+              var media = $('<div>').addClass('youtube-search-item media');
+              var left  = $('<div>').addClass('media-left media-top');
+              var body  = $('<div>').addClass('media-body');
+              var head  = $('<h4>' ).addClass('media-heading').html(item.snippet.title);
+
+              var img = $('<img>')
+                .addClass('youtube-search-img img-rounded')
+                .attr('title', item.id.videoId)
+                .attr('src', item.snippet.thumbnails.default.url);
+
+              left.append(img);
+              body.append(head, $('<span>').html(item.snippet.description));
+              media.append(left, body);
+
+              $('#youtube-search-list').append(media, $('<hr>'));
+            });
+
+            // 結果リストの画像をクリックしたときのイベントを設定する
+            $('.youtube-search-img').click(function() {
+              var id = $(this).attr('title');
+
+              // リクエストのテキストボックスに入力する
+              $('#request-url').val('http://www.youtube.com/watch?v=' + id);
+
+              // 現在のプレイヤーに割り込み再生する
+              playerYoutube.loadVideoById(id);
+            });
+          },
+          complete: function() {
+            // くるくるを消す
+            $('#youtube-search-animate').removeClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+          },
+        });
+      }
+    });
   });
 })(jQuery);

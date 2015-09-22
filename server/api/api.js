@@ -6,6 +6,9 @@ function doGet(e) {
     case 'requestUrl':
       var result = GetController.requestUrl(e.parameter.url, e.parameter.password, e.parameter.isAddOnly);
       break;
+    case 'searchYoutube':
+      var result = GetController.searchYoutube(e.parameter.word);
+      break;
     default:
       var result = new Schedule().getStatus();
       break;
@@ -71,7 +74,21 @@ var GetController = (function() {
     }
   }
 
+  /**
+   * youtube検索する
+   */
+  function searchYoutube(word) {
+    return JSON.parse(YouTube.Search.list('id, snippet', {
+      q: word,
+      type: 'video',
+      maxResults: 20,
+      regionCode: 'JP',
+      videoEmbeddable: true,
+    }));
+  }
+
   return {
-    requestUrl: requestUrl,
+    requestUrl:    requestUrl,
+    searchYoutube: searchYoutube,
   };
 })();
