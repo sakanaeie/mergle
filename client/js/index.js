@@ -179,6 +179,11 @@
       (isMute) ? toUnMute() : toMute();
     });
 
+    // 動画の表示/非表示を切り替える
+    $('#hide-button').click(function() {
+      $('#youtube-player').toggle();
+    });
+
     // 動画をリクエストする
     $('#request-button').click(function() {
       requestUrl(false);
