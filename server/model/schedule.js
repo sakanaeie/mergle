@@ -130,7 +130,7 @@ var Schedule = (function() {
     this.dataList.push({
       rowHash:   rowHash,
       startAt:   startAt,
-      endAt:     startAt + rowHash.duration,
+      endAt:     startAt + rowHash.duration * 1,
       isRequest: isRequest,
     });
   };

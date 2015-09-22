@@ -9,6 +9,12 @@ function doGet(e) {
     case 'searchYoutube':
       var result = GetController.searchYoutube(e.parameter.word);
       break;
+    case 'master':
+      var result = {
+        column: SheetInfo.column,
+        master: new Sheet().rowList,
+      };
+      break;
     default:
       var result = new Schedule().getStatus();
       break;

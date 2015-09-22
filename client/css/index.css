@@ -27,8 +27,13 @@ h2 {
   font-size: 26px;
 }
 
+hr {
+  border-color: #444;
+}
+
 button.btn {
   font-weight: bold;
+  vertical-align: top;
 }
 
 input.form-control {
@@ -48,7 +53,7 @@ input.form-control::-webkit-input-placeholder {
 }
 
 /** ----------------------------------------------------------------------------
- * グラフィコン
+ * glyphicon
  */
 h2 span.glyphicon {
   color: #fff;
@@ -58,17 +63,45 @@ h2 span.glyphicon {
 
 button span.glyphicon {
   color: #555;
-  margin-right: 7px;
-  vertical-align: -1px;
+  margin-right: 6px;
+  vertical-align: -2px;
 }
 
-.glyphicon-refresh-animate {
-  -webkit-animation: spin .9s infinite linear;
+.glyphicon-refresh {
+  display: none;
+}
+
+.spin {
+  -webkit-transform-origin: 50% 58%;
+  -ms-transform-origin: 50% 58%;
+  transform-origin: 50% 58%;
+  -webkit-animation: spin 1.5s linear infinite;
+  -moz-animation:    spin 1.5s linear infinite;
+  -ms-animation:     spin 1.5s linear infinite;
+  -o-animation:      spin 1.5s linear infinite;
+  animation:         spin 1.5s linear infinite;
+  display: inline-block;
 }
 
 @-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); }
-  to   { -webkit-transform: rotate(360deg); }
+  0%   { -webkit-transform: rotate(0deg);   }
+  100% { -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+  0%   { -moz-transform: rotate(0deg);   }
+  100% { -moz-transform: rotate(360deg); }
+}
+@-ms-keyframes spin {
+  0%   { -ms-transform: rotate(0deg);   }
+  100% { -ms-transform: rotate(360deg); }
+}
+@-o-keyframes spin {
+  0%   { -o-transform: rotate(0deg);   }
+  100% { -o-transform: rotate(360deg); }
+}
+@keyframes spin {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
 }
 
 /** ----------------------------------------------------------------------------
@@ -101,12 +134,24 @@ h2 {
   padding-left: 146px;
 }
 
+#player-status-error, #player-status-healthy {
+  display: none;
+}
+
 /** ----------------------------------------------------------------------------
  * player-control
  */
 #player-control {
   padding-top:  4px;
   padding-left: 146px;
+}
+
+#loop-label {
+  font-size: inherit;
+}
+
+#mute-label {
+  font-size: inherit;
 }
 
 /** ----------------------------------------------------------------------------
@@ -144,23 +189,15 @@ h2 {
   padding-left: 146px;
 }
 
-#request button {
-  vertical-align: top;
-}
-
 #request-url {
   display: inline;
-  width: 440px;
+  width: 600px;
+  margin-bottom: 4px;
 }
 
 #request-password {
   display: inline;
-  width: 100px;
-}
-
-#request-animate {
-  height: 14px;
-  vertical-align: middle;
+  width: 120px;
 }
 
 #request-status {
@@ -188,15 +225,44 @@ h2 {
   margin: 0;
 }
 
-#youtube-search-list hr {
-  border-color: #444;
-}
-
 #youtube-search-list .media-body {
   vertical-align: middle;
 }
 
 .youtube-search-img {
-  border: 1px solid #444;
+  border: 2px solid #444;
   margin-right: 6px;
+}
+
+/** ----------------------------------------------------------------------------
+ * master
+ */
+#master {
+  padding-left: 146px;
+}
+
+#master-search-word {
+  margin-top: 4px;
+  width: 440px;
+}
+
+#master span.glyphicon-info-sign {
+  padding-top: 4px;
+}
+
+#master-data-list {
+  margin-top: 18px;
+  margin-left: 20px;
+}
+
+#master-data-list li {
+  margin-bottom: 2px;
+}
+
+#master-data-list a {
+  margin-left: 6px;
+}
+
+.master-search-help {
+  display: none;
 }

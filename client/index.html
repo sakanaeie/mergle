@@ -36,19 +36,19 @@
       <span class="glyphicon glyphicon-info-sign"></span>
       プレイヤーの状態 -
       <span id="player-status-wait">待機 (動画上の再生ボタンをクリック後 "正常" にならないときは、ページをリロードしてください)</span>
-      <span id="player-status-error"   class="myred"   style="display:none;">異常</span>
-      <span id="player-status-healthy" class="mygreen" style="display:none;">正常</span>
+      <span id="player-status-error"   class="myred">異常</span>
+      <span id="player-status-healthy" class="mygreen">正常</span>
     </div>
 
     <div id="player-control">
-      <button id="loop-button" class="btn btn-default">
+      <button id="loop-button" class="btn btn-default btn-sm">
         <span class="glyphicon glyphicon-repeat"></span>Loop - <span id="loop-label" class="myred">Off</span>
       </button>
-      <button id="mute-button" class="btn btn-default">
+      <button id="mute-button" class="btn btn-default btn-sm">
         <span class="glyphicon glyphicon-volume-off"></span>Mute - <span id="mute-label" class="myred">Off</span>
       </button>
-      <button id="sync-button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
-      <button id="hide-button" class="btn btn-default"><span class="glyphicon glyphicon-eye-close"></span>Hide</button>
+      <button id="sync-button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
+      <button id="hide-button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-close"></span>Hide</button>
     </div>
 
     <br>
@@ -86,11 +86,12 @@
 
     <div id="request">
       <div>
-        <input id="request-url"      class="form-control" type="text"     placeholder="ex. http://www.youtube.com/watch?v=iVstp5Ozw2o">
-        <input id="request-password" class="form-control" type="password" placeholder="password">
-        <button id="request-button"  class="btn btn-default">Request</button>
-        <button id="add-only-button" class="btn btn-default">Add Only</button>
-        <span id="request-animate"></span>
+        <input id="request-url"      class="form-control input-sm" type="text"     placeholder="... video url">
+        <br>
+        <input id="request-password" class="form-control input-sm" type="password" placeholder="... password">
+        <button id="request-button"  class="btn btn-default btn-sm">Request</button>
+        <button id="add-only-button" class="btn btn-default btn-sm">Add Only</button>
+        <span id="request-animate" class="glyphicon glyphicon-refresh"></span>
       </div>
       <div id="request-status">
         <span class="glyphicon glyphicon-info-sign"></span>
@@ -103,9 +104,26 @@
     <h2><span class="glyphicon glyphicon-search"></span>Search on youtube</h2>
 
     <div id="youtube-search">
-      <input id="youtube-search-word" class="form-control" type="text" placeholder="input word and press RETURN key">
-      <span id="youtube-search-animate"></span>
+      <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="... input word & press RETURN key">
+      <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
+      <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>
+      <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
       <div id="youtube-search-list"></div>
+    </div>
+
+    <br>
+
+    <h2><span class="glyphicon glyphicon-th-list"></span>Master</h2>
+
+    <div id="master">
+      <button id="get-master" class="btn btn-default btn-sm">Get Latest Master</button>
+      <span id="master-animate" class="glyphicon glyphicon-refresh"></span>
+      <div>
+        <input id="master-search-word" class="form-control input-sm" type="text" placeholder="... incremental search">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        小文字英字で大文字英字、ひらがなでカタカナを検索できます
+        <ul id="master-data-list"></ul>
+      </div>
     </div>
   </div>
 </body>

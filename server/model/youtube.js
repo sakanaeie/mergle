@@ -26,10 +26,12 @@ var Youtube = (function() {
           this.status   = this.response.status.uploadStatus;
           this.canEmbed = this.response.status.embeddable; // 埋め込み可能であるかどうか
 
-          // PT#M#Sの形式であるため、分と秒を分離し、動画再生時間(秒単位)を算出する
+          // PT<int>M<int>Sの形式であるため、分と秒を分離し、動画再生時間(秒単位)を算出する
           var duration  = this.response.contentDetails.duration;
-          var minute    = duration.match(/([0-9]*)M/)[1] || 0;
-          var second    = duration.match(/([0-9]*)S/)[1] || 0;
+          var resultM   = duration.match(/([0-9]*)M/);
+          var minute    = (null !== resultM) ? resultM[1] : 0;
+          var resultS   = duration.match(/([0-9]*)S/);
+          var second    = (null !== resultS) ? resultS[1] : 0;
           this.duration = minute * 60 + second * 1;
         }
       } catch (e) {
