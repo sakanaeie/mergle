@@ -1,7 +1,8 @@
 (function($) {
   var playerYoutube;
+  var getParams = getGetParams();
   var isAgree = isLoop = isMute = false;
-  var apiUrl  = 'https://script.google.com/macros/s/' + getGetParams()['api'] + '/exec';
+  var apiUrl  = 'https://script.google.com/macros/s/' + getParams.api + '/exec';
 
   // APIコードを読み込む
   $.ajax({
@@ -222,6 +223,9 @@
 
   // binding -------------------------------------------------------------------
   $(window).load(function() {
+    // サブタイトルをつける
+    $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
+
     // サーバと同期する
     $('#sync-button').click(function() {
       syncPlayer();
