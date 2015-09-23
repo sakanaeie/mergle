@@ -308,9 +308,20 @@
           }
 
           // 索引用文字列でソートする
-//          response.master.sort(function(a, b) {
-//            return a.helpString.localeCompare(b.helpString);
-//          });
+          response.master.sort(function(a, b) {
+            return a.helpString.localeCompare(b.helpString);
+          });
+
+          // 記号で始まる要素は後方に移動させる
+          var alphaIndex = 0;
+          for (var i in response.master) {
+            alphaIndex = i;
+            if ('a' === response.master[i].helpString[0]) {
+              break;
+            }
+          }
+          var alphaArr    = response.master.splice(alphaIndex);
+          response.master = alphaArr.concat(response.master);
 
           var title, link, help;
           for (var i in response.master) {
