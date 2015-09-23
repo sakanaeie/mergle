@@ -15,6 +15,12 @@ function doGet(e) {
         master: new Sheet().rowList,
       };
       break;
+    case 'deleted':
+      var result = {
+        column:  SheetInfo.column,
+        deleted: new Sheet().getDeleteList(),
+      };
+      break;
     default:
       var result = new Schedule().getStatus();
       break;

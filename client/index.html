@@ -107,13 +107,24 @@
 
     <h2><span class="glyphicon glyphicon-th-list"></span>Master</h2>
     <div id="master" class="sub-content">
-      <button id="get-master" class="btn btn-default btn-sm">Get Latest Master</button>
+      <button id="get-master" class="btn btn-default btn-sm">Get List</button>
       <span id="master-animate" class="glyphicon glyphicon-refresh"></span>
       <div>
         <input id="master-search-word" class="form-control input-sm" type="text" placeholder="... input to incremental search">
         <span class="glyphicon glyphicon-info-sign"></span>
         小文字英字で大文字英字、ひらがなでカタカナを検索できます
         <ul id="master-data-list"></ul>
+      </div>
+    </div>
+
+    <h2><span class="glyphicon glyphicon-trash"></span>Deleted</h2>
+    <div id="deleted" class="sub-content">
+      <button id="get-deleted" class="btn btn-default btn-sm">Get List</button>
+      <span id="deleted-animate" class="glyphicon glyphicon-refresh"></span>
+      <div>
+        <span class="glyphicon glyphicon-info-sign"></span>
+        タイトルをクリックすると、検索機能に移動します
+        <ul id="deleted-data-list"></ul>
       </div>
     </div>
   </div>

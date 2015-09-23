@@ -45,6 +45,13 @@ var Sheet = (function() {
   };
 
   /**
+   * 削除シートの内容を取得する
+   */
+  Sheet.prototype.getDeleteList = function() {
+    return this.getSheetDelete_().getDataRange().getValues();
+  }
+
+  /**
    * マスタシートから削除シートへ移動する
    */
   Sheet.prototype.remove = function(index) {

@@ -345,5 +345,51 @@
         }
       }, 500, $(this).val());
     });
+
+    // 削除動画リストを表示する
+    $('#get-deleted').click(function() {
+      $('#get-deleted').attr('disabled', true);
+      $('#deleted-animate').addClass('spin');
+
+      $.ajax({
+        url:      apiUrl,
+        type:     'GET',
+        dataType: 'jsonp',
+        data: {
+          api: 'deleted',
+        },
+        success: function(response) {
+          // 前回の内容を消す
+          var ul = $('#deleted ul');
+          ul.children().remove();
+
+          var title, link;
+          for (var i in response.deleted) {
+            title = $('<span>')
+              .addClass('deleted-item')
+              .html(response.deleted[i][response.column.title]);
+            link  = $('<a>')
+              .addClass('glyphicon glyphicon-new-window')
+              .attr('href', response.deleted[i][response.column.url])
+              .attr('target', '_blank');
+            ul.append($('<li>').append(title, link));
+          }
+
+          // 削除動画リストのタイトルをクリックしたときのイベントを設定する
+          $('.deleted-item').click(function() {
+            // youtube検索する
+            $('#youtube-search-word').val($(this).html());
+            searchOnYoutube();
+
+            // youtube検索まで移動する
+            $('html, body').animate({scrollTop: $('#youtube-search').offset().top - 40}, 'fast');
+          });
+        },
+        complete: function() {
+          $('#get-deleted').attr('disabled', false);
+          $('#deleted-animate').removeClass('spin');
+        },
+      });
+    });
   });
 })(jQuery);

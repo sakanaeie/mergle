@@ -244,3 +244,18 @@ button span.glyphicon {
 .master-search-help {
   display: none;
 }
+
+/** ----------------------------------------------------------------------------
+ * deleted
+ */
+#deleted-data-list {
+  margin: 18px 0 0 20px;
+}
+
+#deleted-data-list li {
+  margin-bottom: 2px;
+}
+
+div div ul#deleted-data-list li:hover {
+  background-color: #333;
+}
