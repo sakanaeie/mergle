@@ -317,15 +317,15 @@
           });
 
           // 記号で始まる要素は後方に移動させる
-          var alphaIndex = 0;
+          var notSignIndex = 0, hasNotSign = false;
           for (var i in response.master) {
-            alphaIndex = i;
-            if ('a' === response.master[i].helpString[0]) {
+            notSignIndex = i;
+            if (response.master[i].helpString[0].charCodeAt(0) >= 0x41) {
+              var notSignArr  = response.master.splice(notSignIndex);
+              response.master = notSignArr.concat(response.master);
               break;
             }
           }
-          var alphaArr    = response.master.splice(alphaIndex);
-          response.master = alphaArr.concat(response.master);
 
           var title, link, help;
           for (var i in response.master) {
@@ -380,6 +380,9 @@
 
           var title, link;
           for (var i in response.deleted) {
+            if ('undefined' === typeof response.deleted[i][response.column.title]) {
+              continue;
+            }
             title = $('<span>')
               .addClass('deleted-item')
               .html(response.deleted[i][response.column.title]);
