@@ -51,6 +51,16 @@ var Youtube = (function() {
    * 問題があるかどうか
    */
   Youtube.prototype.hasProblem = function() {
+    if (
+        null !== this.response
+        && 'undefined' !== typeof this.response.contentDetails.regionRestriction
+        && 'undefined' !== typeof this.response.contentDetails.regionRestriction.blocked
+        && -1 !== this.response.contentDetails.regionRestriction.blocked.indexOf('JP')
+    ) {
+      MyUtil.log(['問題のある動画が検出されました, blocked', this]);
+      return true;
+    }
+
     return (null === this.id || null === this.response || !this.canEmbed || this.isStatusProblem_());
   };
 
@@ -61,7 +71,7 @@ var Youtube = (function() {
    */
   Youtube.prototype.isStatusProblem_ = function() {
     if ('deleted' === this.status || 'failed' === this.status || 'rejected' === this.status) {
-      MyUtil.log(['問題のある動画が検出されました', this]);
+      MyUtil.log(['問題のある動画が検出されました, invalid status', this]);
       return true;
     } else {
       return false;
