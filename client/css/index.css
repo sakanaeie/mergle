@@ -2,21 +2,27 @@
  * 全般
  */
 *, h1 {
-  color: #ccc;
+  font-family:
+    'Hiragino Kaku Gothic ProN',
+    'ヒラギノ角ゴ ProN W3',
+    'Lucida Grande',
+    'Meiryo',
+    'メイリオ',
+    sans-serif;
+  color:     #ccc;
   font-size: 14px;
-  font-family: 'Courier', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', 'Lucida Grande', Meiryo, メイリオ, sans-serif;
-  margin:  0;
-  padding: 0;
+  margin:    0;
+  padding:   0;
 }
 
 body {
   background-color: #1e1e1e;
-  padding-bottom: 200px; /* ページ下部に空間を作る */
+  padding-bottom:   100px;  /* ページ下部に空間を作る */
 }
 
-h1, h2, h3, h4 {
-  color: #fff;
-  font-weight: bold;
+h1, h2 {
+  font-family: 'Nixie One';
+  color:       #fff;
 }
 
 h1 {
@@ -32,7 +38,7 @@ hr {
 }
 
 button.btn {
-  font-weight: bold;
+  font-weight:    bold;
   vertical-align: top;
 }
 
@@ -56,15 +62,20 @@ input.form-control::-webkit-input-placeholder {
  * glyphicon
  */
 h2 span.glyphicon {
-  color: #fff;
-  font-size: 20px;
-  margin-right: 6px;
+  color:          #fff;
+  font-size:      20px;
+  padding-right:  6px;
+  vertical-align: 1px;
 }
 
 button span.glyphicon {
-  color: #555;
-  margin-right: 6px;
+  color:          #444;
+  padding-right:  6px;
   vertical-align: -2px;
+}
+
+.glyphicon-info-sign {
+  padding-top: 4px;
 }
 
 .glyphicon-refresh {
@@ -72,36 +83,41 @@ button span.glyphicon {
 }
 
 .spin {
-  -webkit-transform-origin: 50% 58%;
-  -ms-transform-origin: 50% 58%;
-  transform-origin: 50% 58%;
-  -webkit-animation: spin 1.5s linear infinite;
-  -moz-animation:    spin 1.5s linear infinite;
-  -ms-animation:     spin 1.5s linear infinite;
-  -o-animation:      spin 1.5s linear infinite;
-  animation:         spin 1.5s linear infinite;
-  display: inline-block;
+  -webkit-transform-origin: 50% 48%;
+  -ms-transform-origin:     50% 48%;
+  transform-origin:         50% 48%;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation:    spin 1s linear infinite;
+  -ms-animation:     spin 1s linear infinite;
+  -o-animation:      spin 1s linear infinite;
+  animation:         spin 1s linear infinite;
+  vertical-align: middle;
+  display:        inline-block;
 }
 
 @-webkit-keyframes spin {
   0%   { -webkit-transform: rotate(0deg);   }
-  100% { -webkit-transform: rotate(360deg); }
+  100% { -webkit-transform: rotate(359deg); }
 }
+
 @-moz-keyframes spin {
   0%   { -moz-transform: rotate(0deg);   }
-  100% { -moz-transform: rotate(360deg); }
+  100% { -moz-transform: rotate(359deg); }
 }
+
 @-ms-keyframes spin {
   0%   { -ms-transform: rotate(0deg);   }
-  100% { -ms-transform: rotate(360deg); }
+  100% { -ms-transform: rotate(359deg); }
 }
+
 @-o-keyframes spin {
   0%   { -o-transform: rotate(0deg);   }
-  100% { -o-transform: rotate(360deg); }
+  100% { -o-transform: rotate(359deg); }
 }
+
 @keyframes spin {
   0%   { transform: rotate(0deg);   }
-  100% { transform: rotate(360deg); }
+  100% { transform: rotate(359deg); }
 }
 
 /** ----------------------------------------------------------------------------
@@ -109,31 +125,25 @@ button span.glyphicon {
  */
 #header {
   background-color: #111;
-  border-bottom: 1px solid #333;
-  padding-left:   116px;
-  padding-bottom: 10px;
-  margin-bottom:  20px;
-}
-
-h2 {
-  padding-left: 120px;
+  border-bottom:    1px solid #333;
+  margin-bottom:    20px;
+  padding:          0 6% 10px;
 }
 
 /** ----------------------------------------------------------------------------
- * player-frame
+ * コンテンツ
  */
-#player-frame {
-  padding-left: 146px;
+#content {
+  padding: 0 8%;
+}
+
+.sub-content {
+  padding: 0 26px 36px;
 }
 
 /** ----------------------------------------------------------------------------
  * player-status
  */
-#player-status {
-  padding-top:  4px;
-  padding-left: 146px;
-}
-
 #player-status-error, #player-status-healthy {
   display: none;
 }
@@ -142,27 +152,18 @@ h2 {
  * player-control
  */
 #player-control {
-  padding-top:  4px;
-  padding-left: 146px;
+  padding-top: 4px;
 }
 
-#loop-label {
-  font-size: inherit;
-}
-
-#mute-label {
+#loop-label, #mute-label {
   font-size: inherit;
 }
 
 /** ----------------------------------------------------------------------------
  * schedule
  */
-#schedule {
-  padding-left: 146px;
-}
-
 #schedule table, tr, th, td {
-  border: 1px solid #333;
+  border:  1px solid #333;
   padding: 4px 8px;
 }
 
@@ -185,39 +186,25 @@ h2 {
 /** ----------------------------------------------------------------------------
  * request
  */
-#request {
-  padding-left: 146px;
-}
-
 #request-url {
-  display: inline;
-  width: 600px;
+  width:         600px;
   margin-bottom: 4px;
 }
 
 #request-password {
   display: inline;
-  width: 120px;
-}
-
-#request-status {
-  padding-top: 4px;
+  width:   120px;
 }
 
 /** ----------------------------------------------------------------------------
  * youtube-search
  */
-#youtube-search {
-  padding-left: 146px;
-}
-
 #youtube-search-word {
   display: inline;
-  width: 440px;
+  width:   400px;
 }
 
 #youtube-search-list {
-  width: 880px;
   margin-top: 18px;
 }
 
@@ -230,29 +217,20 @@ h2 {
 }
 
 .youtube-search-img {
-  border: 2px solid #444;
+  border:       2px solid #444;
   margin-right: 6px;
 }
 
 /** ----------------------------------------------------------------------------
  * master
  */
-#master {
-  padding-left: 146px;
-}
-
 #master-search-word {
   margin-top: 4px;
-  width: 440px;
-}
-
-#master span.glyphicon-info-sign {
-  padding-top: 4px;
+  width:      400px;
 }
 
 #master-data-list {
-  margin-top: 18px;
-  margin-left: 20px;
+  margin: 18px 0 0 20px;
 }
 
 #master-data-list li {
