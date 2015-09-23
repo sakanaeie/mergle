@@ -127,7 +127,15 @@ button span.glyphicon {
   background-color: #111;
   border-bottom:    1px solid #333;
   margin-bottom:    20px;
-  padding:          0 6% 10px;
+  padding:          0 6% 8px;
+}
+
+#header .media-object {
+  margin-top: 8px;
+}
+
+#header img {
+  height: 50px;
 }
 
 /** ----------------------------------------------------------------------------
