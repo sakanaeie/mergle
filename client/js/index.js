@@ -82,6 +82,10 @@
             if ('undefined' !== typeof response[key]) {
               tr.children('.schedule-title').html(response[key].rowHash.title);
               tr.children('.schedule-info').html(response[key].isRequest ? 'Request' : 'Random');
+
+              if ('now' === key) {
+                document.title = response[key].rowHash.title + ' - syngle';
+              }
             } else {
               tr.children('.schedule-title').html('-');
               tr.children('.schedule-info').html('-');
