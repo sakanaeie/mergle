@@ -54,7 +54,7 @@ var GetController = (function() {
       return {message: '指定の動画は埋め込みできません'};
     }
     if (video.hasProblem()) {
-      return {message: '指定の動画は削除されています'};
+      return {message: '指定の動画は音声を再生できません'};
     }
 
     if (!isAddOnly) {

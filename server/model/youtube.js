@@ -36,7 +36,7 @@ var Youtube = (function() {
         }
       } catch (e) {
         // 動画が削除されたときなど
-        MyUtil.log(['YoutubeServiceで例外が発生しました', e]);
+        MyUtil.log(['YouTubeServiceで例外が発生しました', e]);
         if (null !== e.message.match('too_many_recent_calls')) {
           // APIアクセス過多警告, この場合は全体の処理を停止するべきである
           this.tooManyRecentCalls = true;
@@ -51,17 +51,39 @@ var Youtube = (function() {
    * 問題があるかどうか
    */
   Youtube.prototype.hasProblem = function() {
-    if (
-        null !== this.response
-        && 'undefined' !== typeof this.response.contentDetails.regionRestriction
-        && 'undefined' !== typeof this.response.contentDetails.regionRestriction.blocked
-        && -1 !== this.response.contentDetails.regionRestriction.blocked.indexOf('JP')
-    ) {
-      MyUtil.log(['問題のある動画が検出されました, blocked', this]);
+    // パラメータ欠損、ステータス確認 (最も簡単な確認から行なう)
+    if (null === this.id || null === this.response || !this.canEmbed || this.isStatusProblem_()) {
       return true;
     }
 
-    return (null === this.id || null === this.response || !this.canEmbed || this.isStatusProblem_());
+    // 国籍規制
+    if (null !== this.response && 'undefined' !== typeof this.response.contentDetails.regionRestriction) {
+      if ('undefined' !== typeof this.response.contentDetails.regionRestriction.blocked) {
+        if (-1 !== this.response.contentDetails.regionRestriction.blocked.indexOf('JP')) {
+          // 拒否リストの日本があるとき
+          MyUtil.log(['問題のある動画が検出されました, blocked', this]);
+          return true;
+        }
+      }
+      if ('undefined' !== typeof this.response.contentDetails.regionRestriction.allowed) {
+        if (-1 === this.response.contentDetails.regionRestriction.allowed.indexOf('JP')) {
+          // 許可リストの日本がないとき
+          MyUtil.log(['問題のある動画が検出されました, not allowed', this]);
+          return true;
+        }
+      }
+    }
+
+    // 音声差し止め
+    if (!this.response.contentDetails.licensedContent) {
+      // 使用許可のある動画でないとき、htmlを直接取得し、特定文言の有無を確認する
+      if (-1 !== MyUtil.fetchWithRetry(this.url).getContentText().indexOf('この動画では著作権で保護された音声トラックが使用されていました。著作権者からの申し立てにより、音声トラックはミュート状態となっています。')) {
+        MyUtil.log(['問題のある動画が検出されました, muted for copyright violations', this]);
+        return true;
+      }
+    }
+
+    return false;
   };
 
   // private -------------------------------------------------------------------
