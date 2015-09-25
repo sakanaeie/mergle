@@ -77,7 +77,11 @@ var Youtube = (function() {
     // 音声差し止め
     if (!this.response.contentDetails.licensedContent) {
       // 使用許可のある動画でないとき、htmlを直接取得し、特定文言の有無を確認する
-      if (-1 !== MyUtil.fetchWithRetry(this.url).getContentText().indexOf('この動画では著作権で保護された音声トラックが使用されていました。著作権者からの申し立てにより、音声トラックはミュート状態となっています。')) {
+      var t = MyUtil.fetchWithRetry(this.url).getContentText();
+      if (
+             -1 !== t.indexOf('この動画では著作権で保護された音声トラックが使用されていました。著作権者からの申し立てにより、音声トラックはミュート状態となっています。')
+          || -1 !== t.indexOf('This video previously contained a copyrighted audio track. Due to a claim by a copyright holder, the audio track has been muted.')
+      ) {
         MyUtil.log(['問題のある動画が検出されました, muted for copyright violations', this]);
         return true;
       }
