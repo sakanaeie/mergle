@@ -114,9 +114,9 @@ var GetController = (function() {
     var pastId = 'connection' + result.past.rowHash.id;
 
     // ロックする
-    var lock  = LockService.getScriptLock();
+    var lock = LockService.getScriptLock();
     try {
-      lock.waitLock(2000);  // ロック開放待ち2秒
+      lock.waitLock(1000);
 
       // キャッシュを取得する
       var cache = CacheService.getScriptCache();

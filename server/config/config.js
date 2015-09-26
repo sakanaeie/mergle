@@ -1,5 +1,5 @@
 var Config = {
-  makeSec:      60 * 20,
+  makeSec:      60 * 8,
   gapSec:       6,
   historyCount: 50,
   password:     'hogefuga',

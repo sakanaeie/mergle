@@ -4,7 +4,6 @@
 var Schedule = (function() {
   // constructor ---------------------------------------------------------------
   function Schedule() {
-    this.now      = MyUtil.getNow();
     this.cache    = CacheService.getScriptCache();
     this.dataList = JSON.parse(this.cache.get('schedule'));
   }
@@ -23,11 +22,24 @@ var Schedule = (function() {
    * 情報を更新する
    */
   Schedule.prototype.update = function() {
-    this.refresh_();
+    // プロセスが重複しないようにする
+    var lock = LockService.getScriptLock();
+    try {
+      // 既にロックされていたら例外が発生する
+      lock.waitLock(0); // 0msのロック開放待ち
+    } catch (e) {
+      MyUtil.log(['スケジュール更新時のロックで例外が発生しました (プロセスの重複)', e]);
+      return;
+    }
 
-    var sheet = new Sheet();
-    var retry = 0;
+    var sheet = null, retry = 0;
     while (!this.isFill_()) {
+      if (null === sheet) {
+        // 初回ループのとき
+        this.refresh_();      // 不要な情報を消す
+        sheet = new Sheet();  // シートを取得する
+      }
+
       // マスタから取得する
       var rowHash = sheet.getOneAtRandom();
 
@@ -72,9 +84,10 @@ var Schedule = (function() {
    * 情報を取得する
    */
   Schedule.prototype.getStatus = function() {
+    var now = MyUtil.getNow();
     var past, futureList = [];
     for (var i in this.dataList) {
-      if (this.dataList[i].endAt > this.now) {
+      if (this.dataList[i].endAt > now) {
         futureList.push(this.dataList[i])
       } else {
         past = this.dataList[i];
@@ -83,7 +96,7 @@ var Schedule = (function() {
 
     // TODO 空であるときの例外処理
 
-    var diff = futureList[0].startAt - this.now, gap = offset = 0;
+    var diff = futureList[0].startAt - now, gap = offset = 0;
     if (0 < diff) {
       gap    = diff;      // 再生までの待ち時間
     } else {
@@ -112,7 +125,7 @@ var Schedule = (function() {
    */
   Schedule.prototype.isFill_ = function() {
     var last = this.getLast_();
-    return (null !== last && last.endAt >= this.now + Config.makeSec);
+    return (null !== last && last.endAt >= MyUtil.getNow() + Config.makeSec);
   };
 
   /**
@@ -123,7 +136,7 @@ var Schedule = (function() {
     if (null !== last) {
       var startAt   = last.endAt + Config.gapSec;
     } else {
-      var startAt   = this.now;
+      var startAt   = MyUtil.getNow();
       this.dataList = [];
     }
 
@@ -149,7 +162,7 @@ var Schedule = (function() {
     // 過去の情報の数を算出する
     var pastCount = 0;
     for (var i in this.dataList) {
-      if (this.dataList[i].endAt <= this.now) {
+      if (this.dataList[i].endAt <= MyUtil.getNow()) {
         pastCount++;
       }
     }
