@@ -45,6 +45,7 @@
       $('#player-status-healthy').show();
       isAgree = true;
       syncPlayer();
+      getConnectionCount(true);
     }
 
     if (event.data == YT.PlayerState.ENDED) {
@@ -52,6 +53,7 @@
         playerYoutube.seekTo(0); // 冒頭にシークする
       } else {
         syncPlayer();
+        getConnectionCount(true);
       }
 
       if (isMute) {
@@ -95,6 +97,25 @@
       },
       complete: function() {
         $('#sync-button').attr('disabled', false);
+      },
+    });
+  }
+
+  /**
+   * 同時接続数を取得する
+   */
+  function getConnectionCount(withSave) {
+    $.ajax({
+      url:      apiUrl,
+      type:     'GET',
+      dataType: 'jsonp',
+      data: {
+        api:      'connectionCount',
+        withSave: withSave,
+      },
+      success: function(response) {
+        console.log(response.count);
+        $('#listener').html(response.count || '?');
       },
     });
   }
@@ -233,6 +254,7 @@
     // サーバと同期する
     $('#sync-button').click(function() {
       syncPlayer();
+      getConnectionCount(false);
     });
 
     // ループする

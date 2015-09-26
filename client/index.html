@@ -58,7 +58,7 @@
         <button id="volume-middle" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-volume-down"></span>Vol Mid</button>
         <button id="volume-max" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-volume-up"></span>Vol Max</button>
         <button id="hide-button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-close"></span>Hide</button>
-        <button id="sync-button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
+        <button id="sync-button" class="btn btn-default btn-sm" disabled="disabled"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
       </div>
     </div>
 
@@ -69,21 +69,25 @@
           <td><span class="glyphicon glyphicon-music"></span></td>
           <th>Title</th>
           <th>Info</th>
+          <th>Listener</th>
         </tr>
         <tr id="schedule-past">
           <th>Past</th>
           <td class="schedule-title">-</td>
           <td class="schedule-info">-</td>
+          <td id="listener">-</td>
         </tr>
         <tr id="schedule-now">
           <th class="myred">Now</th>
           <td class="schedule-title">-</td>
           <td class="schedule-info">-</td>
+          <td>-</td>
         </tr>
         <tr id="schedule-future">
           <th>Future</th>
           <td class="schedule-title">-</td>
           <td class="schedule-info">-</td>
+          <td>-</td>
         </tr>
       </table>
     </div>

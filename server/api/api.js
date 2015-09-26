@@ -21,6 +21,11 @@ function doGet(e) {
         deleted: new Sheet().getDeleteList(),
       };
       break;
+    case 'connectionCount':
+      var result = {
+        count: GetController.getConnectionCount(e.parameter.withSave),
+      };
+      break;
     default:
       var result = new Schedule().getStatus();
       break;
@@ -99,8 +104,39 @@ var GetController = (function() {
     }));
   }
 
+  /**
+   * 同時接続数を取得する (記録も同時に行なう)
+   */
+  function getConnectionCount(withSave) {
+    // 再生状況を取得する
+    var result = new Schedule().getStatus();
+    var nowId  = 'connection' + result.now.rowHash.id;
+    var pastId = 'connection' + result.past.rowHash.id;
+
+    // ロックする
+    var lock  = LockService.getScriptLock();
+    try {
+      lock.waitLock(2000);  // ロック開放待ち2秒
+
+      // キャッシュを取得する
+      var cache = CacheService.getScriptCache();
+
+      // 現在の同時接続数を記録する
+      if ('true' === withSave) {
+        cache.put(nowId, (cache.get(nowId) || 0) * 1 + 1, 60 * 10);
+      }
+
+      // 前回の同時接続数を返す
+      return cache.get(pastId) || false;
+    } catch (e) {
+      MyUtil.log(['同時接続数の取得、記録に失敗しました', e]);
+      return false;
+    }
+  }
+
   return {
-    requestUrl:    requestUrl,
-    searchYoutube: searchYoutube,
+    requestUrl:         requestUrl,
+    searchYoutube:      searchYoutube,
+    getConnectionCount: getConnectionCount,
   };
 })();
