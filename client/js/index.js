@@ -77,20 +77,26 @@
         setTimeout(function() {
           playerYoutube.loadVideoById(response.now.rowHash.id, response.offset || 0);
 
-          var tr, key, keys = ['past', 'now', 'future'];
+          var tr, td, key, keys = ['past', 'now', 'future'];
           for (var i in keys) {
             key = keys[i];
             tr  = $('#schedule-' + key);
             if ('undefined' !== typeof response[key]) {
               tr.children('.schedule-title').html(response[key].rowHash.title);
-              tr.children('.schedule-info').html(response[key].isRequest ? 'Request' : 'Random');
+
+              td = tr.children('.schedule-type');
+              if (response[key].isRequest) {
+                td.html('Request').addClass('mygreen');
+              } else {
+                td.html('Random').removeClass('mygreen');
+              }
 
               if ('now' === key) {
                 document.title = response[key].rowHash.title + ' - syngle';
               }
             } else {
               tr.children('.schedule-title').html('-');
-              tr.children('.schedule-info').html('-');
+              tr.children('.schedule-type').html('-');
             }
           }
         }, response.gap || 0);
