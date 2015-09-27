@@ -99,7 +99,7 @@
               tr.children('.schedule-type').html('-');
             }
           }
-        }, response.gap || 0);
+        }, (response.gap || 0) * 1000);
       },
       complete: function() {
         $('#sync-button').attr('disabled', false);
