@@ -352,7 +352,7 @@
           var notSignIndex = 0, hasNotSign = false;
           for (var i in response.master) {
             notSignIndex = i;
-            if (response.master[i].helpString[0].charCodeAt(0) >= 0x41) {
+            if (-1 !== response.master[i].helpString[0].search(/^[0-9A-Za-zぁ-んァ-ン]/)) {
               var notSignArr  = response.master.splice(notSignIndex);
               response.master = notSignArr.concat(response.master);
               break;
