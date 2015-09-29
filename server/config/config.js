@@ -3,6 +3,9 @@ var Config = {
   gapSec:       6,
   historyCount: 50,
   password:     'hogefuga',
+  pickupEnable: true,
+  pickupStart:  '1400',
+  pickupEnd:    '1500',
 };
 
 var SheetInfo = {
@@ -19,3 +22,7 @@ var SheetInfo = {
     duration: 4,
   },
 };
+
+var YoutubePickupListIds = [
+  'PLFgquLnL59amuJEYnzXUxiZw5UXCVhWkn', // 最新の動画
+];

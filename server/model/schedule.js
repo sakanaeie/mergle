@@ -8,20 +8,25 @@ var Schedule = (function() {
     this.dataList = JSON.parse(this.cache.get('schedule'));
   }
 
+  // const ---------------------------------------------------------------------
+  Schedule.CHOOSE_TYPE_RANDOM  = 1;
+  Schedule.CHOOSE_TYPE_REQUEST = 2;
+  Schedule.CHOOSE_TYPE_PICKUP  = 3;
+
   // public --------------------------------------------------------------------
   /**
    * 情報を追加する
    */
   Schedule.prototype.push = function(rowHash) {
     this.refresh_();
-    this.add_(rowHash, true);
+    this.add_(rowHash, Schedule.CHOOSE_TYPE_REQUEST);
     this.save_();
   };
 
   /**
    * 情報を更新する
    */
-  Schedule.prototype.update = function() {
+  Schedule.prototype.update = function(chooseType) {
     // プロセスが重複しないようにする
     var lock = LockService.getScriptLock();
     try {
@@ -32,39 +37,24 @@ var Schedule = (function() {
       return;
     }
 
-    var sheet = null, retry = 0;
-    while (!this.isFill_()) {
-      if (null === sheet) {
-        // 初回ループのとき
-        this.refresh_();      // 不要な情報を消す
-        sheet = new Sheet();  // シートを取得する
-      }
-
-      // マスタから取得する
-      var rowHash = sheet.getOneAtRandom();
-
-      // 履歴を確認する
-      if (retry < 20 && this.isDuplicate(rowHash)) {
-        retry++;  // 母数が不足しているときなどに発生しうる無限ループを抑止
-        continue;
-      }
-
-      // URLを検証する
-      var video = new Youtube(rowHash.id);
-      if (video.tooManyRecentCalls) {
-        MyUtil.log('tooManyRecentCallsが検出されました');
-        return;
-      }
-
-      if (video.hasProblem()) {
-        // 問題があるとき、マスタシートから削除する
-        sheet.remove(rowHash.index);
-        continue;
-      }
-
-      this.add_(rowHash, false);
+    if (this.isFill_()) {
+      return;
     }
 
+    // 不要な情報を消す
+    this.refresh_();
+
+    // 選曲する
+    switch (chooseType) {
+      case Schedule.CHOOSE_TYPE_RANDOM:
+        this.chooseRandom_();
+        break;
+      case Schedule.CHOOSE_TYPE_PICKUP:
+        this.choosePickup_();
+        break;
+    }
+
+    // 保存する
     this.save_();
   };
 
@@ -131,7 +121,7 @@ var Schedule = (function() {
   /**
    * 情報を足す
    */
-  Schedule.prototype.add_ = function(rowHash, isRequest) {
+  Schedule.prototype.add_ = function(rowHash, chooseType) {
     var last = this.getLast_();
     if (null !== last) {
       var startAt   = last.endAt + Config.gapSec;
@@ -141,18 +131,11 @@ var Schedule = (function() {
     }
 
     this.dataList.push({
-      rowHash:   rowHash,
-      startAt:   startAt,
-      endAt:     startAt + rowHash.duration * 1,
-      isRequest: isRequest,
+      rowHash:    rowHash,
+      startAt:    startAt,
+      endAt:      startAt + rowHash.duration * 1,
+      chooseType: chooseType,
     });
-  };
-
-  /**
-   * キャッシュを更新する
-   */
-  Schedule.prototype.save_ = function() {
-    this.cache.put('schedule', JSON.stringify(this.dataList), 60 * 30);
   };
 
   /**
@@ -172,6 +155,86 @@ var Schedule = (function() {
     for (var i = 0; i < delCount; i++) {
       this.dataList.shift();
     }
+  };
+
+  /**
+   * キャッシュを更新する
+   */
+  Schedule.prototype.save_ = function() {
+    this.cache.put('schedule', JSON.stringify(this.dataList), 60 * 30);
+  };
+
+  /**
+   * マスタからランダムに選曲する
+   */
+  Schedule.prototype.chooseRandom_ = function() {
+    var sheet = new Sheet(), video, rowHash, retry = 0;
+    do {
+      // マスタから取得する
+      rowHash = sheet.getOneAtRandom();
+
+      // 履歴を確認する
+      if (retry < 20 && this.isDuplicate(rowHash)) {
+        retry++;  // 母数が不足しているときなどに発生しうる無限ループを抑止
+        continue;
+      }
+
+      // URLを検証する
+      video = new Youtube(rowHash.id);
+      if (video.tooManyRecentCalls) {
+        MyUtil.log('tooManyRecentCallsが検出されました');
+        return;
+      }
+
+      if (video.hasProblem()) {
+        // 問題があるとき、マスタシートから削除する
+        sheet.remove(rowHash.index);
+        continue;
+      }
+
+      this.add_(rowHash, Schedule.CHOOSE_TYPE_RANDOM);
+    } while (!this.isFill_());
+  };
+
+  /**
+   * youtube公式音楽プレイリストからランダムに選曲する
+   */
+  Schedule.prototype.choosePickup_ = function() {
+    var pickupList = [];
+    for (var i in YoutubePickupListIds) {
+      pickupList = pickupList.concat(
+        YouTube.PlaylistItems.list('snippet', {
+          playlistId: YoutubePickupListIds[i],
+          maxResults: 50,
+        }).items
+      );
+    }
+    var pickupListCount = pickupList.length;
+
+    var item, video, rowHash, retry = 0;
+    do {
+      // プレイリストから取得する
+      item = pickupList[Math.floor(Math.random() * pickupListCount)];
+
+      // 動画情報を取得する
+      video = new Youtube(item.snippet.resourceId.videoId);
+      if (video.tooManyRecentCalls) {
+        MyUtil.log('tooManyRecentCallsが検出されました');
+        return;
+      }
+      if (video.hasProblem()) {
+        continue;
+      }
+
+      // 履歴を確認する
+      rowHash = Sheet.makeRowHashFromVideo(video);
+      if (retry < 20 && this.isDuplicate(rowHash)) {
+        retry++;  // 母数が不足しているときなどに発生しうる無限ループを抑止
+        continue;
+      }
+
+      this.add_(rowHash, Schedule.CHOOSE_TYPE_PICKUP);
+    } while (!this.isFill_());
   };
 
   return Schedule;

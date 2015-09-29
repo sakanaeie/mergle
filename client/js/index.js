@@ -52,8 +52,10 @@
       if (isLoop) {
         playerYoutube.seekTo(0); // 冒頭にシークする
       } else {
-        syncPlayer();
-        getConnectionCount(true);
+        setTimeout(function() {
+          syncPlayer();
+          getConnectionCount(true);
+        }, 1000); // 動画が早く終わることへの対応
       }
 
       if (isMute) {
@@ -85,10 +87,16 @@
               tr.children('.schedule-title').html(response[key].rowHash.title);
 
               td = tr.children('.schedule-type');
-              if (response[key].isRequest) {
-                td.html('Request').addClass('mygreen');
-              } else {
-                td.html('Random').removeClass('mygreen');
+              switch (response[key].chooseType) {
+                case Schedule.CHOOSE_TYPE_RANDOM:
+                  td.html('Default').removeClass();
+                  break;
+                case Schedule.CHOOSE_TYPE_REQUEST:
+                  td.html('Request').addClass('myblue');
+                  break;
+                case Schedule.CHOOSE_TYPE_PICKUP:
+                  td.html('Pickup').addClass('myorange');
+                  break;
               }
 
               if ('now' === key) {
@@ -120,7 +128,6 @@
         withSave: withSave,
       },
       success: function(response) {
-        console.log(response.count);
         $('#listener').html(response.count || '?');
       },
     });

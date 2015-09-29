@@ -64,6 +64,14 @@ input.form-control::-webkit-input-placeholder {
   color: #008080;
 }
 
+.myblue {
+  color: dodgerblue;
+}
+
+.myorange {
+  color: orange;
+}
+
 /** ----------------------------------------------------------------------------
  * glyphicon
  */
