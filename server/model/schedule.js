@@ -161,7 +161,7 @@ var Schedule = (function() {
    * キャッシュを更新する
    */
   Schedule.prototype.save_ = function() {
-    this.cache.put('schedule', JSON.stringify(this.dataList), 60 * 30);
+    this.cache.put('schedule', JSON.stringify(this.dataList), 60 * 60 * 6);
   };
 
   /**

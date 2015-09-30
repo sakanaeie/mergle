@@ -86,10 +86,10 @@
             if ('undefined' !== typeof response[key]) {
               tr.children('.schedule-title').html(response[key].rowHash.title);
 
-              td = tr.children('.schedule-type');
+              td = tr.children('.schedule-type').removeClass('myblue myorange');
               switch (response[key].chooseType) {
                 case Schedule.CHOOSE_TYPE_RANDOM:
-                  td.html('Default').removeClass();
+                  td.html('Default');
                   break;
                 case Schedule.CHOOSE_TYPE_REQUEST:
                   td.html('Request').addClass('myblue');
