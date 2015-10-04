@@ -49,7 +49,7 @@ var GetController = (function() {
     }
 
     var video = Youtube.fromUrl(url);
-    if (video.tooManyRecentCalls) {
+    if (video.hasError) {
       return {message: 'YouTubeが検証リクエストを受理しませんでした。しばらく時間を置いてからお試しください。'};
     }
     if (null === video.id) {

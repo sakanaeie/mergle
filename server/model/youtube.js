@@ -16,7 +16,7 @@ var Youtube = (function() {
     this.response = null;
     this.status   = null;
     this.canEmbed = false;
-    this.tooManyRecentCalls = false;
+    this.hasError = false;
 
     if (null !== this.id) {
       try {
@@ -35,12 +35,8 @@ var Youtube = (function() {
           this.duration = minute * 60 + second * 1;
         }
       } catch (e) {
-        // 動画が削除されたときなど
+        this.hasError = true;
         MyUtil.log(['YouTubeServiceで例外が発生しました', e]);
-        if (null !== e.message.match('too_many_recent_calls')) {
-          // APIアクセス過多警告, この場合は全体の処理を停止するべきである
-          this.tooManyRecentCalls = true;
-        }
       }
       Utilities.sleep(1000); // too_many_recent_callsが発生しないよう、少し休む
     }

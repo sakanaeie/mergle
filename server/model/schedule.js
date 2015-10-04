@@ -181,8 +181,7 @@ var Schedule = (function() {
 
       // URLを検証する
       video = new Youtube(rowHash.id);
-      if (video.tooManyRecentCalls) {
-        MyUtil.log('tooManyRecentCallsが検出されました');
+      if (video.hasError) {
         return;
       }
 
@@ -218,8 +217,7 @@ var Schedule = (function() {
 
       // 動画情報を取得する
       video = new Youtube(item.snippet.resourceId.videoId);
-      if (video.tooManyRecentCalls) {
-        MyUtil.log('tooManyRecentCallsが検出されました');
+      if (video.hasError) {
         return;
       }
       if (video.hasProblem()) {
