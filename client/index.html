@@ -112,9 +112,15 @@
     <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
     <div id="youtube-search" class="sub-content">
       <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="... input word & press RETURN key">
-      <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
+      <button id="youtube-search-exec" class="btn btn-default btn-sm">Search &lt;&lt;</button>
+      <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
+      <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
       <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>
-      <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
+      <div>
+        <span class="glyphicon glyphicon-info-sign"></span>
+        <span id="youtube-search-info"></span>
+        <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
+      </div>
       <div id="youtube-search-list"></div>
     </div>
 

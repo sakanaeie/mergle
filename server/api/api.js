@@ -7,7 +7,7 @@ function doGet(e) {
       var result = GetController.requestUrl(e.parameter.url, e.parameter.password, e.parameter.isAddOnly);
       break;
     case 'searchYoutube':
-      var result = GetController.searchYoutube(e.parameter.word);
+      var result = GetController.searchYoutube(e.parameter.word, e.parameter.token);
       break;
     case 'master':
       var result = {
@@ -94,14 +94,20 @@ var GetController = (function() {
   /**
    * youtube検索する
    */
-  function searchYoutube(word) {
-    return JSON.parse(YouTube.Search.list('id, snippet', {
+  function searchYoutube(word, token) {
+    var options = {
       q: word,
       type: 'video',
-      maxResults: 20,
+      maxResults: 5,
       regionCode: 'JP',
       videoEmbeddable: true,
-    }));
+    };
+
+    if ('undefined' !== typeof token) {
+      options.pageToken = token;
+    }
+
+    return JSON.parse(YouTube.Search.list('id, snippet', options));
   }
 
   /**

@@ -1,8 +1,10 @@
 (function($) {
   var playerYoutube;
   var getParams = getGetParams();
-  var isAgree = isLoop = isMute = false;
-  var apiUrl  = 'https://script.google.com/macros/s/' + getParams.api + '/exec';
+  var apiUrl    = 'https://script.google.com/macros/s/' + getParams.api + '/exec';
+  var isAgree   = isLoop = isMute = false;
+  var youtubeSearchWord  = '';
+  var youtubeSearchIndex = 1;
 
   // APIコードを読み込む
   $.ajax({
@@ -90,6 +92,7 @@
         setTimeout(function() {
           playerYoutube.loadVideoById(response.now.rowHash.id, response.offset || 0);
 
+          // スケジュール表示を更新する
           var tr, td, key, keys = ['past', 'now', 'future'];
           for (var i in keys) {
             key = keys[i];
@@ -97,6 +100,7 @@
             if ('undefined' !== typeof response[key]) {
               tr.children('.schedule-title').html(response[key].rowHash.title);
 
+              // 選曲理由で色付けする
               td = tr.children('.schedule-type').removeClass('myblue myorange');
               switch (response[key].chooseType) {
                 case Schedule.CHOOSE_TYPE_RANDOM:
@@ -111,6 +115,7 @@
               }
 
               if ('now' === key) {
+                // 現在の動画であるとき、ページタイトルを変更し、デスクトップ通知を表示する
                 document.title = response[key].rowHash.title + ' - syngle';
                 showNotification(response[key].rowHash.title);
               }
@@ -178,6 +183,7 @@
       },
       success: function(response) {
         // レスポンスのメッセージを表示させる
+        // TODO レスポンスとしてtitleも受け取り表示させる
         $('#request-result').html(response.message + ' (' + url + ')');
       },
       complete: function() {
@@ -212,19 +218,41 @@
   /**
    * youtube検索する
    */
-  function searchOnYoutube() {
+  function searchOnYoutube(token) {
+    // ページャボタンを押せなくする
+    $('#youtube-search-prev').attr('disabled', true);
+    $('#youtube-search-next').attr('disabled', true);
+
+    // くるくるを出す
     $('#youtube-search-animate').addClass('spin');
+
+    if ('undefined' === typeof token) {
+      // ページング用トークンがないとき
+      youtubeSearchWord  = $('#youtube-search-word').val();
+      youtubeSearchIndex = 1;
+    }
+    $('#youtube-search-info').html('"' + youtubeSearchWord + '"での検索結果, ' + youtubeSearchIndex + 'ページ目');
 
     $.ajax({
       url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
       data: {
-        api:  'searchYoutube',
-        word: $('#youtube-search-word').val(),
+        api:   'searchYoutube',
+        word:  youtubeSearchWord,
+        token: token,
       },
       success: function(response) {
+        // 結果リストを消す
         $('#youtube-search-list').children().remove();
+
+        // ページャボタンを更新する
+        if ('undefined' !== typeof response.prevPageToken) {
+          $('#youtube-search-prev').attr('disabled', false).val(response.prevPageToken);
+        }
+        if ('undefined' !== typeof response.nextPageToken) {
+          $('#youtube-search-next').attr('disabled', false).val(response.nextPageToken);
+        }
 
         // 結果リストを追加する
         $.each(response.items, function(i, item) {
@@ -341,6 +369,18 @@
     // youtube検索する
     $('#youtube-search-exec').click(function() {
       searchOnYoutube();
+    });
+
+    // youtube検索のページャを戻す
+    $('#youtube-search-prev').click(function() {
+      youtubeSearchIndex--;
+      searchOnYoutube($(this).val());
+    });
+
+    // youtube検索のページャを進める
+    $('#youtube-search-next').click(function() {
+      youtubeSearchIndex++;
+      searchOnYoutube($(this).val());
     });
 
     // youtube検索結果を消す
