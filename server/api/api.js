@@ -62,13 +62,17 @@ var GetController = (function() {
       return {message: '指定の動画は音声を再生できません'};
     }
 
+    var title = '"' + video.title + '"';
+
     if (!isAddOnly) {
       // スケジュールの末尾に追加する
       var schedule = new Schedule();
       var rowHash  = Sheet.makeRowHashFromVideo(video);
 
       if (schedule.isDuplicate(rowHash)) {
-        return {message: '直近のスケジュールに含まれるため、リクエストを棄却しました'};
+        return {
+          message: title + 'は、直近のスケジュールに含まれるため、リクエストを棄却しました'
+        };
       } else {
         schedule.push(video);
       }
@@ -78,15 +82,15 @@ var GetController = (function() {
     if (!sheet.isDuplicate(video.id)) {
       sheet.add(video);
       if (isAddOnly) {
-        return {message: 'マスタに追加しました'};
+        return {message: title + 'をマスタに追加しました'};
       } else {
-        return {message: 'リクエストを受理し、マスタに追加しました'};
+        return {message: title + 'のリクエストを受理し、マスタに追加しました'};
       }
     } else {
       if (isAddOnly) {
-        return {message: '既にマスタに存在します'};
+        return {message: title + 'は、既にマスタに存在します'};
       } else {
-        return {message: 'リクエストを受理しました'};
+        return {message: title + 'のリクエストを受理しました'};
       }
     }
   }

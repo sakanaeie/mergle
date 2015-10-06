@@ -183,7 +183,6 @@
       },
       success: function(response) {
         // レスポンスのメッセージを表示させる
-        // TODO レスポンスとしてtitleも受け取り表示させる
         $('#request-result').html(response.message + ' (' + url + ')');
       },
       complete: function() {
