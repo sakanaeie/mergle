@@ -37,6 +37,17 @@
   }
 
   /**
+   * デスクトップ通知を表示する
+   */
+  function showNotification(body) {
+    notify.createNotification('syngle', {
+      body: body,
+      icon: './image/cloud_music_ico.ico',
+      tag:  'syngle',
+    });
+  }
+
+  /**
    * プレイヤーの状態変化時に呼ばれるメソッド
    */
   function onPlayerStateChange(event) {
@@ -101,6 +112,7 @@
 
               if ('now' === key) {
                 document.title = response[key].rowHash.title + ' - syngle';
+                showNotification(response[key].rowHash.title);
               }
             } else {
               tr.children('.schedule-title').html('-');
@@ -261,6 +273,14 @@
 
   // binding -------------------------------------------------------------------
   $(window).load(function() {
+    // デスクトップ通知の許可を求める
+    notify.config({autoClose: 8000});
+    if (notify.isSupported) {
+      if (notify.PERMISSION_DEFAULT === notify.permissionLevel()) {
+        notify.requestPermission();
+      }
+    }
+
     // サブタイトルをつける
     $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
 
