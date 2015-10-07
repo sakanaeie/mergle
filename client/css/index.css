@@ -88,7 +88,7 @@ button span.glyphicon {
   vertical-align: -2px;
 }
 
-.glyphicon-info-sign {
+.glyphicon-info-sign, .glyphicon-user {
   padding-top: 4px;
 }
 
@@ -161,13 +161,6 @@ button span.glyphicon {
 
 .sub-content {
   padding: 0 26px 36px;
-}
-
-/** ----------------------------------------------------------------------------
- * player-status
- */
-#player-status-error, #player-status-healthy {
-  display: none;
 }
 
 /** ----------------------------------------------------------------------------

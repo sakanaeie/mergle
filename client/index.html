@@ -44,12 +44,9 @@
         </div>
       </div>
 
-      <div id="player-status">
-        <span class="glyphicon glyphicon-info-sign"></span>
-        プレイヤーの状態 -
-        <span id="player-status-wait">待機 (動画上の再生ボタンをクリック後 "正常" にならないときは、ページをリロードしてください)</span>
-        <span id="player-status-error"   class="myred">異常</span>
-        <span id="player-status-healthy" class="mygreen">正常</span>
+      <div id="listener">
+        <span class="glyphicon glyphicon-user"></span>
+        <span id="listener-count">-</span>
       </div>
 
       <div id="player-control">
@@ -73,25 +70,21 @@
           <td><span class="glyphicon glyphicon-music"></span></td>
           <th>Title</th>
           <th>Type</th>
-          <th>Listener</th>
         </tr>
         <tr id="schedule-past">
           <th>Past</th>
           <td class="schedule-title">-</td>
           <td class="schedule-type">-</td>
-          <td id="listener">-</td>
         </tr>
         <tr id="schedule-now">
           <th class="myred">Now</th>
           <td class="schedule-title">-</td>
           <td class="schedule-type">-</td>
-          <td>-</td>
         </tr>
         <tr id="schedule-future">
           <th>Future</th>
           <td class="schedule-title">-</td>
           <td class="schedule-type">-</td>
-          <td>-</td>
         </tr>
       </table>
     </div>

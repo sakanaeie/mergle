@@ -44,7 +44,7 @@
   function showNotification(body) {
     notify.createNotification('syngle', {
       body: body,
-      icon: './image/cloud_music_ico.ico',
+      icon: './image/cloud_music_ico.png',
       tag:  'syngle',
     });
   }
@@ -54,8 +54,6 @@
    */
   function onPlayerStateChange(event) {
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
-      $('#player-status-wait').hide();
-      $('#player-status-healthy').show();
       isAgree = true;
       syncPlayer();
       getConnectionCount(true);
@@ -145,7 +143,7 @@
         withSave: withSave,
       },
       success: function(response) {
-        $('#listener').html(response.count || '?');
+        $('#listener-count').html(response.count || '0');
       },
     });
   }
