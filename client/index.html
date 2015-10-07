@@ -50,16 +50,32 @@
       </div>
 
       <div id="player-control">
-        <button id="loop-button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-repeat"></span>Loop - <span id="loop-label" class="myred">Off</span>
+        <button id="loop-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Loop">
+          <span class="glyphicon glyphicon-repeat"></span><span id="loop-label" class="myred">Off</span>
         </button>
-        <button id="mute-button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-volume-off"></span>Tmp Mute - <span id="mute-label" class="myred">Off</span>
+        <button id="mute-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Tmp Mute">
+          <span class="glyphicon glyphicon-volume-off"></span><span id="mute-label" class="myred">Off</span>
         </button>
-        <button id="volume-middle" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-volume-down"></span>Vol Mid</button>
-        <button id="volume-max" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-volume-up"></span>Vol Max</button>
-        <button id="hide-button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-close"></span>Hide</button>
-        <button id="sync-button" class="btn btn-default btn-sm" disabled="disabled"><span class="glyphicon glyphicon-cloud-download"></span>Sync</button>
+        <button id="volume-middle" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Volume Middle">
+          <span class="glyphicon glyphicon-volume-down"></span>
+        </button>
+        <button id="volume-max" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Volume Max">
+          <span class="glyphicon glyphicon-volume-up"></span>
+        </button>
+        <button id="hide-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Hide Video">
+          <span class="glyphicon glyphicon-eye-close"></span>
+        </button>
+        <button id="sync-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Sync" disabled="disabled">
+          <span class="glyphicon glyphicon-cloud-download"></span>
+        </button>
+        <div id="good-bad">
+          <button id="sync-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Good" disabled="disabled">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+          </button>
+          <button id="sync-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Bad" disabled="disabled">
+            <span class="glyphicon glyphicon-thumbs-down"></span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -105,7 +121,7 @@
     <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
     <div id="youtube-search" class="sub-content">
       <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="... input word & press RETURN key">
-      <button id="youtube-search-exec" class="btn btn-default btn-sm">Search &lt;&lt;</button>
+      <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
       <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
       <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
       <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>

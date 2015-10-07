@@ -72,6 +72,14 @@ input.form-control::-webkit-input-placeholder {
   color: orange;
 }
 
+.tooltip-inner {
+  background-color: #555;
+}
+
+.btn + .tooltip > .tooltip-arrow {
+  border-bottom-color: #555;
+}
+
 /** ----------------------------------------------------------------------------
  * glyphicon
  */
@@ -84,7 +92,6 @@ input.form-control::-webkit-input-placeholder {
 
 button span.glyphicon {
   color:          #444;
-  padding-right:  6px;
   vertical-align: -2px;
 }
 
@@ -167,11 +174,19 @@ button span.glyphicon {
  * player-control
  */
 #player-control {
-  padding-top: 4px;
+  border-top:  1px solid #444;
+  max-width:   640px;
+  margin-top:  4px;
+  padding-top: 8px;
 }
 
 #loop-label, #mute-label {
   font-size: inherit;
+  padding-left: 6px;
+}
+
+#good-bad {
+  float: right;
 }
 
 /** ----------------------------------------------------------------------------

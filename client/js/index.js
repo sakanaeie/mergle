@@ -298,6 +298,11 @@
 
   // binding -------------------------------------------------------------------
   $(window).load(function() {
+    // ツールチップの初期化
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'hover',
+    });
+
     // デスクトップ通知の許可を求める
     notify.config({autoClose: 8000});
     if (notify.isSupported) {
