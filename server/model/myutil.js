@@ -4,6 +4,8 @@
 var MyUtil = (function() {
   /**
    * デバッグ用ロガー
+   *
+   * @param mixed mixData ロギングしたいもの
    */
   function log(mixData) {
     var sheet = new Sheet();
@@ -12,6 +14,8 @@ var MyUtil = (function() {
 
   /**
    * 現在時刻を取得する
+   *
+   * @return タイムスタンプ (秒)
    */
   function getNow() {
     return Math.floor(new Date().getTime() / 1000);
@@ -19,6 +23,10 @@ var MyUtil = (function() {
 
   /**
    * jsonpレスポンスを返す
+   *
+   * @param  string callbackName コールバック名
+   * @param  object obj          レスポンスデータ
+   * @return string              jsonpレスポンス
    */
   function responseJsonp(callbackName, obj) {
     return ContentService.createTextOutput(
@@ -28,6 +36,9 @@ var MyUtil = (function() {
 
   /**
    * UrlFetch (リトライ付き)
+   *
+   * @param  string       url    アクセス先URL
+   * @return HTTPResponse result fetchのレスポンス
    */
   function fetchWithRetry(url) {
     var result, i = 0;
@@ -55,8 +66,6 @@ var MyUtil = (function() {
 
     return result;
   }
-
-
 
   return {
     log:            log,

@@ -6,7 +6,7 @@
   var youtubeSearchWord  = '';
   var youtubeSearchIndex = 1;
 
-  // APIコードを読み込む
+  // APIコードを読み込む -------------------------------------------------------
   $.ajax({
     url:      'https://www.youtube.com/iframe_api',
     dataType: 'script',
@@ -26,8 +26,10 @@
     },
   });
 
-  /**
+  /** --------------------------------------------------------------------------
    * getパラメータを取得する
+   *
+   * @return object params getパラメータ
    */
   function getGetParams() {
     var data, params = {}, blocks = location.search.substring(1).split('&');
@@ -38,8 +40,10 @@
     return params;
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * デスクトップ通知を表示する
+   *
+   * @param string body 本文
    */
   function showNotification(body) {
     notify.createNotification('syngle', {
@@ -49,8 +53,10 @@
     });
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * プレイヤーの状態変化時に呼ばれるメソッド
+   *
+   * @param object event
    */
   function onPlayerStateChange(event) {
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
@@ -60,6 +66,10 @@
     }
 
     if (event.data == YT.PlayerState.ENDED) {
+      if (isMute) {
+        toUnMute();
+      }
+
       if (isLoop) {
         playerYoutube.seekTo(0); // 冒頭にシークする
       } else {
@@ -68,14 +78,10 @@
           getConnectionCount(true);
         }, 1000); // 動画が早く終わることへの対応
       }
-
-      if (isMute) {
-        toUnMute();
-      }
     }
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * サーバと同期する
    */
   function syncPlayer() {
@@ -130,8 +136,10 @@
     });
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * 同時接続数を取得する
+   *
+   * @param bool withSave 記録も同時に行なうかどうか
    */
   function getConnectionCount(withSave) {
     $.ajax({
@@ -148,8 +156,10 @@
     });
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * 動画のリクエストを送信する
+   *
+   * @param bool isAddOnly マスタ追加のみかどうか
    */
   function requestUrl(isAddOnly) {
     isAddOnly = isAddOnly || false;
@@ -194,7 +204,7 @@
     });
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * ミュートにする
    */
   function toMute() {
@@ -203,7 +213,7 @@
     isMute = true;
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * ミュートを解除する
    */
   function toUnMute() {
@@ -212,8 +222,10 @@
     isMute = false;
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * youtube検索する
+   *
+   * @param string token ページング用トークン
    */
   function searchOnYoutube(token) {
     // ページャボタンを押せなくする
@@ -287,8 +299,10 @@
     });
   }
 
-  /**
+  /** --------------------------------------------------------------------------
    * 大文字英字を小文字英字に変換、ひらがなをカタカナに変換、スペースを除去する
+   *
+   * @param string str 文字列
    */
   function toEasyString(str) {
     return str.toLowerCase().replace(/\s+/g, '').replace(/[ァ-ン]/g, function(c) {
@@ -298,12 +312,7 @@
 
   // binding -------------------------------------------------------------------
   $(window).load(function() {
-    // ツールチップの初期化
-    $('[data-toggle="tooltip"]').tooltip({
-      trigger: 'hover',
-    });
-
-    // デスクトップ通知の許可を求める
+    // デスクトップ通知の許可を求める ------------------------------------------
     notify.config({autoClose: 8000});
     if (notify.isSupported) {
       if (notify.PERMISSION_DEFAULT === notify.permissionLevel()) {
@@ -311,16 +320,21 @@
       }
     }
 
-    // サブタイトルをつける
+    // サブタイトルをつける ----------------------------------------------------
     $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
 
-    // サーバと同期する
+    // ツールチップを初期化する ------------------------------------------------
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'hover',
+    });
+
+    // サーバと同期する --------------------------------------------------------
     $('#sync-button').click(function() {
       syncPlayer();
       getConnectionCount(false);
     });
 
-    // ループする
+    // ループする --------------------------------------------------------------
     $('#loop-button').click(function() {
       if (isLoop) {
         $('#loop-label').html('Off').removeClass().addClass('myred');
@@ -330,37 +344,37 @@
       isLoop = !isLoop;
     });
 
-    // ミュートを切り替える
+    // ミュートを切り替える ----------------------------------------------------
     $('#mute-button').click(function() {
       (isMute) ? toUnMute() : toMute();
     });
 
-    // 動画の表示/非表示を切り替える
+    // 動画の表示/非表示を切り替える -------------------------------------------
     $('#hide-button').click(function() {
       $('#youtube-player').toggle();
     });
 
-    // 音量を中にする
+    // 音量を中にする ----------------------------------------------------------
     $('#volume-middle').click(function() {
       playerYoutube.setVolume(50);
     });
 
-    // 音量を大にする
+    // 音量を大にする ----------------------------------------------------------
     $('#volume-max').click(function() {
       playerYoutube.setVolume(100);
     });
 
-    // 動画をリクエストする
+    // 動画をリクエストする ----------------------------------------------------
     $('#request-button').click(function() {
       requestUrl(false);
     });
 
-    // 動画をマスタに追加する
+    // 動画をマスタに追加する --------------------------------------------------
     $('#add-only-button').click(function() {
       requestUrl(true);
     });
 
-    // youtube検索する
+    // youtube検索する ---------------------------------------------------------
     $('#youtube-search-word').keypress(function(e) {
       if (13 === e.which) {
         // RETURNが押されたとき
@@ -368,29 +382,29 @@
       }
     });
 
-    // youtube検索する
+    // youtube検索する ---------------------------------------------------------
     $('#youtube-search-exec').click(function() {
       searchOnYoutube();
     });
 
-    // youtube検索のページャを戻す
+    // youtube検索のページャを戻す ---------------------------------------------
     $('#youtube-search-prev').click(function() {
       youtubeSearchIndex--;
       searchOnYoutube($(this).val());
     });
 
-    // youtube検索のページャを進める
+    // youtube検索のページャを進める -------------------------------------------
     $('#youtube-search-next').click(function() {
       youtubeSearchIndex++;
       searchOnYoutube($(this).val());
     });
 
-    // youtube検索結果を消す
+    // youtube検索結果を消す ---------------------------------------------------
     $('#youtube-search-clear').click(function() {
       $('#youtube-search-list').children().remove();
     });
 
-    // マスタを表示する
+    // マスタを表示する --------------------------------------------------------
     $('#get-master').click(function() {
       $('#get-master').attr('disabled', true);
       $('#master-animate').addClass('spin');
@@ -448,7 +462,7 @@
       });
     });
 
-    // マスタのインクリメンタルサーチ
+    // マスタのインクリメンタルサーチ ------------------------------------------
     var masterSearchTimeoutId = null;
     $('#master-search-word').keyup(function() {
       clearTimeout(masterSearchTimeoutId);
@@ -462,7 +476,7 @@
       }, 500, $(this).val());
     });
 
-    // 削除動画リストを表示する
+    // 削除動画リストを表示する ------------------------------------------------
     $('#get-deleted').click(function() {
       $('#get-deleted').attr('disabled', true);
       $('#deleted-animate').addClass('spin');
@@ -510,5 +524,5 @@
         },
       });
     });
-  });
+  }); // end binding
 })(jQuery);

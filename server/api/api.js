@@ -6,26 +6,31 @@ function doGet(e) {
     case 'requestUrl':
       var result = GetController.requestUrl(e.parameter.url, e.parameter.password, e.parameter.isAddOnly);
       break;
+
     case 'searchYoutube':
       var result = GetController.searchYoutube(e.parameter.word, e.parameter.token);
       break;
+
     case 'master':
       var result = {
         column: SheetInfo.column,
         master: new Sheet().rowList,
       };
       break;
+
     case 'deleted':
       var result = {
         column:  SheetInfo.column,
         deleted: new Sheet().getDeleteList(),
       };
       break;
+
     case 'connectionCount':
       var result = {
         count: GetController.getConnectionCount(e.parameter.withSave),
       };
       break;
+
     default:
       var result = new Schedule().getStatus();
       break;
@@ -40,6 +45,11 @@ function doGet(e) {
 var GetController = (function() {
   /**
    * 動画のリクエストを受信する
+   *
+   * @param  string url       動画URL
+   * @param  string password  パスワード
+   * @param  string isAddOnly マスタ追加のみかどうか
+   * @return object           レスポンスデータ
    */
   function requestUrl(url, password, isAddOnly) {
     isAddOnly = ('true' === isAddOnly) ? true : false;
@@ -97,6 +107,10 @@ var GetController = (function() {
 
   /**
    * youtube検索する
+   *
+   * @param  string word  検索ワード
+   * @param  string token ページング用トークン
+   * @return object       YouTubeAPIのレスポンス
    */
   function searchYoutube(word, token) {
     var options = {
@@ -116,6 +130,9 @@ var GetController = (function() {
 
   /**
    * 同時接続数を取得する (記録も同時に行なう)
+   *
+   * @param  string      withSave 記録も同時に行なうかどうか
+   * @return string|bool          同時接続数, 取得できないときや
    */
   function getConnectionCount(withSave) {
     // 再生状況を取得する
@@ -126,18 +143,23 @@ var GetController = (function() {
     // ロックする
     var lock = LockService.getScriptLock();
     try {
-      lock.waitLock(2000);
+      lock.waitLock(4000);
 
       // キャッシュを取得する
       var cache = CacheService.getScriptCache();
 
       // 現在の同時接続数を記録する
       if ('true' === withSave) {
-        cache.put(nowId, (cache.get(nowId) || 0) * 1 + 1, 60 * 10);
+        cache.put(nowId, (cache.get(nowId) || 0) * 1 + 1, 60 * 20);
       }
 
       // 前回の同時接続数を返す
-      return cache.get(pastId) || false;
+      var count = cache.get(pastId) || false;
+
+      // ロックを明示的に開放する
+      lock.releaseLock();
+
+      return count;
     } catch (e) {
       MyUtil.log(['同時接続数の取得、記録に失敗しました', e]);
       return false;

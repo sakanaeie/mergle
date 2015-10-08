@@ -4,22 +4,24 @@ var Config = {
   historyCount: 50,
   password:     'hogefuga',
   pickupEnable: true,
-  pickupStart:  '1400',
-  pickupEnd:    '1500',
+  pickupStart:  '1355',
+  pickupEnd:    '1455',
 };
 
 var SheetInfo = {
   id: 'hogefuga',
   nameMaster: 'master', // 追加用のシート名
   nameDelete: 'delete', // 削除用のシート名
-  nameBad:    'bad',    // 不愉快用のシート名
   nameLog:    'log',    // ログ用のシート名
   column: {
-    provider: 0,
-    id:       1,
-    url:      2,
-    title:    3,
-    duration: 4,
+    provider:  0,
+    id:        1,
+    url:       2,
+    title:     3,
+    duration:  4,
+    good:      5,
+    bad:       6,
+    createdAt: 7,
   },
 };
 

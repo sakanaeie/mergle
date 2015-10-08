@@ -3,6 +3,9 @@
  */
 var Schedule = (function() {
   // constructor ---------------------------------------------------------------
+  /**
+   * コンストラクタ
+   */
   function Schedule() {
     this.cache    = CacheService.getScriptCache();
     this.dataList = JSON.parse(this.cache.get('schedule'));
@@ -16,6 +19,8 @@ var Schedule = (function() {
   // public --------------------------------------------------------------------
   /**
    * 情報を追加する
+   *
+   * @param object rowHash 連想配列
    */
   Schedule.prototype.push = function(rowHash) {
     this.refresh_();
@@ -25,6 +30,8 @@ var Schedule = (function() {
 
   /**
    * 情報を更新する
+   *
+   * @param int chooseType 選曲種別
    */
   Schedule.prototype.update = function(chooseType) {
     // プロセスが重複しないようにする
@@ -60,6 +67,9 @@ var Schedule = (function() {
 
   /**
    * 重複するかどうか
+   *
+   * @param  object rowHash 連想配列
+   * @return bool           重複するかどうか, する:true / しない:false
    */
   Schedule.prototype.isDuplicate = function(rowHash) {
     for (var i in this.dataList) {
@@ -71,7 +81,9 @@ var Schedule = (function() {
   };
 
   /**
-   * 情報を取得する
+   * 再生状況を取得する
+   *
+   * @return object 再生状況
    */
   Schedule.prototype.getStatus = function() {
     var now = MyUtil.getNow();
@@ -105,6 +117,8 @@ var Schedule = (function() {
   // private -------------------------------------------------------------------
   /**
    * 最後の情報を取得する
+   *
+   * @return object|null 最後の情報
    */
   Schedule.prototype.getLast_ = function() {
     return (null !== this.dataList) ? this.dataList[this.dataList.length - 1] : null;
@@ -112,6 +126,8 @@ var Schedule = (function() {
 
   /**
    * 必要な情報が満たされているか
+   *
+   * @return bool 満たされているかどうか, いる:true / いない:false
    */
   Schedule.prototype.isFill_ = function() {
     var last = this.getLast_();
@@ -120,6 +136,9 @@ var Schedule = (function() {
 
   /**
    * 情報を足す
+   *
+   * @param object rowHash    連想配列
+   * @param int    chooseType 選曲種別
    */
   Schedule.prototype.add_ = function(rowHash, chooseType) {
     var last = this.getLast_();

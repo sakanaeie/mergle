@@ -7,6 +7,11 @@
  */
 var Youtube = (function() {
   // constructor ---------------------------------------------------------------
+  /**
+   * コンストラクタ
+   *
+   * @param string id 動画id
+   */
   function Youtube(id) {
     this.provider = 'youtube';
     this.id       = id;
@@ -45,6 +50,8 @@ var Youtube = (function() {
   // public --------------------------------------------------------------------
   /**
    * 問題があるかどうか
+   *
+   * @return bool 問題があるかどうか, ある:true / ない:false
    */
   Youtube.prototype.hasProblem = function() {
     // パラメータ欠損、ステータス確認 (最も簡単な確認から行なう)
@@ -89,7 +96,10 @@ var Youtube = (function() {
   // private -------------------------------------------------------------------
   /**
    * status.uploadStatusに問題があるかどうか
-   * deleted, failed, processed, rejected, uploaded のいずれかである
+   *
+   * この値は次のいずれかである, deleted, failed, processed, rejected, uploaded
+   *
+   * @return bool 問題があるかどうか, ある:true / ない:false
    */
   Youtube.prototype.isStatusProblem_ = function() {
     if ('deleted' === this.status || 'failed' === this.status || 'rejected' === this.status) {
@@ -103,6 +113,8 @@ var Youtube = (function() {
   // public static -------------------------------------------------------------
   /**
    * urlからインスタンスを生成する
+   *
+   * @return Youtube
    */
   Youtube.fromUrl = function(url) {
     return new Youtube(parseUrl_(url));
@@ -111,6 +123,9 @@ var Youtube = (function() {
   // private static ------------------------------------------------------------
   /**
    * urlからidを取り出す
+   *
+   * @param  string      url 動画URL
+   * @return string|null id  動画id
    */
   function parseUrl_(url) {
     var found = url.match(/^https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9-_]+)/);
@@ -119,6 +134,9 @@ var Youtube = (function() {
 
   /**
    * idからurlを作る
+   *
+   * @param  string id  動画id
+   * @return string url 動画URL
    */
   function buildUrl_(id) {
     return 'https://www.youtube.com/watch?v=' + id;
@@ -126,6 +144,9 @@ var Youtube = (function() {
 
   /**
    * YouTubeAPIを叩き、動画の情報を取得する
+   *
+   * @param  string      id                動画id
+   * @return object|null response.items[0] YouTubeAPIのレスポンスの一部
    */
   function callAPI_(id) {
     var response = YouTube.Videos.list('snippet, contentDetails, status', {
