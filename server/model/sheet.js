@@ -9,10 +9,14 @@ var Sheet = (function() {
   function Sheet() {
     this.ss = SpreadsheetApp.openById(SheetInfo.id);
 
-    this.sheetDelete = this.sheetLog = null;
+    this.sheetDelete = null;
     this.sheetMaster = this.ss.getSheetByName(SheetInfo.nameMaster);
     this.rowList     = this.sheetMaster.getDataRange().getValues();
   }
+
+  // const ---------------------------------------------------------------------
+  Sheet.RATING_TYPE_GOOD = 'good';
+  Sheet.RATING_TYPE_BAD  = 'bad';
 
   // public --------------------------------------------------------------------
   /**
@@ -80,11 +84,52 @@ var Sheet = (function() {
   }
 
   /**
-   * ログを残す
+   * 評価を更新し、キャッシュに入れる
+   *
+   * @param  string provider 動画提供元
+   * @param  string id       動画id
+   * @param  string type     評価種別, 不正な値であるときはキャッシュ更新のみ行なう
+   * @return bool   result   評価を更新したかどうか
    */
-  Sheet.prototype.log = function(mixData) {
-    this.getSheetLog_().appendRow([new Date(), JSON.stringify(mixData)]);
-  }
+  Sheet.prototype.updateRatingAndCache = function(provider, id, type) {
+    var i = null, providerKey = SheetInfo.column.provider, idKey = SheetInfo.column.id;
+    for (i in this.rowList) {
+      if (this.rowList[i][providerKey] === provider && this.rowList[i][idKey] === id) {
+        break;  // ループを抜けることで、iを確定させる
+      }
+    }
+
+    var result = false;
+    if (null !== i) {
+      if (Sheet.RATING_TYPE_GOOD === type || Sheet.RATING_TYPE_BAD === type) {
+        // セルを特定し、値をインクリメントする
+        var column = SheetInfo.column[type];
+        var cell = this.sheetMaster.getRange(i * 1 + 1, column * 1 + 1);
+        var val  = cell.getValue() * 1 + 1;
+        cell.setValue(val);
+
+        // 配列も値も更新する
+        this.rowList[i][column] = val;
+
+        result = true;
+      }
+
+      // キャッシュに入れておく
+      var cache = CacheService.getScriptCache();
+      cache.put(
+        [provider, id, Sheet.RATING_TYPE_GOOD].join(','),
+        this.rowList[i][SheetInfo.column.good],
+        60 * 60 * 6
+      );
+      cache.put(
+        [provider, id, Sheet.RATING_TYPE_BAD].join(','),
+        this.rowList[i][SheetInfo.column.bad],
+        60 * 60 * 6
+      );
+    }
+
+    return result;
+  };
 
   // private -------------------------------------------------------------------
   /**
@@ -97,18 +142,6 @@ var Sheet = (function() {
       this.sheetDelete = this.ss.getSheetByName(SheetInfo.nameDelete);
     }
     return this.sheetDelete;
-  }
-
-  /**
-   * ログシートを取得する
-   *
-   * @return Sheet this.sheetLog ログシート
-   */
-  Sheet.prototype.getSheetLog_ = function() {
-    if (null === this.sheetLog) {
-      this.sheetLog = this.ss.getSheetByName(SheetInfo.nameLog);
-    }
-    return this.sheetLog;
   }
 
   // public static -------------------------------------------------------------

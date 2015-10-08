@@ -3,6 +3,7 @@
   var getParams = getGetParams();
   var apiUrl    = 'https://script.google.com/macros/s/' + getParams.api + '/exec';
   var isAgree   = isLoop = isMute = false;
+  var nowInfo   = null;
   var youtubeSearchWord  = '';
   var youtubeSearchIndex = 1;
 
@@ -86,6 +87,8 @@
    */
   function syncPlayer() {
     $('#sync-button').attr('disabled', true);
+    $('#good-button').attr('disabled', true);
+    $('#bad-button').attr('disabled', true);
 
     $.ajax({
       url:      apiUrl,
@@ -103,8 +106,11 @@
             tr  = $('#schedule-' + key);
             if ('undefined' !== typeof response[key]) {
               tr.children('.schedule-title').html(response[key].rowHash.title);
+              tr.children('.schedule-rating').html(
+                response.rating[key].good + ' / ' + response.rating[key].bad * -1
+              );
 
-              // 選曲理由で色付けする
+              // 選曲種別で色付けする
               td = tr.children('.schedule-type').removeClass('myblue myorange');
               switch (response[key].chooseType) {
                 case Schedule.CHOOSE_TYPE_RANDOM:
@@ -120,11 +126,13 @@
 
               if ('now' === key) {
                 // 現在の動画であるとき、ページタイトルを変更し、デスクトップ通知を表示する
+                nowInfo        = response[key].rowHash;
                 document.title = response[key].rowHash.title + ' - syngle';
                 showNotification(response[key].rowHash.title);
               }
             } else {
               tr.children('.schedule-title').html('-');
+              tr.children('.schedule-rating').html('-');
               tr.children('.schedule-type').html('-');
             }
           }
@@ -132,6 +140,8 @@
       },
       complete: function() {
         $('#sync-button').attr('disabled', false);
+        $('#good-button').attr('disabled', false);
+        $('#bad-button').attr('disabled', false);
       },
     });
   }
@@ -310,6 +320,28 @@
     });
   }
 
+  /** --------------------------------------------------------------------------
+   * 評価する
+   *
+   * @param string type 評価種別
+   */
+  function execRating(type) {
+    $.ajax({
+      url:      apiUrl,
+      type:     'GET',
+      dataType: 'jsonp',
+      data: {
+        api:      'rating',
+        id:       nowInfo.id,
+        provider: nowInfo.provider,
+        type:     type,
+      },
+      success: function(response) {
+        console.log(response);
+      },
+    });
+  }
+
   // binding -------------------------------------------------------------------
   $(window).load(function() {
     // デスクトップ通知の許可を求める ------------------------------------------
@@ -362,6 +394,18 @@
     // 音量を大にする ----------------------------------------------------------
     $('#volume-max').click(function() {
       playerYoutube.setVolume(100);
+    });
+
+    // いいね ------------------------------------------------------------------
+    $('#good-button').click(function() {
+      $(this).attr('disabled', true);
+      execRating('good');
+    });
+
+    // わるいね ----------------------------------------------------------------
+    $('#bad-button').click(function() {
+      $(this).attr('disabled', true);
+      execRating('bad');
     });
 
     // 動画をリクエストする ----------------------------------------------------

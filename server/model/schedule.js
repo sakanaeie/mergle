@@ -7,6 +7,7 @@ var Schedule = (function() {
    * コンストラクタ
    */
   function Schedule() {
+    this.sheet    = null;
     this.cache    = CacheService.getScriptCache();
     this.dataList = JSON.parse(this.cache.get('schedule'));
   }
@@ -83,7 +84,7 @@ var Schedule = (function() {
   /**
    * 再生状況を取得する
    *
-   * @return object 再生状況
+   * @return object result 再生状況
    */
   Schedule.prototype.getStatus = function() {
     var now = MyUtil.getNow();
@@ -105,13 +106,30 @@ var Schedule = (function() {
       offset = diff * -1; // 再生経過時間
     }
 
-    return {
+    var result = {
       future: futureList[1],
       now:    futureList[0],
       past:   past,
       gap:    gap,
       offset: offset,
+      rating: {},
     };
+
+    // キャッシュから評価を取得する
+    var provider, id, str, strArr = ['future', 'now', 'past'];
+    for (var i in strArr) {
+      str = strArr[i];
+      if ('undefined' !== typeof result[str]) {
+        provider = result[str].rowHash.provider;
+        id       = result[str].rowHash.id;
+        result.rating[str] = {
+          good: this.cache.get([provider, id, Sheet.RATING_TYPE_GOOD].join(',')) || false,
+          bad:  this.cache.get([provider, id, Sheet.RATING_TYPE_BAD ].join(',')) || false,
+        };
+      }
+    }
+
+    return result;
   };
 
   // private -------------------------------------------------------------------
@@ -155,6 +173,9 @@ var Schedule = (function() {
       endAt:      startAt + rowHash.duration * 1,
       chooseType: chooseType,
     });
+
+    // 評価をキャッシュに入れる
+    this.getSheet_().updateRatingAndCache(rowHash.provider, rowHash.id);
   };
 
   /**
@@ -187,7 +208,7 @@ var Schedule = (function() {
    * マスタからランダムに選曲する
    */
   Schedule.prototype.chooseRandom_ = function() {
-    var sheet = new Sheet(), video, rowHash, retry = 0;
+    var sheet = this.getSheet_(), video, rowHash, retry = 0;
     do {
       // マスタから取得する
       rowHash = sheet.getOneAtRandom();
@@ -252,6 +273,18 @@ var Schedule = (function() {
 
       this.add_(rowHash, Schedule.CHOOSE_TYPE_PICKUP);
     } while (!this.isFill_());
+  };
+
+  /**
+   * Sheetインスタンスを取得する
+   *
+   * @return Sheet this.sheet Sheetインスタンス
+   */
+  Schedule.prototype.getSheet_ = function() {
+    if (null === this.sheet) {
+      this.sheet = new Sheet();
+    }
+    return this.sheet;
   };
 
   return Schedule;

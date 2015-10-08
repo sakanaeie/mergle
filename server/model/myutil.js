@@ -2,14 +2,18 @@
  * ユーティリティ
  */
 var MyUtil = (function() {
+  var sheetLog = null;
+
   /**
    * デバッグ用ロガー
    *
    * @param mixed mixData ロギングしたいもの
    */
   function log(mixData) {
-    var sheet = new Sheet();
-    sheet.log([new Date(), JSON.stringify(mixData)]);
+    if (null === sheetLog) {
+      sheetLog = SpreadsheetApp.openById(SheetInfo.id).getSheetByName(SheetInfo.nameLog);
+    }
+    sheetLog.appendRow([new Date(), JSON.stringify(mixData)]);
   }
 
   /**

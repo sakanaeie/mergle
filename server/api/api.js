@@ -31,6 +31,12 @@ function doGet(e) {
       };
       break;
 
+    case 'rating':
+      var result = {
+        result: new Sheet().updateRatingAndCache(e.parameter.provider, e.parameter.id, e.parameter.type),
+      };
+      break;
+
     default:
       var result = new Schedule().getStatus();
       break;
