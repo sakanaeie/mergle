@@ -92,24 +92,25 @@ var Sheet = (function() {
    * @return bool   result   評価を更新したかどうか
    */
   Sheet.prototype.updateRatingAndCache = function(provider, id, type) {
-    var i = null, providerKey = SheetInfo.column.provider, idKey = SheetInfo.column.id;
-    for (i in this.rowList) {
+    var index = null, providerKey = SheetInfo.column.provider, idKey = SheetInfo.column.id;
+    for (var i in this.rowList) {
       if (this.rowList[i][providerKey] === provider && this.rowList[i][idKey] === id) {
-        break;  // ループを抜けることで、iを確定させる
+        index = i;
+        break;
       }
     }
 
     var result = false;
-    if (null !== i) {
+    if (null !== index) {
       if (Sheet.RATING_TYPE_GOOD === type || Sheet.RATING_TYPE_BAD === type) {
         // セルを特定し、値をインクリメントする
         var column = SheetInfo.column[type];
-        var cell = this.sheetMaster.getRange(i * 1 + 1, column * 1 + 1);
+        var cell = this.sheetMaster.getRange(index * 1 + 1, column * 1 + 1);
         var val  = cell.getValue() * 1 + 1;
         cell.setValue(val);
 
         // 配列も値も更新する
-        this.rowList[i][column] = val;
+        this.rowList[index][column] = val;
 
         result = true;
       }
@@ -118,12 +119,12 @@ var Sheet = (function() {
       var cache = CacheService.getScriptCache();
       cache.put(
         [provider, id, Sheet.RATING_TYPE_GOOD].join(','),
-        this.rowList[i][SheetInfo.column.good],
+        this.rowList[index][SheetInfo.column.good],
         60 * 60 * 6
       );
       cache.put(
         [provider, id, Sheet.RATING_TYPE_BAD].join(','),
-        this.rowList[i][SheetInfo.column.bad],
+        this.rowList[index][SheetInfo.column.bad],
         60 * 60 * 6
       );
     }
