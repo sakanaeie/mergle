@@ -64,6 +64,7 @@ var GetController = (function() {
       return {message: 'パスワードが違います'};
     }
 
+    // 検証する
     var video = Youtube.fromUrl(url);
     if (video.hasError) {
       return {message: 'YouTubeが検証リクエストを受理しませんでした。しばらく時間を置いてからお試しください。'};
@@ -80,33 +81,31 @@ var GetController = (function() {
 
     var title = '"' + video.title + '"';
 
-    if (!isAddOnly) {
+    // マスタに追加する
+    var sheet = new Sheet(), isDuplicateInMaster = sheet.isDuplicate(video.id);
+    if (!isDuplicateInMaster) {
+      sheet.add(video);
+    }
+
+    if (isAddOnly) {
+      if (isDuplicateInMaster) {
+        return {message: title + 'は、既にマスタに存在します'};
+      } else {
+        return {message: title + 'をマスタに追加しました'};
+      }
+    } else {
       // スケジュールの末尾に追加する
       var schedule = new Schedule();
       var rowHash  = Sheet.makeRowHashFromVideo(video);
-
       if (schedule.isDuplicate(rowHash)) {
-        return {
-          message: title + 'は、直近のスケジュールに含まれるため、リクエストを棄却しました'
-        };
+        return {message: title + 'は、直近のスケジュールに含まれるため、リクエストを棄却しました'};
       } else {
-        schedule.push(video);
-      }
-    }
-
-    var sheet = new Sheet();
-    if (!sheet.isDuplicate(video.id)) {
-      sheet.add(video);
-      if (isAddOnly) {
-        return {message: title + 'をマスタに追加しました'};
-      } else {
-        return {message: title + 'のリクエストを受理し、マスタに追加しました'};
-      }
-    } else {
-      if (isAddOnly) {
-        return {message: title + 'は、既にマスタに存在します'};
-      } else {
-        return {message: title + 'のリクエストを受理しました'};
+        schedule.push(video); // 追加する
+        if (isDuplicateInMaster) {
+          return {message: title + 'のリクエストを受理しました'};
+        } else {
+          return {message: title + 'のリクエストを受理し、マスタに追加しました'};
+        }
       }
     }
   }
