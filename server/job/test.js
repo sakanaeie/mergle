@@ -20,7 +20,7 @@ function test_youtubeAPI() {
  * 評価を入れる、キャッシュを確認する
  */
 function test_rating() {
-  var id = 'LqudCtQ-_VY';
+  var id = 'HyavGNrcTjw';
   var t  = 'good';
   var s  = new Sheet();
 

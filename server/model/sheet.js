@@ -103,14 +103,25 @@ var Sheet = (function() {
     var result = false;
     if (null !== index) {
       if (Sheet.RATING_TYPE_GOOD === type || Sheet.RATING_TYPE_BAD === type) {
-        // セルを特定し、値をインクリメントする
-        var column = SheetInfo.column[type];
-        var cell = this.sheetMaster.getRange(index * 1 + 1, column * 1 + 1);
-        var val  = cell.getValue() * 1 + 1;
-        cell.setValue(val);
+        // ロックする (シートをロックするわけではない、この点は許容)
+        var lock = LockService.getScriptLock();
+        try {
+          lock.waitLock(4000);
 
-        // 配列も値も更新する
-        this.rowList[index][column] = val;
+          // セルを特定し、値をインクリメントする
+          var columnIndex = SheetInfo.column[type];
+          var cell        = this.sheetMaster.getRange(index * 1 + 1, columnIndex * 1 + 1);
+          var val         = cell.getValue() * 1 + 1;
+          cell.setValue(val);
+
+          lock.releaseLock();
+        } catch (e) {
+          MyUtil.log(['評価のロックで例外が発生しました', e]);
+          return false;
+        }
+
+        // 配列の値も更新する
+        this.rowList[index][columnIndex] = val;
 
         result = true;
       }

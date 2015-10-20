@@ -68,7 +68,7 @@
         <button id="sync-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Sync" disabled="disabled">
           <span class="glyphicon glyphicon-cloud-download"></span>
         </button>
-        <div id="good-bad">
+        <div id="rating">
           <button id="good-button" class="btn btn-default btn-sm" disabled="disabled">
             <span class="glyphicon glyphicon-thumbs-up"></span>
           </button>
@@ -76,6 +76,10 @@
             <span class="glyphicon glyphicon-thumbs-down"></span>
           </button>
         </div>
+      </div>
+      <div id="rating-status">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        <span id="rating-result"></span>
       </div>
     </div>
 
@@ -111,8 +115,7 @@
 
     <div class="content-title"><span class="glyphicon glyphicon-cloud-upload"></span>Request</div>
     <div id="request" class="sub-content">
-      <input id="request-url"      class="form-control input-sm" type="text"     placeholder="... video url">
-      <input id="request-password" class="form-control input-sm" type="password" placeholder="... password">
+      <input id="request-url"      class="form-control input-sm" type="text" placeholder="... video url">
       <button id="request-button"  class="btn btn-default btn-sm">Request</button>
       <button id="add-only-button" class="btn btn-default btn-sm">Add Only</button>
       <span id="request-animate" class="glyphicon glyphicon-refresh"></span>
@@ -124,7 +127,7 @@
 
     <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
     <div id="youtube-search" class="sub-content">
-      <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="... input word & press RETURN key">
+      <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="... input word">
       <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
       <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
       <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
@@ -144,7 +147,7 @@
       <div>
         <input id="master-search-word" class="form-control input-sm" type="text" placeholder="... input to incremental search">
         <span class="glyphicon glyphicon-info-sign"></span>
-        小文字英字で大文字英字、ひらがなでカタカナを検索できます
+        GetListで得た結果の絞り込み検索です、小文字英字で大文字英字、ひらがなでカタカナを検索できます
         <ul id="master-data-list"></ul>
       </div>
     </div>

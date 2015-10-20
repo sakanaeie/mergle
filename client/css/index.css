@@ -185,7 +185,7 @@ button span.glyphicon {
   padding-left: 6px;
 }
 
-#good-bad {
+#rating {
   float: right;
 }
 
@@ -217,13 +217,9 @@ button span.glyphicon {
  * request
  */
 #request-url {
+  display:       inline;
   width:         600px;
   margin-bottom: 4px;
-}
-
-#request-password {
-  display: inline;
-  width:   120px;
 }
 
 /** ----------------------------------------------------------------------------
@@ -231,7 +227,7 @@ button span.glyphicon {
  */
 #youtube-search-word {
   display: inline;
-  width:   400px;
+  width:   300px;
 }
 
 #youtube-search-list {
@@ -242,13 +238,23 @@ button span.glyphicon {
   margin: 0;
 }
 
+#youtube-search-list hr {
+ margin: 10px 8px 10px;
+}
+
 #youtube-search-list .media-body {
   vertical-align: middle;
 }
 
 .youtube-search-img {
-  border:       2px solid #444;
+  border:       1px solid #444;
   margin-right: 6px;
+  width:        120px;
+}
+
+.media-heading {
+  font-size:   18px;
+  font-weight: bold;
 }
 
 /** ----------------------------------------------------------------------------
@@ -256,7 +262,7 @@ button span.glyphicon {
  */
 #master-search-word {
   margin-top: 4px;
-  width:      400px;
+  width:      300px;
 }
 
 #master-data-list {

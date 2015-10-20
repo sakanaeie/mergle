@@ -4,7 +4,7 @@
 function doGet(e) {
   switch (e.parameter.api) {
     case 'requestUrl':
-      var result = GetController.requestUrl(e.parameter.url, e.parameter.password, e.parameter.isAddOnly);
+      var result = GetController.requestUrl(e.parameter.url, e.parameter.isAddOnly);
       break;
 
     case 'searchYoutube':
@@ -53,16 +53,11 @@ var GetController = (function() {
    * 動画のリクエストを受信する
    *
    * @param  string url       動画URL
-   * @param  string password  パスワード
    * @param  string isAddOnly マスタ追加のみかどうか
    * @return object           レスポンスデータ
    */
-  function requestUrl(url, password, isAddOnly) {
+  function requestUrl(url, isAddOnly) {
     isAddOnly = ('true' === isAddOnly) ? true : false;
-
-    if (Config.password !== password) {
-      return {message: 'パスワードが違います'};
-    }
 
     // 検証する
     var video = Youtube.fromUrl(url);
@@ -77,6 +72,12 @@ var GetController = (function() {
     }
     if (video.hasProblem()) {
       return {message: '指定の動画は音声を再生できません'};
+    }
+    if (video.hasProblem()) {
+      return {message: '指定の動画は音声を再生できません'};
+    }
+    if (video.duration > Config.limitSec) {
+      return {message: Config.limitSec + '秒を超える動画の指定はご遠慮ください'};
     }
 
     var title = '"' + video.title + '"';
@@ -137,7 +138,7 @@ var GetController = (function() {
    * 同時接続数を取得する (記録も同時に行なう)
    *
    * @param  string      withSave 記録も同時に行なうかどうか
-   * @return string|bool          同時接続数, 取得できないときや
+   * @return string|bool          同時接続数, 取得できないときなどはfalse
    */
   function getConnectionCount(withSave) {
     // 再生状況を取得する

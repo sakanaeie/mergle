@@ -1,8 +1,8 @@
 var Config = {
+  limitSec:     60 * 10,
   makeSec:      60 * 8,
   gapSec:       6,
   historyCount: 50,
-  password:     'hogefuga',
   pickupEnable: true,
   pickupStart:  '1355',
   pickupEnd:    '1455',

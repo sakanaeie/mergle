@@ -123,8 +123,8 @@ var Schedule = (function() {
         provider = result[str].rowHash.provider;
         id       = result[str].rowHash.id;
         result.rating[str] = {
-          good: this.cache.get([provider, id, Sheet.RATING_TYPE_GOOD].join(',')) || false,
-          bad:  this.cache.get([provider, id, Sheet.RATING_TYPE_BAD ].join(',')) || false,
+          good: this.cache.get([provider, id, Sheet.RATING_TYPE_GOOD].join(',')) || 0,
+          bad:  this.cache.get([provider, id, Sheet.RATING_TYPE_BAD ].join(',')) || 0,
         };
       }
     }

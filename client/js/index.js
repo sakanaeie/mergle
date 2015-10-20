@@ -175,9 +175,8 @@
     isAddOnly = isAddOnly || false;
 
     // 入力を取得する
-    var url      = $('#request-url').val();
-    var password = $('#request-password').val();
-    if ('' === url || '' === password) {
+    var url = $('#request-url').val();
+    if ('' === url) {
       return; // 入力がなければ無言で終了
     }
 
@@ -196,7 +195,6 @@
       data: {
         api:       'requestUrl',
         url:       url,
-        password:  password,
         isAddOnly: isAddOnly,
       },
       success: function(response) {
@@ -274,11 +272,12 @@
         }
 
         // 結果リストを追加する
+        var itemCount = response.items.length;
         $.each(response.items, function(i, item) {
           var media = $('<div>').addClass('youtube-search-item media');
           var left  = $('<div>').addClass('media-left media-top');
           var body  = $('<div>').addClass('media-body');
-          var head  = $('<h4>' ).addClass('media-heading').html(item.snippet.title);
+          var head  = $('<div>').addClass('media-heading').html(item.snippet.title);
 
           var img = $('<img>')
             .addClass('youtube-search-img img-rounded')
@@ -289,7 +288,10 @@
           body.append(head, $('<span>').html(item.snippet.description));
           media.append(left, body);
 
-          $('#youtube-search-list').append(media, $('<hr>'));
+          $('#youtube-search-list').append(media);
+          if (itemCount !== i + 1) {
+            $('#youtube-search-list').append($('<hr>'));
+          }
         });
 
         // 結果リストの画像をクリックしたときのイベントを設定する
@@ -337,7 +339,12 @@
         type:     type,
       },
       success: function(response) {
-        console.log(response);
+        var title = '"' + nowInfo.title + '"';
+        if (true === response.result) {
+          $('#rating-result').html(title + 'の' + type + '評価に成功しました');
+        } else {
+          $('#rating-result').html(title + 'の評価に失敗しました');
+        }
       },
     });
   }
