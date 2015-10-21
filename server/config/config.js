@@ -3,6 +3,7 @@ var Config = {
   makeSec:      60 * 8,
   gapSec:       6,
   historyCount: 50,
+  jockeyEnable: true,
   pickupEnable: true,
   pickupStart:  '1355',
   pickupEnd:    '1455',
@@ -27,4 +28,13 @@ var SheetInfo = {
 
 var YoutubePickupListIds = [
   'PLFgquLnL59amuJEYnzXUxiZw5UXCVhWkn', // 最新の動画
+];
+
+var YoutubeJockeyInfos = [
+  {
+    name:  'test',
+    id:    'PLFgquLnL59amuJEYnzXUxiZw5UXCVhWkn',
+    start: '1455',
+    end:   '1555',
+  },
 ];

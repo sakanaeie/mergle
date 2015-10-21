@@ -111,7 +111,7 @@
               );
 
               // 選曲種別で色付けする
-              td = tr.children('.schedule-type').removeClass('myblue myorange');
+              td = tr.children('.schedule-type').removeClass('myblue myorange myviolet');
               switch (response[key].chooseType) {
                 case Schedule.CHOOSE_TYPE_RANDOM:
                   td.html('Default');
@@ -121,6 +121,9 @@
                   break;
                 case Schedule.CHOOSE_TYPE_PICKUP:
                   td.html('Pickup').addClass('myorange');
+                  break;
+                case Schedule.CHOOSE_TYPE_JOCKEY:
+                  td.html('DJ ' + response[key].jockeyInfo.name).addClass('myviolet');
                   break;
               }
 

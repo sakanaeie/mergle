@@ -93,6 +93,15 @@ var Youtube = (function() {
     return false;
   };
 
+  /**
+   * 長すぎないかどうか
+   *
+   * @return bool 長すぎないかどうか, 長い:true / 長くない:false
+   */
+  Youtube.prototype.tooLong = function() {
+    return this.duration > Config.limitSec;
+  };
+
   // private -------------------------------------------------------------------
   /**
    * status.uploadStatusに問題があるかどうか

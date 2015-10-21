@@ -16,6 +16,7 @@ var Schedule = (function() {
   Schedule.CHOOSE_TYPE_RANDOM  = 1;
   Schedule.CHOOSE_TYPE_REQUEST = 2;
   Schedule.CHOOSE_TYPE_PICKUP  = 3;
+  Schedule.CHOOSE_TYPE_JOCKEY  = 4;
 
   // public --------------------------------------------------------------------
   /**
@@ -32,19 +33,10 @@ var Schedule = (function() {
   /**
    * 情報を更新する
    *
-   * @param int chooseType 選曲種別
+   * @param int    chooseType 選曲種別
+   * @param object jockeyInfo 選曲者情報
    */
-  Schedule.prototype.update = function(chooseType) {
-    // プロセスが重複しないようにする
-    var lock = LockService.getScriptLock();
-    try {
-      // 既にロックされていたら例外が発生する
-      lock.waitLock(0); // 0msのロック開放待ち
-    } catch (e) {
-      MyUtil.log(['スケジュール更新時のロックで例外が発生しました (プロセスの重複)', e]);
-      return;
-    }
-
+  Schedule.prototype.update = function(chooseType, jockeyInfo) {
     if (this.isFill_()) {
       return;
     }
@@ -59,6 +51,9 @@ var Schedule = (function() {
         break;
       case Schedule.CHOOSE_TYPE_PICKUP:
         this.choosePickup_();
+        break;
+      case Schedule.CHOOSE_TYPE_JOCKEY:
+        this.chooseJockey_(jockeyInfo);
         break;
     }
 
@@ -157,8 +152,9 @@ var Schedule = (function() {
    *
    * @param object rowHash    連想配列
    * @param int    chooseType 選曲種別
+   * @param object jockeyInfo 選曲者情報
    */
-  Schedule.prototype.add_ = function(rowHash, chooseType) {
+  Schedule.prototype.add_ = function(rowHash, chooseType, jockeyInfo) {
     var last = this.getLast_();
     if (null !== last) {
       var startAt   = last.endAt + Config.gapSec;
@@ -172,6 +168,7 @@ var Schedule = (function() {
       startAt:    startAt,
       endAt:      startAt + rowHash.duration * 1,
       chooseType: chooseType,
+      jockeyInfo: jockeyInfo,
     });
 
     // 評価をキャッシュに入れる
@@ -260,7 +257,7 @@ var Schedule = (function() {
       if (video.hasError) {
         return;
       }
-      if (video.hasProblem()) {
+      if (video.hasProblem() || video.tooLong()) {
         continue;
       }
 
@@ -272,6 +269,47 @@ var Schedule = (function() {
       }
 
       this.add_(rowHash, Schedule.CHOOSE_TYPE_PICKUP);
+    } while (!this.isFill_());
+  };
+
+  /**
+   * 指定プレイリストからランダムに選曲する
+   *
+   * @param object jockeyInfo 選曲者情報
+   */
+  Schedule.prototype.chooseJockey_ = function(jockeyInfo) {
+    var items = YouTube.PlaylistItems.list('snippet', {
+      playlistId: jockeyInfo.id,
+      maxResults: 50, // TODO 全件取得できるか？
+    }).items;
+    var count = items.length;
+
+    var item, video, rowHash, retry = 0;
+    do {
+      // 順番に取る TODO ということもしたい
+//      item = items.shift();
+
+      // プレイリストから取得する
+      item = items[Math.floor(Math.random() * count)];
+
+      // 動画情報を取得する
+      video = new Youtube(item.snippet.resourceId.videoId);
+      if (video.hasError) {
+        return;
+      }
+      if (video.hasProblem() || video.tooLong()) {
+        // TODO toolongは必要なく、指定時間であれば許容する形態とする
+        continue;
+      }
+
+      // 履歴を確認する
+      rowHash = Sheet.makeRowHashFromVideo(video);
+      if (retry < 20 && this.isDuplicate(rowHash)) {
+        retry++;  // 母数が不足しているときなどに発生しうる無限ループを抑止
+        continue;
+      }
+
+      this.add_(rowHash, Schedule.CHOOSE_TYPE_JOCKEY, jockeyInfo);
     } while (!this.isFill_());
   };
 

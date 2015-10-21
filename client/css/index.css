@@ -72,6 +72,10 @@ input.form-control::-webkit-input-placeholder {
   color: orange;
 }
 
+.myviolet{
+  color: violet;
+}
+
 .tooltip-inner {
   background-color: #555;
 }
