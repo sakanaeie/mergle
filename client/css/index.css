@@ -2,45 +2,34 @@
  * 全般
  */
 * {
-  font-family:
-    'Hiragino Kaku Gothic ProN',
-    'ヒラギノ角ゴ ProN W3',
-    'Lucida Grande',
-    'Meiryo',
-    'メイリオ',
-    sans-serif;
-  color:       #ccc;
-  font-size:   14px;
+  font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', 'Lucida Grande', 'Meiryo', 'メイリオ', sans-serif;
+  font-size:   13px;
   line-height: normal;
   margin:      0;
   padding:     0;
 }
 
 body {
-  background-color: #1e1e1e;
-  padding-bottom:   100px;
+  background-color: #f1f1f1;
 }
 
 #page-title, #page-sub-title, .content-title {
   font-family: 'Nixie One';
-  color:       #fff;
 }
 
 #page-title {
-  font-size: 50px;
+  font-size: 40px;
+  color:     #fff;
 }
 
 #page-sub-title {
-  font-size: 26px;
+  font-size: 20px;
 }
 
 .content-title {
-  font-size: 26px;
+  font-weight:   bold;
+  font-size:     24px;
   margin-bottom: 8px;
-}
-
-hr {
-  border-color: #444;
 }
 
 button.btn {
@@ -48,12 +37,8 @@ button.btn {
   vertical-align: top;
 }
 
-input.form-control {
-  color: #111;
-}
-
 input.form-control::-webkit-input-placeholder {
-  color: #999;
+  color: #666;
 }
 
 .myred {
@@ -88,8 +73,7 @@ input.form-control::-webkit-input-placeholder {
  * glyphicon
  */
 .content-title span.glyphicon {
-  color:          #fff;
-  font-size:      20px;
+  font-size:      18px;
   padding-right:  6px;
   vertical-align: 1px;
 }
@@ -149,10 +133,9 @@ button span.glyphicon {
  * ヘッダー
  */
 #header {
-  background-color: #111;
-  border-bottom:    1px solid #333;
+  background-color: #333;
   margin-bottom:    20px;
-  padding:          0 6% 8px;
+  padding:          0 20px 8px;
 }
 
 #header .media-object {
@@ -160,70 +143,91 @@ button span.glyphicon {
 }
 
 #header img {
-  height: 50px;
+  height: 40px;
 }
 
 /** ----------------------------------------------------------------------------
  * コンテンツ
  */
 #content {
-  padding: 0 8%;
+  padding: 0 60px;
 }
 
-.sub-content {
-  padding: 0 26px 36px;
+.content-block {
+  margin-bottom: 20px;
+  padding:       12px;
+}
+
+/** ----------------------------------------------------------------------------
+ * player-frame
+ */
+#player-mask {
+  background-color: #333;
+  display:          none;
+}
+
+#player-mask table {
+  width:  100%;
+  height: 100%;
+}
+
+#player-mask td {
+  text-align:     center;
+  vertical-align: middle;
+}
+
+#player-mask span {
+  font-size: 100px;
+  color:     #ccc;
+}
+
+/** ----------------------------------------------------------------------------
+ * youtube-player
+ */
+#youtube-player {
+  width:  100%;
+  height: 240px;
 }
 
 /** ----------------------------------------------------------------------------
  * player-control
  */
 #player-control {
-  border-top:  1px solid #444;
-  max-width:   640px;
-  margin-top:  4px;
-  padding-top: 8px;
+  width:      100%;
+  margin-top: 2px;
 }
 
 #loop-label, #mute-label {
-  font-size: inherit;
+  font-size:    smaller;
   padding-left: 6px;
-}
-
-#rating {
-  float: right;
 }
 
 /** ----------------------------------------------------------------------------
  * schedule
  */
-#schedule table, tr, th, td {
-  border:  1px solid #333;
-  padding: 4px 8px;
+#schedule table {
+  width: 100%;
 }
 
-#schedule th {
-  background-color: #111;
+#schedule table th, #schedule table td {
+  vertical-align: middle;
 }
 
-#schedule th, td {
+#schedule-header {
   text-align: center;
 }
 
-.schedule-title {
-  min-width: 400px;
-}
-
-.schedule-info {
-  min-width: 100px;
+.schedule-at, .schedule-time, .schedule-rating, .schedule-type {
+  width:      8%;
+  text-align: center;
 }
 
 /** ----------------------------------------------------------------------------
  * request
  */
 #request-url {
-  display:       inline;
-  width:         600px;
-  margin-bottom: 4px;
+  display: inline;
+  width:   60%;
 }
 
 /** ----------------------------------------------------------------------------
@@ -257,8 +261,8 @@ button span.glyphicon {
 }
 
 .media-heading {
-  font-size:   18px;
   font-weight: bold;
+  font-size:   18px;
 }
 
 /** ----------------------------------------------------------------------------
@@ -283,19 +287,4 @@ button span.glyphicon {
 
 .master-search-help {
   display: none;
-}
-
-/** ----------------------------------------------------------------------------
- * deleted
- */
-#deleted-data-list {
-  margin: 18px 0 0 20px;
-}
-
-#deleted-data-list li {
-  margin-bottom: 2px;
-}
-
-div div ul#deleted-data-list li:hover {
-  background-color: #333;
 }

@@ -16,8 +16,6 @@
       window.onYouTubeIframeAPIReady = function() {
         // プレイヤーを作成する
         playerYoutube = new YT.Player('youtube-player', {
-          height:  '360',
-          width:   '640',
           videoId: '51CH3dPaWXc',
           events: {
             'onStateChange': onPlayerStateChange,
@@ -42,6 +40,20 @@
   }
 
   /** --------------------------------------------------------------------------
+   * 0埋めする
+   *
+   * @param mixed val    数字
+   * @param int    width 幅
+   */
+  function zerofill(val, width) {
+    val = val.toString();
+    while (val.length < width) {
+      val = '0' + val;
+    }
+    return val;
+  }
+
+  /** --------------------------------------------------------------------------
    * デスクトップ通知を表示する
    *
    * @param string body 本文
@@ -63,7 +75,6 @@
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
       isAgree = true;
       syncPlayer();
-      getConnectionCount(true);
     }
 
     if (event.data == YT.PlayerState.ENDED) {
@@ -76,7 +87,6 @@
       } else {
         setTimeout(function() {
           syncPlayer();
-          getConnectionCount(true);
         }, 1000); // 動画が早く終わることへの対応
       }
     }
@@ -100,21 +110,29 @@
           playerYoutube.loadVideoById(response.now.rowHash.id, response.offset || 0);
 
           // スケジュール表示を更新する
-          var tr, td, key, keys = ['past', 'now', 'future'];
+          var videoInfo, startDate, tr, td, key, keys = ['past', 'now', 'future'];
           for (var i in keys) {
             key = keys[i];
             tr  = $('#schedule-' + key);
             if ('undefined' !== typeof response[key]) {
-              tr.children('.schedule-title').html(response[key].rowHash.title);
+              videoInfo = response[key];
+              startDate = new Date(videoInfo.startAt * 1000);
+
+              tr.children('.schedule-time').html(
+                zerofill(startDate.getHours(), 2)
+                + ':' + zerofill(startDate.getMinutes(), 2)
+                + ':' + zerofill(startDate.getSeconds(), 2)
+              );
+              tr.children('.schedule-title').html(videoInfo.rowHash.title);
               tr.children('.schedule-rating').html(
                 response.rating[key].good + ' / ' + response.rating[key].bad * -1
               );
 
               // 選曲種別で色付けする
               td = tr.children('.schedule-type').removeClass('myblue myorange myviolet');
-              switch (response[key].chooseType) {
+              switch (videoInfo.chooseType) {
                 case Schedule.CHOOSE_TYPE_RANDOM:
-                  td.html('Default');
+                  td.html('');
                   break;
                 case Schedule.CHOOSE_TYPE_REQUEST:
                   td.html('Request').addClass('myblue');
@@ -123,20 +141,21 @@
                   td.html('Pickup').addClass('myorange');
                   break;
                 case Schedule.CHOOSE_TYPE_JOCKEY:
-                  td.html('DJ ' + response[key].jockeyInfo.name).addClass('myviolet');
+                  td.html('DJ ' + videoInfo.jockeyInfo.name).addClass('myviolet');
                   break;
               }
 
               if ('now' === key) {
                 // 現在の動画であるとき、ページタイトルを変更し、デスクトップ通知を表示する
-                nowInfo        = response[key].rowHash;
-                document.title = response[key].rowHash.title + ' - syngle';
-                showNotification(response[key].rowHash.title);
+                nowInfo        = videoInfo.rowHash;
+                document.title = nowInfo.title + ' - syngle';
+                showNotification(nowInfo.title);
               }
             } else {
-              tr.children('.schedule-title').html('-');
-              tr.children('.schedule-rating').html('-');
-              tr.children('.schedule-type').html('-');
+              tr.children('.schedule-time').html('');
+              tr.children('.schedule-title').html('');
+              tr.children('.schedule-rating').html('');
+              tr.children('.schedule-type').html('');
             }
           }
         }, (response.gap || 0) * 1000);
@@ -145,26 +164,6 @@
         $('#sync-button').attr('disabled', false);
         $('#good-button').attr('disabled', false);
         $('#bad-button').attr('disabled', false);
-      },
-    });
-  }
-
-  /** --------------------------------------------------------------------------
-   * 同時接続数を取得する
-   *
-   * @param bool withSave 記録も同時に行なうかどうか
-   */
-  function getConnectionCount(withSave) {
-    $.ajax({
-      url:      apiUrl,
-      type:     'GET',
-      dataType: 'jsonp',
-      data: {
-        api:      'connectionCount',
-        withSave: withSave,
-      },
-      success: function(response) {
-        $('#listener-count').html(response.count || '0');
       },
     });
   }
@@ -315,7 +314,7 @@
   }
 
   /** --------------------------------------------------------------------------
-   * 大文字英字を小文字英字に変換、ひらがなをカタカナに変換、スペースを除去する
+   * 大文字英字を小文字英字に変換、カタカナをひらがなに変換、スペースを除去する
    *
    * @param string str 文字列
    */
@@ -344,9 +343,10 @@
       success: function(response) {
         var title = '"' + nowInfo.title + '"';
         if (true === response.result) {
-          $('#rating-result').html(title + 'の' + type + '評価に成功しました');
+          // TODO navbar
+//          $('#rating-result').html(title + 'に' + type + '評価しました');
         } else {
-          $('#rating-result').html(title + 'の評価に失敗しました');
+//          $('#rating-result').html(title + 'の評価に失敗しました');
         }
       },
     });
@@ -373,7 +373,6 @@
     // サーバと同期する --------------------------------------------------------
     $('#sync-button').click(function() {
       syncPlayer();
-      getConnectionCount(false);
     });
 
     // ループする --------------------------------------------------------------
@@ -393,17 +392,14 @@
 
     // 動画の表示/非表示を切り替える -------------------------------------------
     $('#hide-button').click(function() {
-      $('#youtube-player').toggle();
-    });
+      var player = $('#player-frame');
+      var mask   = $('#player-mask');
 
-    // 音量を中にする ----------------------------------------------------------
-    $('#volume-middle').click(function() {
-      playerYoutube.setVolume(50);
-    });
+      mask.width(player.width());
+      mask.height(player.height());
 
-    // 音量を大にする ----------------------------------------------------------
-    $('#volume-max').click(function() {
-      playerYoutube.setVolume(100);
+      player.toggle();
+      mask.toggle();
     });
 
     // いいね ------------------------------------------------------------------
@@ -528,55 +524,6 @@
           $('#master-data-list li:contains(' + word + ')').show();
         }
       }, 500, $(this).val());
-    });
-
-    // 削除動画リストを表示する ------------------------------------------------
-    $('#get-deleted').click(function() {
-      $('#get-deleted').attr('disabled', true);
-      $('#deleted-animate').addClass('spin');
-
-      $.ajax({
-        url:      apiUrl,
-        type:     'GET',
-        dataType: 'jsonp',
-        data: {
-          api: 'deleted',
-        },
-        success: function(response) {
-          // 前回の内容を消す
-          var ul = $('#deleted ul');
-          ul.children().remove();
-
-          var title, link;
-          for (var i in response.deleted) {
-            if ('undefined' === typeof response.deleted[i][response.column.title]) {
-              continue;
-            }
-            title = $('<span>')
-              .addClass('deleted-item')
-              .html(response.deleted[i][response.column.title]);
-            link  = $('<a>')
-              .addClass('glyphicon glyphicon-new-window')
-              .attr('href', response.deleted[i][response.column.url])
-              .attr('target', '_blank');
-            ul.append($('<li>').append(title, link));
-          }
-
-          // 削除動画リストのタイトルをクリックしたときのイベントを設定する
-          $('.deleted-item').click(function() {
-            // youtube検索する
-            $('#youtube-search-word').val($(this).html());
-            searchOnYoutube();
-
-            // youtube検索まで移動する
-            $('html, body').animate({scrollTop: $('#youtube-search').offset().top - 40}, 'fast');
-          });
-        },
-        complete: function() {
-          $('#get-deleted').attr('disabled', false);
-          $('#deleted-animate').removeClass('spin');
-        },
-      });
     });
   }); // end binding
 })(jQuery);

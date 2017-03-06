@@ -36,130 +36,144 @@
   </div>
 
   <div id="content">
-    <div class="content-title"><span class="glyphicon glyphicon-film"></span>Player</div>
-    <div class="sub-content">
-      <div id="player-frame">
-        <div id="youtube-player">
-          <span class="myred">数秒でプレイヤーが描画されないときは、ページをリロードしてください</span>
+    <div class="row">
+      <div class="col-md-4">
+        <!-- プレイヤー -->
+        <div class="content-block panel panel-default">
+          <div class="content-title"><span class="glyphicon glyphicon-film"></span>Player</div>
+          <!-- プレイヤー本体 -->
+          <div id="player-frame">
+            <div id="youtube-player">
+              <span class="myred">プレイヤーが描画されないときは、ページをリロードしてください</span>
+            </div>
+          </div>
+          <!-- プレイヤーを覆う物 -->
+          <div id="player-mask">
+            <table><tr><td><span class="glyphicon glyphicon-eye-close"></span></td></tr></table>
+          </div>
+
+          <!-- プレイヤーコントロールパネル -->
+          <div id="player-control" class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group">
+              <button id="loop-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Loop">
+                <span class="glyphicon glyphicon-repeat"></span><span id="loop-label" class="myred">Off</span>
+              </button>
+            </div>
+            <div class="btn-group" role="group">
+              <button id="mute-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Mute">
+                <span class="glyphicon glyphicon-volume-off"></span><span id="mute-label" class="myred">Off</span>
+              </button>
+            </div>
+            <div class="btn-group" role="group">
+              <button id="hide-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Hide">
+                <span class="glyphicon glyphicon-eye-close"></span>
+              </button>
+            </div>
+            <div class="btn-group" role="group">
+              <button id="sync-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Sync" disabled="disabled">
+                <span class="glyphicon glyphicon-cloud-download"></span>
+              </button>
+            </div>
+            <div class="btn-group" role="group">
+              <button id="good-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Good" disabled="disabled">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+              </button>
+            </div>
+            <div class="btn-group" role="group">
+              <button id="bad-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Bad" disabled="disabled">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 評価結果 -->
+          <div id="rating-status">
+            <span id="rating-result"></span>
+          </div>
         </div>
       </div>
+      <div class="col-md-8">
+        <!-- スケジュール -->
+        <div id="schedule" class="content-block panel panel-default">
+          <div class="content-title"><span class="glyphicon glyphicon-calendar"></span>Schedule</div>
+          <table class="table table-bordered">
+            <tr id="schedule-header">
+              <th></th>
+              <td>Date</td>
+              <td>Title</td>
+              <td>Rate</td>
+              <td>Type</td>
+            </tr>
+            <tr id="schedule-past">
+              <th class="schedule-at">Prev</th>
+              <td class="schedule-time"></td>
+              <td class="schedule-title"></td>
+              <td class="schedule-rating"></td>
+              <td class="schedule-type"></td>
+            </tr>
+            <tr id="schedule-now">
+              <th class="schedule-at myred">Now</th>
+              <td class="schedule-time"></td>
+              <td class="schedule-title"></td>
+              <td class="schedule-rating"></td>
+              <td class="schedule-type"></td>
+            </tr>
+            <tr id="schedule-future">
+              <th class="schedule-at">Next</th>
+              <td class="schedule-time"></td>
+              <td class="schedule-title"></td>
+              <td class="schedule-rating"></td>
+              <td class="schedule-type"></td>
+            </tr>
+          </table>
+        </div>
 
-      <div id="listener">
-        <span class="glyphicon glyphicon-user"></span>
-        <span id="listener-count">-</span>
-      </div>
-
-      <div id="player-control">
-        <button id="loop-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Loop">
-          <span class="glyphicon glyphicon-repeat"></span><span id="loop-label" class="myred">Off</span>
-        </button>
-        <button id="mute-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Tmp Mute">
-          <span class="glyphicon glyphicon-volume-off"></span><span id="mute-label" class="myred">Off</span>
-        </button>
-        <button id="volume-middle" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Volume Middle">
-          <span class="glyphicon glyphicon-volume-down"></span>
-        </button>
-        <button id="volume-max" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Volume Max">
-          <span class="glyphicon glyphicon-volume-up"></span>
-        </button>
-        <button id="hide-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Hide Video">
-          <span class="glyphicon glyphicon-eye-close"></span>
-        </button>
-        <button id="sync-button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Sync" disabled="disabled">
-          <span class="glyphicon glyphicon-cloud-download"></span>
-        </button>
-        <div id="rating">
-          <button id="good-button" class="btn btn-default btn-sm" disabled="disabled">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-          </button>
-          <button id="bad-button" class="btn btn-default btn-sm" disabled="disabled">
-            <span class="glyphicon glyphicon-thumbs-down"></span>
-          </button>
+        <!-- リクエスト -->
+        <div class="content-block panel panel-default">
+          <div class="content-title"><span class="glyphicon glyphicon-cloud-upload"></span>Request</div>
+          <div id="request">
+            <input id="request-url" class="form-control input-sm" type="text" placeholder="Input Video URL">
+            <button id="request-button" class="btn btn-default btn-sm">Request</button>
+            <button id="add-only-button" class="btn btn-default btn-sm">Add Only</button>
+            <span id="request-animate" class="glyphicon glyphicon-refresh"></span>
+            <div id="request-status">
+              <span class="glyphicon glyphicon-info-sign"></span>
+              <span id="request-result"></span>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="rating-status">
-        <span class="glyphicon glyphicon-info-sign"></span>
-        <span id="rating-result"></span>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <!-- youtube検索 -->
+        <div id="youtube-search" class="content-block panel panel-default">
+          <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
+          <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="Input Word">
+          <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
+          <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
+          <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
+          <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>
+          <div>
+            <span class="glyphicon glyphicon-info-sign"></span>
+            <span id="youtube-search-info"></span>
+            <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
+          </div>
+          <div id="youtube-search-list"></div>
+        </div>
       </div>
-    </div>
-
-    <div class="content-title"><span class="glyphicon glyphicon-calendar"></span>Schedule</div>
-    <div id="schedule" class="sub-content">
-      <table>
-        <tr>
-          <td><span class="glyphicon glyphicon-music"></span></td>
-          <th>Title</th>
-          <th>Good / Bad</th>
-          <th>Type</th>
-        </tr>
-        <tr id="schedule-past">
-          <th>Past</th>
-          <td class="schedule-title">-</td>
-          <td class="schedule-rating">-</td>
-          <td class="schedule-type">-</td>
-        </tr>
-        <tr id="schedule-now">
-          <th class="myred">Now</th>
-          <td class="schedule-title">-</td>
-          <td class="schedule-rating">-</td>
-          <td class="schedule-type">-</td>
-        </tr>
-        <tr id="schedule-future">
-          <th>Future</th>
-          <td class="schedule-title">-</td>
-          <td class="schedule-rating">-</td>
-          <td class="schedule-type">-</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="content-title"><span class="glyphicon glyphicon-cloud-upload"></span>Request</div>
-    <div id="request" class="sub-content">
-      <input id="request-url"      class="form-control input-sm" type="text" placeholder="... video url">
-      <button id="request-button"  class="btn btn-default btn-sm">Request</button>
-      <button id="add-only-button" class="btn btn-default btn-sm">Add Only</button>
-      <span id="request-animate" class="glyphicon glyphicon-refresh"></span>
-      <div id="request-status">
-        <span class="glyphicon glyphicon-info-sign"></span>
-        <span id="request-result"></span>
-      </div>
-    </div>
-
-    <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
-    <div id="youtube-search" class="sub-content">
-      <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="... input word">
-      <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
-      <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
-      <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
-      <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>
-      <div>
-        <span class="glyphicon glyphicon-info-sign"></span>
-        <span id="youtube-search-info"></span>
-        <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
-      </div>
-      <div id="youtube-search-list"></div>
-    </div>
-
-    <div class="content-title"><span class="glyphicon glyphicon-th-list"></span>Master</div>
-    <div id="master" class="sub-content">
-      <button id="get-master" class="btn btn-default btn-sm">Get List</button>
-      <span id="master-animate" class="glyphicon glyphicon-refresh"></span>
-      <div>
-        <input id="master-search-word" class="form-control input-sm" type="text" placeholder="... input to incremental search">
-        <span class="glyphicon glyphicon-info-sign"></span>
-        GetListで得た結果の絞り込み検索です、小文字英字で大文字英字、ひらがなでカタカナを検索できます
-        <ul id="master-data-list"></ul>
-      </div>
-    </div>
-
-    <div class="content-title"><span class="glyphicon glyphicon-trash"></span>Deleted</div>
-    <div id="deleted" class="sub-content">
-      <button id="get-deleted" class="btn btn-default btn-sm">Get List</button>
-      <span id="deleted-animate" class="glyphicon glyphicon-refresh"></span>
-      <div>
-        <span class="glyphicon glyphicon-info-sign"></span>
-        タイトルをクリックすると、検索機能に移動します
-        <ul id="deleted-data-list"></ul>
+      <div class="col-md-6">
+        <!-- マスタ表示 -->
+        <div id="master" class="content-block panel panel-default"> 
+          <div class="content-title"><span class="glyphicon glyphicon-th-list"></span>Master Data List</div>
+          <button id="get-master" class="btn btn-default btn-sm">Get List</button>
+          <span id="master-animate" class="glyphicon glyphicon-refresh"></span>
+          <div>
+            <input id="master-search-word" class="form-control input-sm" type="text" placeholder="Input Word">
+            <ul id="master-data-list"></ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
