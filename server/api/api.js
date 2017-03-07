@@ -73,9 +73,6 @@ var GetController = (function() {
     if (video.hasProblem()) {
       return {message: '指定の動画は音声を再生できません'};
     }
-    if (video.hasProblem()) {
-      return {message: '指定の動画は音声を再生できません'};
-    }
     if (video.tooLong()) {
       return {message: Config.limitSec + '秒を超える動画の指定はご遠慮ください'};
     }

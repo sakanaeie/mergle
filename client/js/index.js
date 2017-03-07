@@ -250,7 +250,7 @@
       youtubeSearchWord  = $('#youtube-search-word').val();
       youtubeSearchIndex = 1;
     }
-    $('#youtube-search-info').html('"' + youtubeSearchWord + '"での検索結果, ' + youtubeSearchIndex + 'ページ目');
+    $('#youtube-search-page').html(youtubeSearchIndex);
 
     $.ajax({
       url:      apiUrl,
@@ -274,7 +274,6 @@
         }
 
         // 結果リストを追加する
-        var itemCount = response.items.length;
         $.each(response.items, function(i, item) {
           var media = $('<div>').addClass('youtube-search-item media');
           var left  = $('<div>').addClass('media-left media-top');
@@ -282,18 +281,15 @@
           var head  = $('<div>').addClass('media-heading').html(item.snippet.title);
 
           var img = $('<img>')
-            .addClass('youtube-search-img img-rounded')
+            .addClass('youtube-search-img')
             .attr('title', item.id.videoId)
             .attr('src', item.snippet.thumbnails.default.url);
 
           left.append(img);
-          body.append(head, $('<span>').html(item.snippet.description));
+          body.append(head, $('<span>').addClass('media-sentence').html(item.snippet.channelTitle));
           media.append(left, body);
 
           $('#youtube-search-list').append(media);
-          if (itemCount !== i + 1) {
-            $('#youtube-search-list').append($('<hr>'));
-          }
         });
 
         // 結果リストの画像をクリックしたときのイベントを設定する

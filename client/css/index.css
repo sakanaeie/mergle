@@ -38,7 +38,7 @@ button.btn {
 }
 
 input.form-control::-webkit-input-placeholder {
-  color: #666;
+  color: #aaa;
 }
 
 .myred {
@@ -239,15 +239,12 @@ button span.glyphicon {
 }
 
 #youtube-search-list {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 #youtube-search-list .media {
+  padding-bottom: 8px;
   margin: 0;
-}
-
-#youtube-search-list hr {
- margin: 10px 8px 10px;
 }
 
 #youtube-search-list .media-body {
@@ -255,14 +252,26 @@ button span.glyphicon {
 }
 
 .youtube-search-img {
-  border:       1px solid #444;
-  margin-right: 6px;
+  margin-right: 4px;
   width:        120px;
 }
 
 .media-heading {
-  font-weight: bold;
-  font-size:   18px;
+  font-size: 16px;
+}
+
+.media-sentence {
+  font-size: 12px;
+  color:     #888;
+}
+
+#youtube-search-pager {
+  margin-top: 2px;
+  text-align: center;
+}
+
+#youtube-search-page {
+  cursor: inherit;
 }
 
 /** ----------------------------------------------------------------------------

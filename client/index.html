@@ -99,9 +99,11 @@
           <table class="table table-bordered">
             <tr id="schedule-header">
               <th></th>
-              <td>Date</td>
-              <td>Title</td>
-              <td>Rate</td>
+              <td>Time</td>
+              <td>Video</td>
+              <td>
+                <span class="glyphicon glyphicon-thumbs-up"></span> / <span class="glyphicon glyphicon-thumbs-down"></span>
+              </td>
               <td>Type</td>
             </tr>
             <tr id="schedule-past">
@@ -152,20 +154,23 @@
           <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
           <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="Input Word">
           <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
-          <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
-          <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
           <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>
-          <div>
-            <span class="glyphicon glyphicon-info-sign"></span>
-            <span id="youtube-search-info"></span>
-            <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
-          </div>
+          <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
           <div id="youtube-search-list"></div>
+
+          <!-- ページャ -->
+          <div id="youtube-search-pager">
+            <div class="btn-group btn-group-sm" role="group">
+              <button id="youtube-search-prev" class="btn btn-default" disabled="disabled">&lt;</button>
+              <button id="youtube-search-page" class="btn btn-default" disabled="disabled">0</button>
+              <button id="youtube-search-next" class="btn btn-default" disabled="disabled">&gt;</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-md-6">
         <!-- マスタ表示 -->
-        <div id="master" class="content-block panel panel-default"> 
+        <div id="master" class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-th-list"></span>Master Data List</div>
           <button id="get-master" class="btn btn-default btn-sm">Get List</button>
           <span id="master-animate" class="glyphicon glyphicon-refresh"></span>
