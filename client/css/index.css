@@ -80,7 +80,7 @@ input.form-control::-webkit-input-placeholder {
 
 button span.glyphicon {
   color:          #444;
-  vertical-align: -2px;
+  vertical-align: -1px;
 }
 
 .glyphicon-info-sign, .glyphicon-user {
@@ -193,6 +193,49 @@ button span.glyphicon {
  * player-control
  */
 #player-control {
+  border-bottom:  1px solid #ddd;
+  margin-bottom:  6px;
+  padding-bottom: 6px;
+}
+
+#player-control table {
+  width: 100%;
+}
+
+#player-control td {
+  vertical-align: middle;
+}
+
+#player-play-pause-body {
+  width: 10%;
+}
+
+#player-volume-body {
+  padding: 0 10px 0 14px;
+  width: 90%;
+}
+
+#player-play-pause, #player-volume-slider {
+  width: 100%;
+}
+
+#player-play-pause {
+  background-color: #333;
+}
+
+#player-play-pause span {
+  color: #fff;
+}
+
+#player-play-icon {
+  display: none;
+}
+
+#player-volume-box {
+  display: none;
+}
+
+#player-control-extention {
   width:      100%;
   margin-top: 2px;
 }

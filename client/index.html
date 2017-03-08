@@ -17,6 +17,10 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+<!-- slider -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.min.js"></script>
+
 <!-- libs -->
 <script src="./js/lib/desktop-notify.js"></script>
 
@@ -53,7 +57,24 @@
           </div>
 
           <!-- プレイヤーコントロールパネル -->
-          <div id="player-control" class="btn-group btn-group-justified" role="group">
+          <div id="player-control">
+            <table>
+              <tr>
+                <td class="player-play-pause-body">
+                  <button id="player-play-pause" class="btn btn-sm">
+                    <span id="player-play-icon" class="glyphicon glyphicon-play"></span>
+                    <span id="player-pause-icon" class="glyphicon glyphicon-pause"></span>
+                  </button>
+                </td>
+                <td id="player-volume-body">
+                  <input id="player-volume-box" type="text" data-slider-id="player-volume-slider">
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- 拡張コントロールパネル -->
+          <div id="player-control-extention" class="btn-group btn-group-justified" role="group">
             <div class="btn-group" role="group">
               <button id="loop-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Loop">
                 <span class="glyphicon glyphicon-repeat"></span><span id="loop-label" class="myred">Off</span>

@@ -17,7 +17,7 @@
         // プレイヤーを作成する
         playerYoutube = new YT.Player('youtube-player', {
           videoId: '51CH3dPaWXc',
-          events: {
+          events:  {
             'onStateChange': onPlayerStateChange,
           },
         });
@@ -33,7 +33,7 @@
   function getGetParams() {
     var data, params = {}, blocks = location.search.substring(1).split('&');
     for (var i in blocks) {
-      data = blocks[i].split('=');
+      data            = blocks[i].split('=');
       params[data[0]] = data[1];
     }
     return params;
@@ -42,8 +42,8 @@
   /** --------------------------------------------------------------------------
    * 0埋めする
    *
-   * @param mixed val    数字
-   * @param int    width 幅
+   * @param mixed val   数字
+   * @param int   width 幅
    */
   function zerofill(val, width) {
     val = val.toString();
@@ -73,8 +73,17 @@
    */
   function onPlayerStateChange(event) {
     if (!isAgree && event.data == YT.PlayerState.PLAYING) {
+      // 初回再生ボタンを明示的に押したとき
       isAgree = true;
       syncPlayer();
+    }
+
+    if (event.data == YT.PlayerState.PLAYING) {
+      changePlayPauseButtonTo('pause');
+    }
+
+    if (event.data == YT.PlayerState.PAUSED) {
+      changePlayPauseButtonTo('play')
     }
 
     if (event.data == YT.PlayerState.ENDED) {
@@ -90,6 +99,9 @@
         }, 1000); // 動画が早く終わることへの対応
       }
     }
+
+    // ボリューム変更イベントがないため、状態変化時にスライダーを同期する
+    $('#player-volume-box').slider('setValue', playerYoutube.getVolume());
   }
 
   /** --------------------------------------------------------------------------
@@ -166,6 +178,25 @@
         $('#bad-button').attr('disabled', false);
       },
     });
+  }
+
+  /** --------------------------------------------------------------------------
+   * 再生停止ボタンの状態を変化させる
+   *
+   * @param string state 状態遷移先
+   */
+  function changePlayPauseButtonTo(state) {
+    $('#player-play-pause').val(state);
+
+    var playIcon  = $('#player-play-icon');
+    var pauseIcon = $('#player-pause-icon');
+    if ('play' === state) {
+      playIcon.show();
+      pauseIcon.hide();
+    } else {
+      playIcon.hide();
+      pauseIcon.show();
+    }
   }
 
   /** --------------------------------------------------------------------------
@@ -360,6 +391,32 @@
 
     // サブタイトルをつける ----------------------------------------------------
     $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
+
+
+    // 再生/停止する -----------------------------------------------------------
+    $('#player-play-pause').click(function() {
+      if ('play' === $(this).val()) {
+        // 再生ボタンであるとき
+        playerYoutube.playVideo();
+      } else {
+        // 停止ボタンであるとき
+        playerYoutube.pauseVideo();
+      }
+    });
+
+    // ボリュームスライダーを初期化する ----------------------------------------
+    $('#player-volume-box').slider({
+      min:              0,
+      max:              100,
+      step:             10,
+      value:            50,
+      tooltip_position: 'bottom',
+      formatter:        function(value) {
+        return value;
+      },
+    }).change(function() {
+      playerYoutube.setVolume($(this).val());
+    });
 
     // ツールチップを初期化する ------------------------------------------------
     $('[data-toggle="tooltip"]').tooltip({
