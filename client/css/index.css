@@ -194,7 +194,7 @@ button span.glyphicon {
  */
 #player-control {
   border-bottom:  1px solid #ddd;
-  margin-bottom:  6px;
+  margin:         6px 0 6px;
   padding-bottom: 6px;
 }
 
