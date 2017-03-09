@@ -211,8 +211,13 @@ button span.glyphicon {
 }
 
 #player-volume-body {
-  padding: 0 10px 0 14px;
-  width: 90%;
+  padding: 0 4% 0 4%;
+  width:   80%;
+}
+
+#player-viewer {
+  text-align: center;
+  width:      10%;
 }
 
 #player-play-pause, #player-volume-slider {
@@ -242,11 +247,6 @@ button span.glyphicon {
 #player-control-extention {
   width:      100%;
   margin-top: 2px;
-}
-
-#loop-label, #mute-label {
-  font-size:    smaller;
-  padding-left: 6px;
 }
 
 /** ----------------------------------------------------------------------------

@@ -76,6 +76,7 @@
       // 初回再生ボタンを明示的に押したとき
       isAgree = true;
       syncPlayer();
+      getConnectionCount(true);
     }
 
     if (event.data == YT.PlayerState.PLAYING) {
@@ -96,6 +97,7 @@
       } else {
         setTimeout(function() {
           syncPlayer();
+          getConnectionCount(true);
         }, 1000); // 動画が早く終わることへの対応
       }
     }
@@ -200,6 +202,26 @@
   }
 
   /** --------------------------------------------------------------------------
+   * 同時接続数を取得する
+   *
+   * @param bool withSave 記録も同時に行なうかどうか
+   */
+  function getConnectionCount(withSave) {
+    $.ajax({
+      url:      apiUrl,
+      type:     'GET',
+      dataType: 'jsonp',
+      data: {
+        api:      'connectionCount',
+        withSave: withSave,
+      },
+      success: function(response) {
+        $('#player-viewer-count').html(response.count || '0');
+      },
+    });
+  }
+
+  /** --------------------------------------------------------------------------
    * 動画のリクエストを送信する
    *
    * @param bool isAddOnly マスタ追加のみかどうか
@@ -249,7 +271,7 @@
    * ミュートにする
    */
   function toMute() {
-    $('#mute-label').html('On').removeClass().addClass('mygreen');
+    $('#mute-button').addClass('active');
     playerYoutube.mute();
     isMute = true;
   }
@@ -258,7 +280,7 @@
    * ミュートを解除する
    */
   function toUnMute() {
-    $('#mute-label').html('Off').removeClass().addClass('myred');
+    $('#mute-button').removeClass('active');
     playerYoutube.unMute();
     isMute = false;
   }
@@ -426,16 +448,17 @@
     // サーバと同期する --------------------------------------------------------
     $('#sync-button').click(function() {
       syncPlayer();
+      getConnectionCount(false);
     });
 
     // ループする --------------------------------------------------------------
     $('#loop-button').click(function() {
-      if (isLoop) {
-        $('#loop-label').html('Off').removeClass().addClass('myred');
-      } else {
-        $('#loop-label').html('On').removeClass().addClass('mygreen');
-      }
       isLoop = !isLoop;
+      if (isLoop) {
+        $('#loop-button').addClass('active');
+      } else {
+        $('#loop-button').removeClass('active');
+      }
     });
 
     // ミュートを切り替える ----------------------------------------------------
