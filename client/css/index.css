@@ -282,7 +282,7 @@ button span.glyphicon {
  */
 #youtube-search-word {
   display: inline;
-  width:   300px;
+  width:   60%;
 }
 
 #youtube-search-list {
@@ -326,7 +326,7 @@ button span.glyphicon {
  */
 #master-search-word {
   margin-top: 4px;
-  width:      300px;
+  width:      60%;
 }
 
 #master-data-list {
