@@ -231,6 +231,10 @@ button span.glyphicon {
   display: none;
 }
 
+#player-volume-slider .slider-selection {
+  background: #89cdef;
+}
+
 #player-volume-box {
   display: none;
 }
