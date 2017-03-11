@@ -62,22 +62,37 @@ var GetController = (function() {
     // 検証する
     var video = Youtube.fromUrl(url);
     if (video.hasError) {
-      return {message: 'YouTubeが検証リクエストを受理しませんでした。しばらく時間を置いてからお試しください。'};
+      return {
+        message: 'YouTubeが検証リクエストを受理しませんでした。しばらく時間を置いてからお試しください。',
+        result:  'error',
+      };
     }
     if (null === video.id) {
-      return {message: 'URLが不正です'};
+      return {
+        message: 'URLが不正です。',
+        result:  'error',
+      };
     }
     if (!video.canEmbed) {
-      return {message: '指定の動画は埋め込みできません'};
+      return {
+        message: '指定の動画は埋め込みできません。',
+        result:  'error',
+      };
     }
     if (video.hasProblem()) {
-      return {message: '指定の動画は音声を再生できません'};
+      return {
+        message: '指定の動画は音声を再生できません。',
+        result:  'error',
+      };
     }
     if (video.tooLong()) {
-      return {message: Config.limitSec + '秒を超える動画の指定はご遠慮ください'};
+      return {
+        message: Config.limitSec + '秒を超える動画の指定はご遠慮ください。',
+        result:  'error',
+      };
     }
 
-    var title = '"' + video.title + '"';
+    var title = '"' + video.title + '" ';
 
     // マスタに追加する
     var sheet = new Sheet(), isDuplicateInMaster = sheet.isDuplicate(video.id);
@@ -87,22 +102,37 @@ var GetController = (function() {
 
     if (isAddOnly) {
       if (isDuplicateInMaster) {
-        return {message: title + 'は、既にマスタに存在します'};
+        return {
+          message: title + 'は、既にマスタに存在します。',
+          result:  'warning',
+        };
       } else {
-        return {message: title + 'をマスタに追加しました'};
+        return {
+          message: title + 'をマスタに追加しました。',
+          result:  'success',
+        };
       }
     } else {
       // スケジュールの末尾に追加する
       var schedule = new Schedule();
       var rowHash  = Sheet.makeRowHashFromVideo(video);
       if (schedule.isDuplicate(rowHash)) {
-        return {message: title + 'は、直近のスケジュールに含まれるため、リクエストを棄却しました'};
+        return {
+          message: title + 'は、直近のスケジュールに含まれるため、リクエストを棄却しました。',
+          result:  'warning',
+        };
       } else {
         schedule.push(video); // 追加する
         if (isDuplicateInMaster) {
-          return {message: title + 'のリクエストを受理しました'};
+          return {
+            message: title + 'のリクエストを受理しました。',
+            result:  'success',
+          };
         } else {
-          return {message: title + 'のリクエストを受理し、マスタに追加しました'};
+          return {
+            message: title + 'のリクエストを受理し、マスタに追加しました。',
+            result:  'success',
+          };
         }
       }
     }

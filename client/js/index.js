@@ -69,11 +69,25 @@
   }
 
   /** --------------------------------------------------------------------------
+   * フラッシュメッセージを表示する
+   *
+   * @param string body        本文
+   * @param string style       スタイル
+   * @param bool   isAutoClose 自動で閉じるかどうか
+   */
+  function showFlashMessage(body, style, isAutoClose) {
+    if (isAutoClose) {
+      style += '-auto';
+    }
+    $.notify(body, {style: style, autoHide: isAutoClose});
+  }
+
+  /** --------------------------------------------------------------------------
    * デスクトップ通知を表示する
    *
    * @param string body 本文
    */
-  function showNotification(body) {
+  function showDesktopNotification(body) {
     notify.createNotification('syngle', {
       body: body,
       icon: './image/cloud_music_ico.png',
@@ -178,7 +192,7 @@
                 // 現在の動画であるとき、ページタイトルを変更し、デスクトップ通知を表示する
                 nowInfo        = videoInfo.rowHash;
                 document.title = nowInfo.title + ' - syngle';
-                showNotification(nowInfo.title);
+                showDesktopNotification(nowInfo.title);
               }
             } else {
               tr.children('.schedule-time').html('');
@@ -256,7 +270,6 @@
 
     // くるくるを出す
     $('#request-animate').addClass('spin');
-    $('#request-result').html('processing...');
 
     $.ajax({
       url:      apiUrl,
@@ -269,7 +282,7 @@
       },
       success: function(response) {
         // レスポンスのメッセージを表示させる
-        $('#request-result').html(response.message + ' (' + url + ')');
+        showFlashMessage(response.message + ' (' + url + ')', response.result, false);
       },
       complete: function() {
         // ボタンを押せるようにする
@@ -345,19 +358,27 @@
         $.each(response.items, function(i, item) {
           var media = $('#youtube-search-list-template > div').clone();
 
-          media.find('.youtube-search-title').html(item.snippet.title).attr('data-video-id', item.id.videoId);
-          media.find('.youtube-search-channel').html(item.snippet.channelTitle);
+          media.find('.youtube-search-channel')
+            .html(item.snippet.channelTitle);
+          media.find('.youtube-search-title')
+            .html(item.snippet.title)
+            .attr('data-video-id', item.id.videoId)
+            .attr('data-video-title', item.snippet.title);
           media.find('img')
             .addClass('youtube-search-img')
+            .attr('src', item.snippet.thumbnails.default.url)
             .attr('data-video-id', item.id.videoId)
-            .attr('src', item.snippet.thumbnails.default.url);
+            .attr('data-video-title', item.snippet.title);
 
           $('#youtube-search-list').append(media);
         });
 
         // 結果リストの画像かタイトルをクリックしたときのイベントを設定する
         $('.youtube-search-title, .youtube-search-img').click(function() {
-          var id = $(this).attr('data-video-id');
+          var id    = $(this).attr('data-video-id');
+          var title = $(this).attr('data-video-title');
+
+          showFlashMessage('"' + title + '" の割り込み再生を開始し、リクエスト欄にURLを入力しました。', 'info', true);
 
           // リクエストのテキストボックスに入力する
           $('#request-url').val(youtubeVideoUrl + id);
@@ -368,7 +389,12 @@
 
         // チャンネル名をクリックしたときのイベントを設定する
         $('.youtube-search-channel').click(function() {
-          $('#youtube-search-word').val($(this).html());
+          var channel = $(this).html();
+
+          showFlashMessage('"' + channel + '" で検索しました。', 'info', true);
+
+          // チャンネル名で検索する
+          $('#youtube-search-word').val(channel);
           searchOnYoutube();
         });
       },
@@ -406,12 +432,10 @@
         type:     type,
       },
       success: function(response) {
-        var title = '"' + nowInfo.title + '"';
         if (true === response.result) {
-          // TODO navbar
-//          $('#rating-result').html(title + 'に' + type + '評価しました');
+          showFlashMessage('"' + nowInfo.title + '" に ' + type + ' 評価しました。', 'success', true);
         } else {
-//          $('#rating-result').html(title + 'の評価に失敗しました');
+          showFlashMessage('"' + nowInfo.title + '" の評価に失敗しました。', 'error', true);
         }
       },
     });

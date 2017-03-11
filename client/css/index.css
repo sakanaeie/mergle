@@ -77,6 +77,15 @@ input.form-control::-webkit-input-placeholder {
 /** ----------------------------------------------------------------------------
  * glyphicon
  */
+.notify-icon {
+  padding-right: 6px;
+}
+
+.notify-close-icon {
+  color: #999;
+  padding-left: 20px;
+}
+
 .content-title span.glyphicon {
   font-size: 18px;
   padding-right: 6px;
