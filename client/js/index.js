@@ -1,9 +1,24 @@
 (function($) {
+  // プレイヤー
   var playerYoutube;
+
+  // getパラメータ
   var getParams = getGetParams();
-  var apiUrl    = 'https://script.google.com/macros/s/' + getParams.api + '/exec';
-  var isAgree   = isLoop = isMute = false;
-  var nowInfo   = null;
+
+  // 各種URL
+  var apiUrl          = 'https://script.google.com/macros/s/' + getParams.api + '/exec';
+  var youtubeVideoUrl = 'https://www.youtube.com/watch?v=';
+
+  // 再生中動画のマスタ情報
+  var nowInfo = null;
+
+  // 明示的に再生ボタンを押したかどうか
+  var isAgree = false;
+
+  // ループ、ミュートしているかどうか
+  var isLoop = isMute = false;
+
+  // youtube検索のパラメータ
   var youtubeSearchWord  = '';
   var youtubeSearchIndex = 1;
 
@@ -328,32 +343,33 @@
 
         // 結果リストを追加する
         $.each(response.items, function(i, item) {
-          var media = $('<div>').addClass('youtube-search-item media');
-          var left  = $('<div>').addClass('media-left media-top');
-          var body  = $('<div>').addClass('media-body');
-          var head  = $('<div>').addClass('media-heading').html(item.snippet.title);
+          var media = $('#youtube-search-list-template > div').clone();
 
-          var img = $('<img>')
+          media.find('.youtube-search-title').html(item.snippet.title).attr('data-video-id', item.id.videoId);
+          media.find('.youtube-search-channel').html(item.snippet.channelTitle);
+          media.find('img')
             .addClass('youtube-search-img')
-            .attr('title', item.id.videoId)
+            .attr('data-video-id', item.id.videoId)
             .attr('src', item.snippet.thumbnails.default.url);
-
-          left.append(img);
-          body.append(head, $('<span>').addClass('media-sentence').html(item.snippet.channelTitle));
-          media.append(left, body);
 
           $('#youtube-search-list').append(media);
         });
 
-        // 結果リストの画像をクリックしたときのイベントを設定する
-        $('.youtube-search-img').click(function() {
-          var id = $(this).attr('title');
+        // 結果リストの画像かタイトルをクリックしたときのイベントを設定する
+        $('.youtube-search-title, .youtube-search-img').click(function() {
+          var id = $(this).attr('data-video-id');
 
           // リクエストのテキストボックスに入力する
-          $('#request-url').val('http://www.youtube.com/watch?v=' + id);
+          $('#request-url').val(youtubeVideoUrl + id);
 
           // 現在のプレイヤーに割り込み再生する
           playerYoutube.loadVideoById(id);
+        });
+
+        // チャンネル名をクリックしたときのイベントを設定する
+        $('.youtube-search-channel').click(function() {
+          $('#youtube-search-word').val($(this).html());
+          searchOnYoutube();
         });
       },
       complete: function() {
@@ -413,7 +429,6 @@
 
     // サブタイトルをつける ----------------------------------------------------
     $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
-
 
     // 再生/停止する -----------------------------------------------------------
     $('#player-play-pause').click(function() {
@@ -527,6 +542,7 @@
 
     // youtube検索結果を消す ---------------------------------------------------
     $('#youtube-search-clear').click(function() {
+      $('#youtube-search-word').val('');
       $('#youtube-search-list').children().remove();
     });
 
