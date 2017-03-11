@@ -24,6 +24,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.min.js"></script>
 
+<!-- jQuery.DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+
 <!-- libs -->
 <script src="./js/lib/desktop-notify.js"></script>
 
@@ -206,12 +211,16 @@
         <!-- マスタ表示 -->
         <div id="master" class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-th-list"></span>Master Data List</div>
-          <button id="get-master" class="btn btn-default btn-sm">Get List</button>
-          <span id="master-animate" class="glyphicon glyphicon-refresh"></span>
-          <div>
-            <input id="master-search-word" class="form-control input-sm" type="text" placeholder="Input Word">
-            <ul id="master-data-list"></ul>
-          </div>
+          <table id="master-data-list" class="table table-striped">
+            <thead>
+              <tr>
+                <th class="master-data-list-th">CreatedAt</th>
+                <th class="master-data-list-th">Video</th>
+                <th class="master-data-list-th"><span class="glyphicon glyphicon-thumbs-up"></span></th>
+                <th class="master-data-list-th"><span class="glyphicon glyphicon-thumbs-down"></span></th>
+              </tr>
+            </thead>
+          </table>
         </div>
       </div>
     </div>

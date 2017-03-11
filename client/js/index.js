@@ -147,7 +147,7 @@
       url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
-      success: function(response) {
+      success:  function(response) {
         // 取得したidで、動画を読み込み再生する
         setTimeout(function() {
           playerYoutube.loadVideoById(response.now.rowHash.id, response.offset || 0);
@@ -240,11 +240,11 @@
       url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
-      data: {
+      data:     {
         api:      'connectionCount',
         withSave: withSave,
       },
-      success: function(response) {
+      success:  function(response) {
         $('#player-viewer-count').html(response.count || '0');
       },
     });
@@ -275,12 +275,12 @@
       url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
-      data: {
+      data:     {
         api:       'requestUrl',
         url:       url,
         isAddOnly: isAddOnly,
       },
-      success: function(response) {
+      success:  function(response) {
         // レスポンスのメッセージを表示させる
         showFlashMessage(response.message + ' (' + url + ')', response.result, false);
       },
@@ -337,12 +337,12 @@
       url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
-      data: {
+      data:     {
         api:   'searchYoutube',
         word:  youtubeSearchWord,
         token: token,
       },
-      success: function(response) {
+      success:  function(response) {
         // 結果リストを消す
         $('#youtube-search-list').children().remove();
 
@@ -405,17 +405,6 @@
   }
 
   /** --------------------------------------------------------------------------
-   * 大文字英字を小文字英字に変換、カタカナをひらがなに変換、スペースを除去する
-   *
-   * @param string str 文字列
-   */
-  function toEasyString(str) {
-    return str.toLowerCase().replace(/\s+/g, '').replace(/[ァ-ン]/g, function(c) {
-      return String.fromCharCode(c.charCodeAt(0) - 0x60);
-    });
-  }
-
-  /** --------------------------------------------------------------------------
    * 評価する
    *
    * @param string type 評価種別
@@ -425,13 +414,13 @@
       url:      apiUrl,
       type:     'GET',
       dataType: 'jsonp',
-      data: {
+      data:     {
         api:      'rating',
         id:       nowInfo.id,
         provider: nowInfo.provider,
         type:     type,
       },
-      success: function(response) {
+      success:  function(response) {
         if (true === response.result) {
           showFlashMessage('"' + nowInfo.title + '" に ' + type + ' 評価しました。', 'success', true);
         } else {
@@ -450,6 +439,63 @@
         notify.requestPermission();
       }
     }
+
+    // マスタを取得する --------------------------------------------------------
+    $('#master-data-list').dataTable({
+      ajax: {
+        url:      apiUrl,
+        type:     'GET',
+        dataType: 'jsonp',
+        data:     {
+          api: 'master',
+        },
+        dataSrc:  function(response) {
+          var row, createdDate, createdAt, jsons = [];
+          for (var i in response.master) {
+            row = response.master[i];
+
+            if ('' !== row[response.column.createdAt]) {
+              createdDate = new Date(row[response.column.createdAt] * 1000);
+              createdAt   = createdDate.getFullYear()
+                + '-' + zerofill(createdDate.getMonth() + 1, 2)
+                + '-' + zerofill(createdDate.getDate(), 2);
+            } else {
+              createdAt = '';
+            }
+
+            jsons.push({
+              createdAt: createdAt,
+              title:     row[response.column.title],
+              good:      row[response.column.good],
+              bad:       row[response.column.bad],
+            });
+          }
+          return jsons;
+        },
+      },
+      columns: [
+        {data: 'createdAt', searchable: false},
+        {data: 'title'},
+        {data: 'good', searchable: false},
+        {data: 'bad', searchable: false},
+      ],
+      language: {
+        lengthMenu:        'Show Number _MENU_',
+        info:              'Showing _START_ - _END_ / _TOTAL_',
+        infoEmpty:         'Showing 0 - 0',
+        infoFiltered:      ' (total _MAX_)',
+        search:            '',
+        searchPlaceholder: 'Input Video Title',
+        paginate:          {
+          previous: '<',
+          next:     '>',
+        },
+      },
+      lengthChange: false,
+      order: [[0, 'desc']],
+      pageLength: 25,
+      scrollY: '500px',
+    });
 
     // サブタイトルをつける ----------------------------------------------------
     $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
@@ -568,78 +614,6 @@
     $('#youtube-search-clear').click(function() {
       $('#youtube-search-word').val('');
       $('#youtube-search-list').children().remove();
-    });
-
-    // マスタを表示する --------------------------------------------------------
-    $('#get-master').click(function() {
-      $('#get-master').attr('disabled', true);
-      $('#master-animate').addClass('spin');
-
-      $.ajax({
-        url:      apiUrl,
-        type:     'GET',
-        dataType: 'jsonp',
-        data: {
-          api: 'master',
-        },
-        success: function(response) {
-          // 前回の内容を消す
-          var ul = $('#master ul');
-          ul.children().remove();
-
-          // 索引用文字列を生成する
-          for (var i in response.master) {
-            response.master[i].helpString = toEasyString(response.master[i][response.column.title]);
-          }
-
-          // 索引用文字列でソートする
-          response.master.sort(function(a, b) {
-            return a.helpString.localeCompare(b.helpString);
-          });
-
-          // 記号で始まる要素は後方に移動させる
-          var notSignIndex = 0, hasNotSign = false;
-          for (var i in response.master) {
-            notSignIndex = i;
-            if (-1 !== response.master[i].helpString[0].search(/^[0-9A-Za-zぁ-んァ-ン]/)) {
-              var notSignArr  = response.master.splice(notSignIndex);
-              response.master = notSignArr.concat(response.master);
-              break;
-            }
-          }
-
-          var title, link, help;
-          for (var i in response.master) {
-            title = $('<span>').html(response.master[i][response.column.title]);
-            link  = $('<a>')
-              .addClass('glyphicon glyphicon-new-window')
-              .attr('href', response.master[i][response.column.url])
-              .attr('target', '_blank');
-            help = $('<span>')
-              .addClass('master-search-help')
-              .html(response.master[i].helpString);
-            ul.append($('<li>').append(title, link, help));
-          }
-        },
-        complete: function() {
-          $('#get-master').attr('disabled', false);
-          $('#master-animate').removeClass('spin');
-        },
-      });
-    });
-
-    // マスタのインクリメンタルサーチ ------------------------------------------
-    var masterSearchTimeoutId = null;
-    $('#master-search-word').keyup(function() {
-      clearTimeout(masterSearchTimeoutId);
-      masterSearchTimeoutId = setTimeout(function(word) {
-        if ('' === word) {
-          $('#master-data-list li').show();
-        } else {
-          $('#master-data-list li').hide();
-          $('#master-data-list li:contains(' + word + ')').show();
-        }
-      }, 500, $(this).val());
     });
   }); // end binding
 })(jQuery);

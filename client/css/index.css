@@ -347,23 +347,16 @@ button span.glyphicon {
 /** ----------------------------------------------------------------------------
  * master
  */
-#master-search-word {
-  margin-top: 4px;
-  width: 60%;
+#master {
+  padding-bottom: 4px;
 }
 
-#master-data-list {
-  margin: 18px 0 0 20px;
+#master td {
+  font-size: 12px;
+  padding: 6px;
 }
 
-#master-data-list li {
-  margin-bottom: 2px;
-}
-
-#master-data-list a {
-  margin-left: 6px;
-}
-
-.master-search-help {
-  display: none;
+.master-data-list-th {
+  font-weight: normal;
+  text-align: center;
 }
