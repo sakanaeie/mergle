@@ -51,21 +51,19 @@
   <div id="content">
     <div class="row">
       <div class="col-md-4">
-        <!-- プレイヤー -->
         <div class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-film"></span>Player</div>
-          <!-- プレイヤー本体 -->
+
           <div id="player-frame">
             <div id="youtube-player">
               <span class="myred">プレイヤーが描画されないときは、ページをリロードしてください</span>
             </div>
           </div>
-          <!-- プレイヤーを覆う物 -->
+
           <div id="player-mask">
             <table><tr><td><span class="glyphicon glyphicon-eye-close"></span></td></tr></table>
           </div>
 
-          <!-- プレイヤーコントロールパネル -->
           <div id="player-control">
             <table>
               <tr>
@@ -78,12 +76,13 @@
                 <td id="player-volume-body">
                   <input id="player-volume-box" type="text" data-slider-id="player-volume-slider">
                 </td>
-                <td id="player-viewer" title="Online Viewer"><span class="glyphicon glyphicon-user"></span> <span id="player-viewer-count">0</span></td>
+                <td id="player-viewer" title="Online Viewer">
+                  <span class="glyphicon glyphicon-user"></span> <span id="player-viewer-count">0</span>
+                </td>
               </tr>
             </table>
           </div>
 
-          <!-- 拡張コントロールパネル -->
           <div id="player-control-extention" class="btn-group btn-group-justified" role="group">
             <div class="btn-group" role="group">
               <button id="loop-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Loop">
@@ -117,16 +116,16 @@
             </div>
           </div>
 
-          <!-- 評価結果 -->
           <div id="rating-status">
             <span id="rating-result"></span>
           </div>
         </div>
       </div>
+
       <div class="col-md-8">
-        <!-- スケジュール -->
         <div id="schedule" class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-calendar"></span>Schedule</div>
+
           <table class="table table-bordered">
             <tr id="schedule-header">
               <th></th>
@@ -161,9 +160,9 @@
           </table>
         </div>
 
-        <!-- リクエスト -->
         <div class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-cloud-upload"></span>Request</div>
+
           <div id="request">
             <input id="request-url" class="form-control input-sm" type="text" placeholder="Input Video URL">
             <button id="request-button" class="btn btn-default btn-sm">Request</button>
@@ -175,16 +174,18 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6">
-        <!-- youtube検索 -->
+      <div class="col-md-5">
         <div id="youtube-search" class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-search"></span>Search on youtube</div>
+
           <input id="youtube-search-word" class="form-control input-sm" type="text" placeholder="Input Word">
           <button id="youtube-search-exec" class="btn btn-default btn-sm">Search</button>
           <button id="youtube-search-clear" class="btn btn-default btn-sm">Clear</button>
           <span id="youtube-search-animate" class="glyphicon glyphicon-refresh"></span>
+
           <div id="youtube-search-list">
           </div>
+
           <div id="youtube-search-list-template">
             <div class="media">
               <div class="media-left media-top">
@@ -197,7 +198,6 @@
             </div>
           </div>
 
-          <!-- ページャ -->
           <div id="youtube-search-pager">
             <div class="btn-group btn-group-sm" role="group">
               <button id="youtube-search-prev" class="btn btn-default" disabled="disabled">&lt;</button>
@@ -207,8 +207,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <!-- マスタ表示 -->
+
+      <div class="col-md-7">
         <div id="master" class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-th-list"></span>Master Data List</div>
           <table id="master-data-list" class="table table-striped">

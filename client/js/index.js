@@ -450,6 +450,15 @@
           api: 'master',
         },
         dataSrc:  function(response) {
+          // 登録日で降順ソートする
+          // - 年月日までしか表示してないため、内部的に時分秒を含めソートしておくことで、順番の一貫性を保つ
+          response.master.sort(function(a, b) {
+            var i      = response.column.createdAt;
+            var fixedA = ('' === a[i]) ? 0 : a[i];
+            var fixedB = ('' === b[i]) ? 0 : b[i];
+            return fixedB - fixedA;
+          })
+
           var row, createdDate, createdAt, jsons = [];
           for (var i in response.master) {
             row = response.master[i];
@@ -493,7 +502,7 @@
       },
       lengthChange: false,
       order: [[0, 'desc']],
-      pageLength: 25,
+      pageLength: 50,
       scrollY: '500px',
     });
 

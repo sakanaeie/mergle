@@ -326,13 +326,13 @@ button span.glyphicon {
 .youtube-search-title {
   color: #333;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .youtube-search-channel {
   color: #888;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 #youtube-search-pager {
