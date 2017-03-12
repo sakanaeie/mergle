@@ -378,12 +378,12 @@
           var id    = $(this).attr('data-video-id');
           var title = $(this).attr('data-video-title');
 
-          showFlashMessage('"' + title + '" の割り込み再生を開始し、リクエスト欄にURLを入力しました。', 'info', true);
+          showFlashMessage('"' + title + '" のローカル再生を開始し、リクエスト欄にURLを入力しました。', 'info', true);
 
           // リクエストのテキストボックスに入力する
           $('#request-url').val(youtubeVideoUrl + id);
 
-          // 現在のプレイヤーに割り込み再生する
+          // 現在のプレイヤーに割り込み、ローカル再生する
           playerYoutube.loadVideoById(id);
         });
 
@@ -441,7 +441,7 @@
     }
 
     // マスタを取得する --------------------------------------------------------
-    $('#master-data-list').dataTable({
+    var masterDataTable = $('#master-data-list').dataTable({
       ajax: {
         url:      apiUrl,
         type:     'GET',
@@ -473,6 +473,7 @@
             }
 
             jsons.push({
+              videoId:   row[response.column.id],
               createdAt: createdAt,
               title:     row[response.column.title],
               good:      row[response.column.good],
@@ -483,6 +484,7 @@
         },
       },
       columns: [
+        {data: 'videoId', searchable: false, visible: false},
         {data: 'createdAt', searchable: false},
         {data: 'title'},
         {data: 'good', searchable: false},
@@ -501,9 +503,19 @@
         },
       },
       lengthChange: false,
-      order: [[0, 'desc']],
+      order: [[1, 'desc']],
       pageLength: 50,
       scrollY: '500px',
+    });
+    $('#master-data-list tbody').on('click', 'tr', function() {
+      var row = masterDataTable.fnGetData(this);
+
+      if (null !== row) {
+        showFlashMessage('"' + row.title + '" のローカル再生を開始しました。', 'info', true);
+
+        // 現在のプレイヤーに割り込み、ローカル再生する
+        playerYoutube.loadVideoById(row.videoId);
+      }
     });
 
     // サブタイトルをつける ----------------------------------------------------
