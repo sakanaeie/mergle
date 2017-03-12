@@ -200,9 +200,9 @@
 
           <div id="youtube-search-pager">
             <div class="btn-group btn-group-sm" role="group">
-              <button id="youtube-search-prev" class="btn btn-default" disabled="disabled">&lt;</button>
-              <button id="youtube-search-page" class="btn btn-default" disabled="disabled">0</button>
-              <button id="youtube-search-next" class="btn btn-default" disabled="disabled">&gt;</button>
+              <button id="youtube-search-prev" class="btn btn-default btn-sm" disabled="disabled">&lt;</button>
+              <button id="youtube-search-page" class="btn btn-default btn-sm" disabled="disabled">0</button>
+              <button id="youtube-search-next" class="btn btn-default btn-sm" disabled="disabled">&gt;</button>
             </div>
           </div>
         </div>
@@ -211,17 +211,22 @@
       <div class="col-md-7">
         <div id="master" class="content-block panel panel-default">
           <div class="content-title"><span class="glyphicon glyphicon-th-list"></span>Master Data List</div>
-          <table id="master-data-list" class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th class="master-data-list-th"></th>
-                <th class="master-data-list-th">CreatedAt</th>
-                <th class="master-data-list-th">Video</th>
-                <th class="master-data-list-th"><span class="glyphicon glyphicon-thumbs-up"></span></th>
-                <th class="master-data-list-th"><span class="glyphicon glyphicon-thumbs-down"></span></th>
-              </tr>
-            </thead>
-          </table>
+
+          <button id="master-data-button" class="btn btn-default btn-sm">Show</button>
+
+          <div id="master-data-list-wrap">
+            <table id="master-data-list" class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th class="master-data-list-th"></th>
+                  <th class="master-data-list-th">CreatedAt</th>
+                  <th class="master-data-list-th">Video</th>
+                  <th class="master-data-list-th"><span class="glyphicon glyphicon-thumbs-up"></span></th>
+                  <th class="master-data-list-th"><span class="glyphicon glyphicon-thumbs-down"></span></th>
+                </tr>
+              </thead>
+            </table>
+          </div>
         </div>
       </div>
     </div>

@@ -1,3 +1,8 @@
+var SiteInfo = {
+  subTitle: '',
+  message:  '',
+};
+
 var Config = {
   limitSec:     60 * 10,
   makeSec:      60 * 8,

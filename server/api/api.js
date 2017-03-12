@@ -3,12 +3,19 @@
  */
 function doGet(e) {
   switch (e.parameter.api) {
+    case 'siteInfo':
+      var result = {
+        subTitle: SiteInfo.subTitle,
+        message:  SiteInfo.message,
+      };
+      break;
+
     case 'requestUrl':
       var result = GetController.requestUrl(e.parameter.url, e.parameter.isAddOnly);
       break;
 
     case 'searchYoutube':
-      var result = GetController.searchYoutube(e.parameter.word, e.parameter.token);
+      var result = GetController.searchYoutube(e.parameter.word, e.parameter.count, e.parameter.token);
       break;
 
     case 'master':
@@ -142,14 +149,24 @@ var GetController = (function() {
    * youtube検索する
    *
    * @param  string word  検索ワード
+   * @param  int    count 検索件数
    * @param  string token ページング用トークン
    * @return object       YouTubeAPIのレスポンス
    */
-  function searchYoutube(word, token) {
+  function searchYoutube(word, count, token) {
+    if (isNaN(count)) {
+      // 数値でないとき
+      count = 0;
+    } else {
+      count *= 1;
+    }
+    // 20件までに制限する
+    count = Math.min(Math.max(count, 1), 20);
+
     var options = {
       q: word,
       type: 'video',
-      maxResults: 5,
+      maxResults: count,
       regionCode: 'JP',
       videoEmbeddable: true,
     };

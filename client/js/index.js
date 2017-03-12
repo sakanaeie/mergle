@@ -21,6 +21,7 @@
   // youtube検索のパラメータ
   var youtubeSearchWord  = '';
   var youtubeSearchIndex = 1;
+  var youtubeSearchCount = 6;
 
   // APIコードを読み込む -------------------------------------------------------
   $.ajax({
@@ -340,6 +341,7 @@
       data:     {
         api:   'searchYoutube',
         word:  youtubeSearchWord,
+        count: youtubeSearchCount,
         token: token,
       },
       success:  function(response) {
@@ -440,86 +442,103 @@
       }
     }
 
+    // サイト情報を表示する ----------------------------------------------------
+    $.ajax({
+      url:      apiUrl,
+      type:     'GET',
+      dataType: 'jsonp',
+      data:     {
+        api: 'siteInfo',
+      },
+      success:  function(response) {
+        $('#page-sub-title').html(response.subTitle);
+        if ('' !== response.message) {
+          showFlashMessage(response.message, 'info', false);
+        }
+      },
+    });
+
     // マスタを取得する --------------------------------------------------------
-    var masterDataTable = $('#master-data-list').dataTable({
-      ajax: {
-        url:      apiUrl,
-        type:     'GET',
-        dataType: 'jsonp',
-        data:     {
-          api: 'master',
-        },
-        dataSrc:  function(response) {
-          // 登録日で降順ソートする
-          // - 年月日までしか表示してないため、内部的に時分秒を含めソートしておくことで、順番の一貫性を保つ
-          response.master.sort(function(a, b) {
-            var i      = response.column.createdAt;
-            var fixedA = ('' === a[i]) ? 0 : a[i];
-            var fixedB = ('' === b[i]) ? 0 : b[i];
-            return fixedB - fixedA;
-          })
+    $('#master-data-button').click(function() {
+      $(this).remove();
+      $('#master-data-list-wrap').show();
+      var masterDataTable = $('#master-data-list').dataTable({
+        ajax: {
+          url:      apiUrl,
+          type:     'GET',
+          dataType: 'jsonp',
+          data:     {
+            api: 'master',
+          },
+          dataSrc:  function(response) {
+            // 登録日で降順ソートする
+            // - 年月日までしか表示してないため、内部的に時分秒を含めソートしておくことで、順番の一貫性を保つ
+            response.master.sort(function(a, b) {
+              var i      = response.column.createdAt;
+              var fixedA = ('' === a[i]) ? 0 : a[i];
+              var fixedB = ('' === b[i]) ? 0 : b[i];
+              return fixedB - fixedA;
+            })
 
-          var row, createdDate, createdAt, jsons = [];
-          for (var i in response.master) {
-            row = response.master[i];
+            var row, createdDate, createdAt, jsons = [];
+            for (var i in response.master) {
+              row = response.master[i];
 
-            if ('' !== row[response.column.createdAt]) {
-              createdDate = new Date(row[response.column.createdAt] * 1000);
-              createdAt   = createdDate.getFullYear()
-                + '-' + zerofill(createdDate.getMonth() + 1, 2)
-                + '-' + zerofill(createdDate.getDate(), 2);
-            } else {
-              createdAt = '';
+              if ('' !== row[response.column.createdAt]) {
+                createdDate = new Date(row[response.column.createdAt] * 1000);
+                createdAt   = createdDate.getFullYear()
+                  + '-' + zerofill(createdDate.getMonth() + 1, 2)
+                  + '-' + zerofill(createdDate.getDate(), 2);
+              } else {
+                createdAt = '';
+              }
+
+              jsons.push({
+                videoId:   row[response.column.id],
+                createdAt: createdAt,
+                title:     row[response.column.title],
+                good:      row[response.column.good],
+                bad:       row[response.column.bad],
+              });
             }
-
-            jsons.push({
-              videoId:   row[response.column.id],
-              createdAt: createdAt,
-              title:     row[response.column.title],
-              good:      row[response.column.good],
-              bad:       row[response.column.bad],
-            });
-          }
-          return jsons;
+            return jsons;
+          },
         },
-      },
-      columns: [
-        {data: 'videoId', searchable: false, visible: false},
-        {data: 'createdAt', searchable: false},
-        {data: 'title'},
-        {data: 'good', searchable: false},
-        {data: 'bad', searchable: false},
-      ],
-      language: {
-        lengthMenu:        'Show Number _MENU_',
-        info:              'Showing _START_ - _END_ / _TOTAL_',
-        infoEmpty:         'Showing 0 - 0',
-        infoFiltered:      ' (total _MAX_)',
-        search:            '',
-        searchPlaceholder: 'Input Video Title',
-        paginate:          {
-          previous: '<',
-          next:     '>',
+        columns: [
+          {data: 'videoId', searchable: false, visible: false},
+          {data: 'createdAt', searchable: false},
+          {data: 'title'},
+          {data: 'good', searchable: false},
+          {data: 'bad', searchable: false},
+        ],
+        language: {
+          lengthMenu:        'Show Number _MENU_',
+          info:              'Showing _START_ - _END_ / _TOTAL_',
+          infoEmpty:         'Showing 0 - 0',
+          infoFiltered:      ' (total _MAX_)',
+          search:            '',
+          searchPlaceholder: 'Input Video Title',
+          paginate:          {
+            previous: '<',
+            next:     '>',
+          },
         },
-      },
-      lengthChange: false,
-      order: [[1, 'desc']],
-      pageLength: 50,
-      scrollY: '500px',
+        lengthChange: false,
+        order: [[1, 'desc']],
+        pageLength: 50,
+        scrollY: '500px',
+      });
+      $('#master-data-list tbody').on('click', 'tr', function() {
+        var row = masterDataTable.fnGetData(this);
+
+        if (null !== row) {
+          showFlashMessage('"' + row.title + '" のローカル再生を開始しました。', 'info', true);
+
+          // 現在のプレイヤーに割り込み、ローカル再生する
+          playerYoutube.loadVideoById(row.videoId);
+        }
+      });
     });
-    $('#master-data-list tbody').on('click', 'tr', function() {
-      var row = masterDataTable.fnGetData(this);
-
-      if (null !== row) {
-        showFlashMessage('"' + row.title + '" のローカル再生を開始しました。', 'info', true);
-
-        // 現在のプレイヤーに割り込み、ローカル再生する
-        playerYoutube.loadVideoById(row.videoId);
-      }
-    });
-
-    // サブタイトルをつける ----------------------------------------------------
-    $('#page-sub-title').html(decodeURIComponent(('undefined' !== typeof getParams.title) ? getParams.title : ''));
 
     // 再生/停止する -----------------------------------------------------------
     $('#player-play-pause').click(function() {

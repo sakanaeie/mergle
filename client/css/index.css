@@ -347,8 +347,8 @@ button span.glyphicon {
 /** ----------------------------------------------------------------------------
  * master
  */
-#master {
-  padding-bottom: 4px;
+#master-data-list-wrap {
+  display: none;
 }
 
 #master td {
