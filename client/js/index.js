@@ -526,8 +526,19 @@
         lengthChange: false,
         order: [[1, 'desc']],
         pageLength: 50,
-        scrollY: '500px',
+        processing: true,
+        scrollY: '510px',
       });
+
+      $('#master-data-list_wrapper .col-sm-6:first-child').append(
+        $('<button>')
+          .html('Reload')
+          .addClass('btn btn-default btn-sm')
+          .click(function() {
+            masterDataTable.api().ajax.reload();
+          })
+      );
+
       $('#master-data-list tbody').on('click', 'tr', function() {
         var row = masterDataTable.fnGetData(this);
 
