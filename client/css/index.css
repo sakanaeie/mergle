@@ -18,17 +18,13 @@ body {
   background-color: #f1f1f1;
 }
 
-#page-title, #page-sub-title, .content-title {
+#page-title, .content-title {
   font-family: 'Nixie One';
 }
 
 #page-title {
   color: #fff;
-  font-size: 40px;
-}
-
-#page-sub-title {
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .content-title {
@@ -40,10 +36,6 @@ body {
 button.btn {
   font-weight: bold;
   vertical-align: top;
-}
-
-input.form-control::-webkit-input-placeholder {
-  color: #aaa;
 }
 
 .myred {
@@ -86,18 +78,12 @@ input.form-control::-webkit-input-placeholder {
   padding-left: 20px;
 }
 
-.content-title span.glyphicon {
-  font-size: 18px;
-  padding-right: 6px;
-  vertical-align: 1px;
-}
-
 button span.glyphicon {
   color: #444;
   vertical-align: -1px;
 }
 
-.glyphicon-info-sign, .glyphicon-user {
+.glyphicon-info-sign {
   padding-top: 4px;
 }
 
@@ -153,19 +139,11 @@ button span.glyphicon {
   padding: 0 20px 8px;
 }
 
-#header .media-object {
-  margin-top: 8px;
-}
-
-#header img {
-  height: 40px;
-}
-
 /** ----------------------------------------------------------------------------
  * コンテンツ
  */
 #content {
-  padding: 0 4%;
+  padding: 0 2%;
 }
 
 .content-block {
@@ -200,7 +178,7 @@ button span.glyphicon {
  * youtube-player
  */
 #youtube-player {
-  height: 240px;
+  height: 280px;
   width: 100%;
 }
 
@@ -227,12 +205,7 @@ button span.glyphicon {
 
 #player-volume-body {
   padding: 0 4% 0 4%;
-  width: 80%;
-}
-
-#player-viewer {
-  text-align: center;
-  width: 10%;
+  width: 90%;
 }
 
 #player-play-pause, #player-volume-slider {
@@ -265,98 +238,22 @@ button span.glyphicon {
 }
 
 /** ----------------------------------------------------------------------------
- * schedule
+ * merged-playlist
  */
-#schedule table {
-  width: 100%;
-}
-
-#schedule table th, #schedule table td {
-  vertical-align: middle;
-}
-
-#schedule-header {
-  text-align: center;
-}
-
-.schedule-at, .schedule-time, .schedule-rating, .schedule-type {
-  text-align: center;
-  width: 8%;
-}
-
-/** ----------------------------------------------------------------------------
- * request
- */
-#request-url {
-  display: inline;
-  width: 60%;
-}
-
-/** ----------------------------------------------------------------------------
- * youtube-search
- */
-#youtube-search-word {
-  display: inline;
-  width: 60%;
-}
-
-#youtube-search-list-template {
+#merged-playlist-wrap {
   display: none;
 }
 
-#youtube-search-list {
-  margin-top: 12px;
-}
-
-#youtube-search-list .media {
-  margin: 0;
-  padding-bottom: 8px;
-}
-
-#youtube-search-list .media-body {
-  vertical-align: middle;
-}
-
-.youtube-search-img {
-  cursor: pointer;
-  margin-right: 4px;
-  width: 120px;
-}
-
-.youtube-search-title {
-  color: #333;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-.youtube-search-channel {
-  color: #888;
-  cursor: pointer;
-  font-size: 11px;
-}
-
-#youtube-search-pager {
-  margin-top: 2px;
-  text-align: center;
-}
-
-#youtube-search-page {
-  cursor: inherit;
-}
-
-/** ----------------------------------------------------------------------------
- * master
- */
-#master-data-list-wrap {
-  display: none;
-}
-
-#master td {
+#merged-playlist td {
   font-size: 12px;
   padding: 6px;
 }
 
-.master-data-list-th {
+#merged-playlist td.dt-text-align-center {
+  text-align: center;
+}
+
+.merged-playlist-table-th {
   font-weight: normal;
   text-align: center;
 }
