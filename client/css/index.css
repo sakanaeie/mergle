@@ -257,3 +257,7 @@ button span.glyphicon {
   font-weight: normal;
   text-align: center;
 }
+
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+  background-color: #ccc;
+}

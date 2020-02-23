@@ -2,9 +2,10 @@ import PlayKeeper from './modules/PlayKeeper.js';
 
 (function($) {
   let player;
-  let keeper  = new PlayKeeper();
-  let isAgree = false; // 明示的に再生ボタンを押したかどうか
-  let isLoop  = false; // ループしているかどうか
+  let keeper    = new PlayKeeper();
+  let dataTable = null;
+  let isAgree   = false; // 明示的に再生ボタンを押したかどうか
+  let isLoop    = false; // ループしているかどうか
 
   // GETパラメータを取得する
   let urlGetParams = (() => {
@@ -27,14 +28,15 @@ import PlayKeeper from './modules/PlayKeeper.js';
     success: response => {
       keeper.setPlaylists(response);
       if (keeper.isPlayable()) {
-        notifyPlayStatus(keeper.play());
+        updatePlayingInfo(keeper.play());
       }
 
       // datatableを表示する
       $('#merged-playlist-wrap').show();
-      let masterDataTable = $('#merged-playlist-table').dataTable({
+      dataTable = $('#merged-playlist-table').DataTable({
         data: keeper.getAllVideos().map((video) => {
           // "publishedAt" カラムについて、表示用とソート用の情報を作成する
+          video.uniqueKey   = video.id + '-' + video.playlistTitle;
           video.publishedAt = {
             'formatted': (() => {
               // 日付を "yyyy-mm-dd" 形式にする
@@ -54,11 +56,12 @@ import PlayKeeper from './modules/PlayKeeper.js';
         }),
         columns: [
           { data: 'id', searchable: false, visible: false },
-          { data: { display: 'publishedAt.formatted', sort: 'publishedAt.raw' }, searchable: false, className: 'dt-text-align-center' },
+          { data: { display: 'publishedAt.formatted', sort: 'publishedAt.raw' }, className: 'dt-text-align-center' },
           { data: 'title' },
-          { data: 'publisher', searchable: false, className: 'dt-text-align-center' },
-          { data: 'playlistTitle', searchable: false, className: 'dt-text-align-center' },
+          { data: 'publisher', className: 'dt-text-align-center' },
+          { data: 'playlistTitle', className: 'dt-text-align-center' },
         ],
+        rowId: 'uniqueKey',
         language: {
           lengthMenu:   'Show Number _MENU_',
           info:         'Showing _START_ - _END_ / _TOTAL_',
@@ -94,7 +97,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
             'onError': e => {
               // TODO フラッシュメッセージによる通知
               if (keeper.isPlayable()) {
-                notifyPlayStatus(keeper.next());
+                updatePlayingInfo(keeper.next());
               }
             }
           },
@@ -115,7 +118,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
 
       keeper.setPlayer(player);
       if (keeper.isPlayable()) {
-        notifyPlayStatus(keeper.play());
+        updatePlayingInfo(keeper.play());
       }
     }
 
@@ -132,7 +135,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
         player.seekTo(0); // 冒頭にシークする
       } else {
         if (keeper.isPlayable()) {
-          notifyPlayStatus(keeper.next());
+          updatePlayingInfo(keeper.next());
         }
       }
     }
@@ -156,17 +159,32 @@ import PlayKeeper from './modules/PlayKeeper.js';
   }
 
   /**
-   * 再生情報を通知する
+   * 再生情報を更新する
    *
    * @param object video
    */
-  function notifyPlayStatus(video) {
+  function updatePlayingInfo(video) {
     document.title = video.title + ' - mergle';
+
     Push.create('mergle', {
       body: video.title,
       icon: './image/cloud_music_ico.png',
       timeout: 6000, // ms
     });
+
+    updatePlayingPositionOnDataTable(video);
+  }
+
+  /**
+   * データテーブルの再生位置表示を更新する
+   *
+   * @param object video
+   */
+  function updatePlayingPositionOnDataTable(video) {
+    if (null !== dataTable) {
+      dataTable.row('.selected').deselect();
+      dataTable.row('#' + video.id + '-' + video.playlistTitle).select().show().draw(false);
+    }
   }
 
   /**
@@ -190,7 +208,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
 
   // binding
   // thisの束縛を回避するため、アロー関数を利用しない
-  $(window).load(function() {
+  $(window).on('load', function() {
     // デスクトップ通知の許可を求める
     Push.Permission.request();
 
@@ -224,12 +242,12 @@ import PlayKeeper from './modules/PlayKeeper.js';
 
     // 前へ
     $('#back-button').click(function() {
-      keeper.back(); // 通知はしない
+      updatePlayingPositionOnDataTable(keeper.back());
     });
 
     // 次へ
     $('#next-button').click(function() {
-      keeper.next(); // 通知はしない
+      updatePlayingPositionOnDataTable(keeper.next());
     });
 
     // ループする
