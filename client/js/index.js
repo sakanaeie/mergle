@@ -28,7 +28,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
     success: response => {
       keeper.setPlaylists(response);
       if (keeper.isPlayable()) {
-        updatePlayingInfo(keeper.play());
+        updatePlayingInfoWithNotification(keeper.play());
         enablePlayerControlExtention()
       }
 
@@ -98,7 +98,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
             'onError': e => {
               // TODO フラッシュメッセージによる通知
               if (keeper.isPlayable()) {
-                updatePlayingInfo(keeper.next());
+                updatePlayingInfoWithNotification(keeper.next());
               }
             }
           },
@@ -119,7 +119,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
 
       keeper.setPlayer(player);
       if (keeper.isPlayable()) {
-        updatePlayingInfo(keeper.play());
+        updatePlayingInfoWithNotification(keeper.play());
         enablePlayerControlExtention()
       }
     }
@@ -137,7 +137,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
         player.seekTo(0); // 冒頭にシークする
       } else {
         if (keeper.isPlayable()) {
-          updatePlayingInfo(keeper.next());
+          updatePlayingInfoWithNotification(keeper.next());
         }
       }
     }
@@ -168,25 +168,25 @@ import PlayKeeper from './modules/PlayKeeper.js';
   function updatePlayingInfo(video) {
     document.title = video.title + ' - mergle';
 
+    if (null !== dataTable) {
+      dataTable.row('.selected').deselect();
+      dataTable.row('#' + video.id + '-' + video.playlistTitle).select().show().draw(false);
+    }
+  }
+
+  /**
+   * 再生情報を更新し、デスクトップ通知を出す
+   *
+   * @param object video
+   */
+  function updatePlayingInfoWithNotification(video) {
+    updatePlayingInfo(video);
+
     Push.create('mergle', {
       body: video.title,
       icon: './image/cloud_music_ico.png',
       timeout: 6000, // ms
     });
-
-    updatePlayingPositionOnDataTable(video);
-  }
-
-  /**
-   * データテーブルの再生位置表示を更新する
-   *
-   * @param object video
-   */
-  function updatePlayingPositionOnDataTable(video) {
-    if (null !== dataTable) {
-      dataTable.row('.selected').deselect();
-      dataTable.row('#' + video.id + '-' + video.playlistTitle).select().show().draw(false);
-    }
   }
 
   /**
@@ -254,14 +254,14 @@ import PlayKeeper from './modules/PlayKeeper.js';
     // 前へ
     $('#back-button').click(function() {
       if (keeper.isPlayable()) {
-        updatePlayingPositionOnDataTable(keeper.back());
+        updatePlayingInfo(keeper.back());
       }
     });
 
     // 次へ
     $('#next-button').click(function() {
       if (keeper.isPlayable()) {
-        updatePlayingPositionOnDataTable(keeper.next());
+        updatePlayingInfo(keeper.next());
       }
     });
 
