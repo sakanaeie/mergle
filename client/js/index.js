@@ -29,6 +29,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
       keeper.setPlaylists(response);
       if (keeper.isPlayable()) {
         updatePlayingInfo(keeper.play());
+        enablePlayerControlExtention()
       }
 
       // datatableを表示する
@@ -119,6 +120,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
       keeper.setPlayer(player);
       if (keeper.isPlayable()) {
         updatePlayingInfo(keeper.play());
+        enablePlayerControlExtention()
       }
     }
 
@@ -206,6 +208,15 @@ import PlayKeeper from './modules/PlayKeeper.js';
     }
   }
 
+  /**
+   * 拡張コントロールを有効化させる
+   */
+  function enablePlayerControlExtention() {
+    $('#back-button').attr('disabled', false);
+    $('#next-button').attr('disabled', false);
+    $('#random-button').attr('disabled', false);
+  }
+
   // binding
   // thisの束縛を回避するため、アロー関数を利用しない
   $(window).on('load', function() {
@@ -242,15 +253,19 @@ import PlayKeeper from './modules/PlayKeeper.js';
 
     // 前へ
     $('#back-button').click(function() {
-      updatePlayingPositionOnDataTable(keeper.back());
+      if (keeper.isPlayable()) {
+        updatePlayingPositionOnDataTable(keeper.back());
+      }
     });
 
     // 次へ
     $('#next-button').click(function() {
-      updatePlayingPositionOnDataTable(keeper.next());
+      if (keeper.isPlayable()) {
+        updatePlayingPositionOnDataTable(keeper.next());
+      }
     });
 
-    // ループする
+    // ループ切り替え
     $('#loop-button').click(function() {
       isLoop = !isLoop;
       if (isLoop) {
@@ -260,7 +275,20 @@ import PlayKeeper from './modules/PlayKeeper.js';
       }
     });
 
-    // 動画の表示/非表示を切り替える
+    // ランダム切り替え
+    $('#random-button').click(function() {
+      if (keeper.isPlayable()) {
+        if (!keeper.isRandomEnabled()) {
+          $('#random-button').addClass('active');
+          keeper.toRandom();
+        } else {
+          $('#random-button').removeClass('active');
+          keeper.toUnrandom();
+        }
+      }
+    });
+
+    // 動画の表示/非表示を切り替え
     $('#hide-button').click(function() {
       let frame = $('#player-frame');
       let mask  = $('#player-mask');

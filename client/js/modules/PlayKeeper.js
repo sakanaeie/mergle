@@ -10,10 +10,10 @@ export default class {
     this.index    = 0;
     this.maxIndex = 0;
 
-    this.isRandom        = false;
-    this.prevsOnRandom   = [];
-    this.nextsOnRandom   = [];
-    this.indexesOnRandom = [];
+    this.isRandom            = false;
+    this.indexesPoolOnRandom = [];
+    this.prevIndexesOnRandom = [];
+    this.nextIndexesOnRandom = [];
   }
 
   // public
@@ -54,6 +54,7 @@ export default class {
     this.videos.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1);
 
     this.indexes  = Array.from(this.videos.keys());
+    this.index    = 0;
     this.maxIndex = this.indexes.slice(-1)[0];
   }
 
@@ -64,6 +65,35 @@ export default class {
    */
   getAllVideos() {
     return this.videos;
+  }
+
+  /**
+   * ランダムか
+   *
+   * @return bool
+   */
+  isRandomEnabled() {
+    return this.isRandom;
+  }
+
+  /**
+   * ランダムにする
+   */
+  toRandom() {
+    this.isRandom            = true;
+    this.indexesPoolOnRandom = Array.from(this.indexes);
+    this.prevIndexesOnRandom = [];
+    this.nextIndexesOnRandom = [];
+  }
+
+  /**
+   * 非ランダムにする
+   */
+  toUnrandom() {
+    this.isRandom            = false;
+    this.indexesPoolOnRandom = [];
+    this.prevIndexesOnRandom = [];
+    this.nextIndexesOnRandom = [];
   }
 
   /**
@@ -113,10 +143,19 @@ export default class {
    * @return this
    */
   forwardIndex_() {
-    this.index++;
+    if (!this.isRandom) {
+      this.index++;
+      if (this.maxIndex < this.index) {
+        this.index = 0;
+      }
+    } else {
+      this.prevIndexesOnRandom.push(this.index);
 
-    if (this.maxIndex < this.index) {
-      this.index = 0;
+      if (0 < this.nextIndexesOnRandom.length) {
+        this.index = this.nextIndexesOnRandom.pop();
+      } else {
+        this.pickAtRandom_();
+      }
     }
 
     return this;
@@ -128,12 +167,32 @@ export default class {
    * @return this
    */
   backwardIndex_() {
-    this.index--;
+    if (!this.isRandom) {
+      this.index--;
+      if (0 > this.index) {
+        this.index = this.maxIndex;
+      }
+    } else {
+      this.nextIndexesOnRandom.push(this.index);
 
-    if (0 > this.index) {
-      this.index = this.maxIndex;
+      if (0 < this.prevIndexesOnRandom.length) {
+        this.index = this.prevIndexesOnRandom.pop();
+      } else {
+        this.pickAtRandom_();
+      }
     }
 
     return this;
+  }
+
+  /**
+   * ランダムにピックする
+   */
+  pickAtRandom_() {
+    let numOfPool = this.indexesPoolOnRandom.length;
+    if (0 === numOfPool) {
+      this.toRandom(); // 初期化
+    }
+    this.index = this.indexesPoolOnRandom.splice(Math.floor(Math.random() * numOfPool), 1).pop();
   }
 }
