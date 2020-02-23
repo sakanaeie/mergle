@@ -1,120 +1,10 @@
+import PlayKeeper from './modules/PlayKeeper.js';
+
 (function($) {
-  /**
-   * 複数のプレイリストをマージし、プレイヤーや表示リストの操作をおこなう
-   */
-  class PlayKeeper {
-    constructor() {
-      this.videos   = [];
-      this.indexes  = [];
-      this.index    = 0;
-      this.maxIndex = 0;
-
-      this.isRandom        = false;
-      this.prevsOnRandom   = [];
-      this.nextsOnRandom   = [];
-      this.indexesOnRandom = [];
-    }
-
-    // public
-
-    /**
-     * プレイリストをセットする
-     *
-     * @param object playlists AppsScriptAPIのレスポンス
-     */
-    setPlaylists(playlists) {
-      for (const key in playlists) {
-        let playlist = playlists[key];
-
-        this.videos = this.videos.concat(playlist.items.map(item => {
-          item['playlistTitle']        = playlist.title;
-          item['formattedPublishedAt'] = (() => {
-            // 日付を "yyyy-mm-dd" 形式にする
-            let date = new Date(item.publishedAt);
-
-            return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map((num) => {
-              let str = num.toString();
-              if (2 > str.length) {
-                str = '0' + str;
-              }
-              return str;
-            }).join('-');
-          })();
-
-          return item;
-        }));
-      };
-
-      this.videos.sort((a, b) => {
-        return a.publishedAt < b.publishedAt;
-      });
-
-      this.indexes  = Array.from(this.videos.keys());
-      this.maxIndex = this.indexes.slice(-1)[0];
-    };
-
-    /**
-     * プレイリストがセットされているか
-     *
-     * @return bool
-     */
-    existsPlaylists() {
-      return 0 < this.maxIndex;
-    };
-
-    /**
-     * 動画を全て取得する
-     */
-    getAllVideos() {
-      return this.videos;
-    };
-
-    /**
-     * 再生する
-     */
-    play() {
-      let video = this.getCurrentVideo_();
-
-      // ページタイトルを更新し、通知を表示する
-      document.title = video.title + ' - mergle';
-      showDesktopNotification(video.title);
-
-      player.loadVideoById(video.id);
-    };
-
-    /**
-     * 次へ
-     */
-    next() {
-      this.forwardIndex_().play();
-    };
-
-    // private
-
-    /**
-     * プレイリスト位置の動画を取得する
-     *
-     * @return object
-     */
-    getCurrentVideo_() {
-      return this.videos[this.index];
-    };
-
-    /**
-     * プレイリスト位置を進める
-     *
-     * @return this
-     */
-    forwardIndex_() {
-      this.index++;
-
-      if (this.maxIndex < this.index) {
-        this.index = 0;
-      }
-
-      return this;
-    };
-  }
+  let player;
+  let keeper  = new PlayKeeper();
+  let isAgree = false; // 明示的に再生ボタンを押したかどうか
+  let isLoop  = false; // ループしているかどうか
 
   // GETパラメータを取得する
   let urlGetParams = (() => {
@@ -126,15 +16,9 @@
     return params;
   })();
 
-  let player;
-  let keeper  = new PlayKeeper();
-  let isAgree = false; // 明示的に再生ボタンを押したかどうか
-  let isLoop  = false; // ループしているかどうか
-  let apiUrl  = 'https://script.google.com/macros/s/' + urlGetParams.api + '/exec';
-
   // 複数のプレイリストを取得する
   $.ajax({
-    url: apiUrl,
+    url: 'https://script.google.com/macros/s/' + urlGetParams.api + '/exec',
     type: 'GET',
     data: {
       plid_csv: urlGetParams.plid_csv,
@@ -142,19 +26,35 @@
     dataType: 'jsonp',
     success: response => {
       keeper.setPlaylists(response);
-
-      if (isAgree) {
-        // 既にプレイヤーがアクティブなら、再生を開始する
-        keeper.play();
+      if (keeper.isPlayable()) {
+        notifyPlayStatus(keeper.play());
       }
 
-      // datatablesを表示する
+      // datatableを表示する
       $('#merged-playlist-wrap').show();
       let masterDataTable = $('#merged-playlist-table').dataTable({
-        data: keeper.getAllVideos(),
+        data: keeper.getAllVideos().map((video) => {
+          // "publishedAt" カラムについて、表示用とソート用の情報を作成する
+          video.publishedAt = {
+            'formatted': (() => {
+              // 日付を "yyyy-mm-dd" 形式にする
+              let date = new Date(video.publishedAt);
+
+              return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map((num) => {
+                let str = num.toString();
+                if (2 > str.length) {
+                  str = '0' + str;
+                }
+                return str;
+              }).join('-');
+            })(),
+            'raw': video.publishedAt,
+          };
+          return video;
+        }),
         columns: [
           { data: 'id', searchable: false, visible: false },
-          { data: 'formattedPublishedAt', searchable: false, className: 'dt-text-align-center' },
+          { data: { display: 'publishedAt.formatted', sort: 'publishedAt.raw' }, searchable: false, className: 'dt-text-align-center' },
           { data: 'title' },
           { data: 'publisher', searchable: false, className: 'dt-text-align-center' },
           { data: 'playlistTitle', searchable: false, className: 'dt-text-align-center' },
@@ -192,9 +92,9 @@
           events: {
             'onStateChange': onPlayerStateChange,
             'onError': e => {
-              // TODO 通知など
-              if (keeper.existsPlaylists()) {
-                keeper.next();
+              // TODO フラッシュメッセージによる通知
+              if (keeper.isPlayable()) {
+                notifyPlayStatus(keeper.next());
               }
             }
           },
@@ -212,9 +112,10 @@
     if (!isAgree && e.data == YT.PlayerState.PLAYING) {
       // 初回再生ボタンを明示的に押したとき
       isAgree = true;
-      if (keeper.existsPlaylists()) {
-        // 既にプレイリストがセットされているなら、再生を開始する
-        keeper.play();
+
+      keeper.setPlayer(player);
+      if (keeper.isPlayable()) {
+        notifyPlayStatus(keeper.play());
       }
     }
 
@@ -230,8 +131,8 @@
       if (isLoop) {
         player.seekTo(0); // 冒頭にシークする
       } else {
-        if (keeper.existsPlaylists()) {
-          keeper.next();
+        if (keeper.isPlayable()) {
+          notifyPlayStatus(keeper.next());
         }
       }
     }
@@ -255,22 +156,23 @@
   }
 
   /**
-   * デスクトップ通知を表示する
+   * 再生情報を通知する
    *
-   * @param string body 本文
+   * @param object video
    */
-  function showDesktopNotification(body) {
-    notify.createNotification('syngle', {
-      body: body,
+  function notifyPlayStatus(video) {
+    document.title = video.title + ' - mergle';
+    Push.create('mergle', {
+      body: video.title,
       icon: './image/cloud_music_ico.png',
-      tag: 'syngle',
+      timeout: 6000, // ms
     });
   }
 
   /**
    * 再生停止ボタンの状態を変化させる
    *
-   * @param string state 状態遷移先
+   * @param string state 'play' or 'pause'
    */
   function changePlayPauseButtonTo(state) {
     $('#player-play-pause').val(state);
@@ -287,15 +189,10 @@
   }
 
   // binding
-  // thisの束縛を回避するため、アロー関数を利用してないところもある
+  // thisの束縛を回避するため、アロー関数を利用しない
   $(window).load(function() {
     // デスクトップ通知の許可を求める
-    notify.config({ autoClose: 8000 });
-    if (notify.isSupported) {
-      if (notify.PERMISSION_DEFAULT === notify.permissionLevel()) {
-        notify.requestPermission();
-      }
-    }
+    Push.Permission.request();
 
     // ツールチップを初期化する
     $('[data-toggle="tooltip"]').tooltip({
@@ -323,6 +220,16 @@
         // 停止ボタンであるとき
         player.pauseVideo();
       }
+    });
+
+    // 前へ
+    $('#back-button').click(function() {
+      keeper.back(); // 通知はしない
+    });
+
+    // 次へ
+    $('#next-button').click(function() {
+      keeper.next(); // 通知はしない
     });
 
     // ループする

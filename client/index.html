@@ -29,13 +29,13 @@
 <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
 
-<!-- libs -->
-<script src="./js/lib/desktop-notify.js"></script>
+<!-- push.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.12/push.min.js"></script>
 
 <!-- mines -->
 <link rel="stylesheet" href="./css/index.css">
 <script src="./js/notify-style.js"></script>
-<script src="./js/index.js"></script>
+<script type="module" src="./js/index.js"></script>
 </head>
 <body>
   <div id="header" class="media">
@@ -74,6 +74,16 @@
         </div>
 
         <div id="player-control-extention" class="btn-group btn-group-justified" role="group">
+          <div class="btn-group" role="group">
+            <button id="back-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Back">
+              <span class="glyphicon glyphicon-step-backward"></span>
+            </button>
+          </div>
+          <div class="btn-group" role="group">
+            <button id="next-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Next">
+              <span class="glyphicon glyphicon-step-forward"></span>
+            </button>
+          </div>
           <div class="btn-group" role="group">
             <button id="loop-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Loop">
               <span class="glyphicon glyphicon-retweet"></span>
