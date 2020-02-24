@@ -69,6 +69,15 @@ export default class {
   }
 
   /**
+   * プレイリスト位置の動画を取得する
+   *
+   * @return Video
+   */
+  getCurrentVideo() {
+    return this.videos[this.index];
+  }
+
+  /**
    * ランダムか
    *
    * @return bool
@@ -103,7 +112,7 @@ export default class {
    * @return Video video
    */
   play() {
-    let video = this.getCurrentVideo_();
+    let video = this.getCurrentVideo();
     this.player.loadVideoById(video.id);
 
     return video;
@@ -147,15 +156,6 @@ export default class {
   }
 
   // private
-
-  /**
-   * プレイリスト位置の動画を取得する
-   *
-   * @return Video
-   */
-  getCurrentVideo_() {
-    return this.videos[this.index];
-  }
 
   /**
    * プレイリスト位置を前進させる

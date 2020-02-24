@@ -61,7 +61,7 @@ import VideoHandler from './modules/VideoHandler.js';
         },
         lengthChange: false,
         order: [[0, 'desc']],
-        pageLength: 24,
+        pageLength: 20,
         processing: true,
       });
 
@@ -88,7 +88,17 @@ import VideoHandler from './modules/VideoHandler.js';
           events: {
             'onStateChange': onPlayerStateChange,
             'onError': e => {
-              // TODO フラッシュメッセージによる通知
+              let message = '';
+              let video   = keeper.getCurrentVideo();
+              if (undefined !== video) {
+                message = `「${video.title}」で問題が発生しました`;
+              } else {
+                message = `プレイヤーで問題が発生しました`;
+              }
+
+              showFlashMessage(`${message}, 詳細はコンソールをご覧ください`, 'error', false);
+              console.log(`${message} code=${e.data} data=${JSON.stringify(e.target.getVideoData())}`);
+
               if (keeper.isPlayable()) {
                 updatePlayingInfoWithNotification(keeper.next());
               }
@@ -142,14 +152,14 @@ import VideoHandler from './modules/VideoHandler.js';
    * フラッシュメッセージを表示する
    *
    * @param string body        本文
-   * @param string style       スタイル
+   * @param string level       レベル, [success, info, warning, error]
    * @param bool   isAutoClose 自動で閉じるかどうか
    */
-  function showFlashMessage(body, style, isAutoClose) {
+  function showFlashMessage(body, level, isAutoClose) {
     if (isAutoClose) {
       style += '-auto';
     }
-    $.notify(body, { style: style, autoHide: isAutoClose });
+    $.notify(body, { style: level, autoHide: isAutoClose });
   }
 
   /**
@@ -178,6 +188,7 @@ import VideoHandler from './modules/VideoHandler.js';
       body: video.title,
       icon: './image/cloud_music_ico.png',
       timeout: 6000, // ms
+      silent: true,
     });
   }
 
