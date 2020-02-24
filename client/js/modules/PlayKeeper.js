@@ -1,3 +1,5 @@
+import Video from './Video.js';
+
 /**
  * 複数のプレイリストをマージし、プレイヤーや表示リストの操作をおこなう
  */
@@ -9,6 +11,8 @@ export default class {
     this.indexes  = [];
     this.index    = 0;
     this.maxIndex = 0;
+
+    this.uniqueKeyToIndex = {};
 
     this.isRandom            = false;
     this.indexesPoolOnRandom = [];
@@ -37,31 +41,28 @@ export default class {
   }
 
   /**
-   * プレイリストをセットする
+   * 動画リストをセットする
    *
-   * @param object playlists AppsScriptAPIのレスポンス
+   * @param Video[] videos
    */
-  setPlaylists(playlists) {
-    for (const key in playlists) {
-      let playlist = playlists[key];
-
-      this.videos = this.videos.concat(playlist.items.map(item => {
-        item['playlistTitle'] = playlist.title;
-        return item;
-      }));
-    };
-
-    this.videos.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1);
+  setVideos(videos) {
+    this.videos = videos;
+    this.videos.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1); // TODO
 
     this.indexes  = Array.from(this.videos.keys());
     this.index    = 0;
     this.maxIndex = this.indexes.slice(-1)[0];
+
+    this.uniqueKeyToIndex = this.videos.reduce((acc, video, index) => {
+      acc[video.getUniqueKey()] = index;
+      return acc;
+    }, {});
   }
 
   /**
    * 動画を全て取得する
    *
-   * @return object[]
+   * @return Video[]
    */
   getAllVideos() {
     return this.videos;
@@ -99,7 +100,7 @@ export default class {
   /**
    * 再生する
    *
-   * @return object video
+   * @return Video video
    */
   play() {
     let video = this.getCurrentVideo_();
@@ -109,9 +110,28 @@ export default class {
   }
 
   /**
+   * 動画を指定して再生する
+   *
+   * @param Video video
+   * @return Video
+   */
+  playAtDirect(video) {
+    if (this.isRandom) {
+      this.toRandom(); // 初期化
+    }
+
+    let hitIndex = this.uniqueKeyToIndex[video.getUniqueKey()];
+    if (null !== hitIndex) {
+      this.index = hitIndex;
+    }
+
+    return this.play();
+  }
+
+  /**
    * 次へ
    *
-   * @return object video
+   * @return Video
    */
   next() {
     return this.forwardIndex_().play();
@@ -120,7 +140,7 @@ export default class {
   /**
    * 前へ
    *
-   * @return object video
+   * @return Video
    */
   back() {
     return this.backwardIndex_().play();
@@ -131,7 +151,7 @@ export default class {
   /**
    * プレイリスト位置の動画を取得する
    *
-   * @return object
+   * @return Video
    */
   getCurrentVideo_() {
     return this.videos[this.index];

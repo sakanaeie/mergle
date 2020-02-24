@@ -42,10 +42,10 @@ function getPlaylists(idsCSV) {
 
       itemsResponse.items.forEach((item) => {
         playlists[item.snippet.playlistId].items.push({
-          id:          item.snippet.resourceId.videoId,
-          title:       item.snippet.title,
-          publisher:   item.snippet.channelTitle, // プレイリストに追加したユーザ
-          publishedAt: item.snippet.publishedAt,  // プレイリストに追加した日時
+          id:             item.snippet.resourceId.videoId,
+          title:          item.snippet.title,
+          registererName: item.snippet.channelTitle, // プレイリストに追加したユーザ
+          publishedAt:    item.snippet.publishedAt,  // プレイリストに追加した日時
         });
       });
 

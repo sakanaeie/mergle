@@ -1,4 +1,6 @@
-import PlayKeeper from './modules/PlayKeeper.js';
+import PlayKeeper   from './modules/PlayKeeper.js';
+import Video        from './modules/Video.js';
+import VideoHandler from './modules/VideoHandler.js';
 
 (function($) {
   let player;
@@ -26,47 +28,31 @@ import PlayKeeper from './modules/PlayKeeper.js';
     },
     dataType: 'jsonp',
     success: response => {
-      keeper.setPlaylists(response);
+      let videoHandler = new VideoHandler();
+      let videos       = videoHandler.convertToFlatListFromPlaylists(response);
+
+      keeper.setVideos(videos);
       if (keeper.isPlayable()) {
         updatePlayingInfoWithNotification(keeper.play());
-        enablePlayerControlExtention()
+        enablePlayerControlExtention();
       }
 
       // datatableを表示する
       $('#merged-playlist-wrap').show();
       dataTable = $('#merged-playlist-table').DataTable({
-        data: keeper.getAllVideos().map((video) => {
-          // "publishedAt" カラムについて、表示用とソート用の情報を作成する
-          video.uniqueKey   = video.id + '-' + video.playlistTitle;
-          video.publishedAt = {
-            'formatted': (() => {
-              // 日付を "yyyy-mm-dd" 形式にする
-              let date = new Date(video.publishedAt);
-
-              return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map((num) => {
-                let str = num.toString();
-                if (2 > str.length) {
-                  str = '0' + str;
-                }
-                return str;
-              }).join('-');
-            })(),
-            'raw': video.publishedAt,
-          };
-          return video;
-        }),
+        data: keeper.getAllVideos(),
         columns: [
           { data: 'id', searchable: false, visible: false },
-          { data: { display: 'publishedAt.formatted', sort: 'publishedAt.raw' }, className: 'dt-text-align-center' },
+          { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
           { data: 'title' },
-          { data: 'publisher', className: 'dt-text-align-center' },
+          { data: 'registererName', className: 'dt-text-align-center' },
           { data: 'playlistTitle', className: 'dt-text-align-center' },
         ],
-        rowId: 'uniqueKey',
+        rowId: 'getUniqueKey()',
         language: {
-          lengthMenu:   'Show Number _MENU_',
-          info:         'Showing _START_ - _END_ / _TOTAL_',
-          infoEmpty:    'Showing 0 - 0',
+          lengthMenu: 'Show Number _MENU_',
+          info: 'Showing _START_ - _END_ / _TOTAL_',
+          infoEmpty: 'Showing 0 - 0',
           infoFiltered: ' (total _MAX_)',
           search: '',
           searchPlaceholder: 'Input Video Title',
@@ -79,6 +65,14 @@ import PlayKeeper from './modules/PlayKeeper.js';
         order: [[1, 'desc']],
         pageLength: 40,
         processing: true,
+      });
+
+      // ダブルクリックで再生するように、イベントリスナーを追加する
+      $('#merged-playlist-table tbody').on('dblclick', 'tr', function() {
+        if (keeper.isPlayable()) {
+            let clickedVideo = Video.fromObject(dataTable.row(this).data());
+            updatePlayingInfo(keeper.playAtDirect(clickedVideo));
+        }
       });
     },
   });
@@ -120,7 +114,7 @@ import PlayKeeper from './modules/PlayKeeper.js';
       keeper.setPlayer(player);
       if (keeper.isPlayable()) {
         updatePlayingInfoWithNotification(keeper.play());
-        enablePlayerControlExtention()
+        enablePlayerControlExtention();
       }
     }
 
