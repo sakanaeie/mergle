@@ -1,7 +1,7 @@
 import Video from './Video.js';
 
 /**
- * 複数のプレイリストをマージし、プレイヤーや表示リストの操作をおこなう
+ * 複数プレイリストのマージデータを元に、プレイヤーや表示リストの操作をおこなう
  */
 export default class {
   constructor() {
@@ -47,7 +47,7 @@ export default class {
    */
   setVideos(videos) {
     this.videos = videos;
-    this.videos.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1); // TODO
+    this.videos.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1);
 
     this.indexes  = Array.from(this.videos.keys());
     this.index    = 0;
@@ -121,7 +121,7 @@ export default class {
     }
 
     let hitIndex = this.uniqueKeyToIndex[video.getUniqueKey()];
-    if (null !== hitIndex) {
+    if (undefined !== hitIndex) {
       this.index = hitIndex;
     }
 

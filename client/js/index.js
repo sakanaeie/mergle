@@ -42,10 +42,8 @@ import VideoHandler from './modules/VideoHandler.js';
       dataTable = $('#merged-playlist-table').DataTable({
         data: keeper.getAllVideos(),
         columns: [
-          { data: 'id', searchable: false, visible: false },
           { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
           { data: 'title' },
-          { data: 'registererName', className: 'dt-text-align-center' },
           { data: 'playlistTitle', className: 'dt-text-align-center' },
         ],
         rowId: 'getUniqueKey()',
@@ -62,8 +60,8 @@ import VideoHandler from './modules/VideoHandler.js';
           },
         },
         lengthChange: false,
-        order: [[1, 'desc']],
-        pageLength: 40,
+        order: [[0, 'desc']],
+        pageLength: 24,
         processing: true,
       });
 
@@ -157,21 +155,21 @@ import VideoHandler from './modules/VideoHandler.js';
   /**
    * 再生情報を更新する
    *
-   * @param object video
+   * @param Video video
    */
   function updatePlayingInfo(video) {
     document.title = video.title + ' - mergle';
 
     if (null !== dataTable) {
       dataTable.row('.selected').deselect();
-      dataTable.row('#' + video.id + '-' + video.playlistTitle).select().show().draw(false);
+      dataTable.row('#' + video.getUniqueKey()).select().show().draw(false);
     }
   }
 
   /**
    * 再生情報を更新し、デスクトップ通知を出す
    *
-   * @param object video
+   * @param Video video
    */
   function updatePlayingInfoWithNotification(video) {
     updatePlayingInfo(video);

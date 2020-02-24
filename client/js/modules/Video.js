@@ -8,15 +8,15 @@ export default class {
    * @param string id
    * @param string title
    * @param string publishedAt
-   * @param string registererName
+   * @param string playlistId
    * @param string playlistTitle
    */
-  constructor(id, title, publishedAt, registererName, playlistTitle) {
-    this.id             = id;
-    this.title          = title;
-    this.publishedAt    = publishedAt;
-    this.registererName = registererName;
-    this.playlistTitle  = playlistTitle;
+  constructor(id, title, publishedAt, playlistId, playlistTitle) {
+    this.id            = id;
+    this.title         = title;
+    this.publishedAt   = publishedAt;
+    this.playlistId    = playlistId;
+    this.playlistTitle = playlistTitle;
   }
 
   // public
@@ -27,7 +27,7 @@ export default class {
    * @return string
    */
   getUniqueKey() {
-    return this.id + '-' + this.playlistTitle;
+    return this.id + '-' + this.playlistId;
   }
 
   /**
@@ -53,6 +53,6 @@ export default class {
    * オブジェクトから生成する
    */
   static fromObject(object) {
-    return new this(object.id, object.title, object.publishedAt, object.registererName, object.playlistTitle);
+    return new this(object.id, object.title, object.publishedAt, object.playlistId, object.playlistTitle);
   }
 }

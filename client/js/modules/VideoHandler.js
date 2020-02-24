@@ -17,10 +17,10 @@ export default class {
    */
   convertToFlatListFromPlaylists(playlists) {
     let videos = [];
-    for (const key in playlists) {
-      let playlist = playlists[key];
+    for (const playlistId in playlists) {
+      let playlist = playlists[playlistId];
       videos = videos.concat(playlist.items.map(video => {
-        return new Video(video.id, video.title, video.publishedAt, video.registererName, playlist.title);
+        return new Video(video.id, video.title, video.publishedAt, playlistId, playlist.title);
       }));
     }
     return videos;

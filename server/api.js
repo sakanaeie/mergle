@@ -44,8 +44,10 @@ function getPlaylists(idsCSV) {
         playlists[item.snippet.playlistId].items.push({
           id:             item.snippet.resourceId.videoId,
           title:          item.snippet.title,
-          registererName: item.snippet.channelTitle, // プレイリストに追加したユーザ
-          publishedAt:    item.snippet.publishedAt,  // プレイリストに追加した日時
+          publishedAt:    item.snippet.publishedAt, // プレイリストに追加した日時
+
+          // 下記パラメータは "プレイリストに追加したユーザ" とマニュアルにあるが、プレイリスト作成者である
+          // registererName: item.snippet.channelTitle,
         });
       });
 
