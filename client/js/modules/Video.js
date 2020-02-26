@@ -51,6 +51,9 @@ export default class {
 
   /**
    * オブジェクトから生成する
+   *
+   * @param object object
+   * @return Video
    */
   static fromObject(object) {
     return new this(object.id, object.title, object.publishedAt, object.playlistId, object.playlistTitle);

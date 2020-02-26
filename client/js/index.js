@@ -27,7 +27,7 @@ import VideoHandler from './modules/VideoHandler.js';
       plid_csv: urlGetParams.plid_csv,
     },
     dataType: 'jsonp',
-    success: response => {
+    success: function(response) {
       let videoHandler = new VideoHandler();
       let videos       = videoHandler.convertToFlatListFromPlaylists(response);
 
@@ -40,7 +40,7 @@ import VideoHandler from './modules/VideoHandler.js';
       // datatableを表示する
       $('#merged-playlist-wrap').show();
       dataTable = $('#merged-playlist-table').DataTable({
-        data: keeper.getAllVideos(),
+        data: keeper.getUnignoredVideos(),
         columns: [
           { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
           { data: 'title' },
@@ -72,6 +72,42 @@ import VideoHandler from './modules/VideoHandler.js';
             updatePlayingInfo(keeper.playAtDirect(clickedVideo));
         }
       });
+
+      // プレイリスト除外ボタンを配置する
+      for (const playlistId in response) {
+        let playlist = response[playlistId];
+
+        // ボタン構造
+        let html = `
+          <div class="btn-group" role="group">
+            <button class="btn btn-default" value="${playlistId}">
+              ${playlist.title}
+            </button>
+          </div>`;
+
+        // ボタン構造を作成する
+        let div = $(html);
+
+        // ボタンに挙動を定義する
+        let button = div.children('button').click(function() {
+          if (!$(this).hasClass('active')) {
+            $(this).addClass('active');
+            keeper.ignoreByPlaylistId($(this).val());
+          } else {
+            $(this).removeClass('active');
+            keeper.unignoreByPlaylistId($(this).val());
+          }
+
+          // datatableを再描画する
+          dataTable.clear().rows.add(keeper.getUnignoredVideos()).draw();
+
+          // datatableの再生位置を再描画する
+          updatePlayingInfo(keeper.getCurrentVideo());
+        });
+
+        // ボタン構造を生成する
+        $('#playlist-ignore-control').append(div);
+      }
     },
   });
 
@@ -172,7 +208,11 @@ import VideoHandler from './modules/VideoHandler.js';
 
     if (null !== dataTable) {
       dataTable.row('.selected').deselect();
-      dataTable.row('#' + video.getUniqueKey()).select().show().draw(false);
+
+      let row = dataTable.row('#' + video.getUniqueKey());
+      if (1 === row.length) {
+        row.select().show().draw(false);
+      }
     }
   }
 
@@ -272,9 +312,9 @@ import VideoHandler from './modules/VideoHandler.js';
     $('#loop-button').click(function() {
       isLoop = !isLoop;
       if (isLoop) {
-        $('#loop-button').addClass('active');
+        $(this).addClass('active');
       } else {
-        $('#loop-button').removeClass('active');
+        $(this).removeClass('active');
       }
     });
 
@@ -282,10 +322,10 @@ import VideoHandler from './modules/VideoHandler.js';
     $('#random-button').click(function() {
       if (keeper.isPlayable()) {
         if (!keeper.isRandomEnabled()) {
-          $('#random-button').addClass('active');
+          $(this).addClass('active');
           keeper.toRandom();
         } else {
-          $('#random-button').removeClass('active');
+          $(this).removeClass('active');
           keeper.toUnrandom();
         }
       }

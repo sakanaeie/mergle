@@ -1,23 +1,25 @@
 import Video from './Video.js';
 
 /**
- * 複数プレイリストのマージデータを元に、プレイヤーや表示リストの操作をおこなう
+ * 複数プレイリストのマージデータを元に、プレイヤーの操作をおこなう
  */
 export default class {
   constructor() {
     this.player = null;
 
-    this.videos   = [];
-    this.indexes  = [];
-    this.index    = 0;
-    this.maxIndex = 0;
-
+    this.videos           = [];
+    this.indexes          = [];
+    this.index            = 0;
+    this.maxIndex         = 0;
     this.uniqueKeyToIndex = {};
 
     this.isRandom            = false;
     this.indexesPoolOnRandom = [];
     this.prevIndexesOnRandom = [];
     this.nextIndexesOnRandom = [];
+
+    this.playlistIds        = {};
+    this.ignoredPlaylistIds = {};
   }
 
   // public
@@ -57,6 +59,11 @@ export default class {
       acc[video.getUniqueKey()] = index;
       return acc;
     }, {});
+
+    this.playlistIds = this.videos.reduce((acc, video) => {
+      acc[video.playlistId] = video.playlistId;
+      return acc;
+    }, {});
   }
 
   /**
@@ -69,7 +76,16 @@ export default class {
   }
 
   /**
-   * プレイリスト位置の動画を取得する
+   * 無視されてないプレイリストの動画を取得する
+   *
+   * @return Video[]
+   */
+  getUnignoredVideos() {
+    return this.videos.filter(video => undefined === this.ignoredPlaylistIds[video.playlistId]);
+  }
+
+  /**
+   * 再生位置の動画を取得する
    *
    * @return Video
    */
@@ -104,6 +120,32 @@ export default class {
     this.indexesPoolOnRandom = [];
     this.prevIndexesOnRandom = [];
     this.nextIndexesOnRandom = [];
+  }
+
+  /**
+   * プレイリストの無視を設定する
+   *
+   * @param string playlistId
+   */
+  ignoreByPlaylistId(playlistId) {
+    if (this.isRandom) {
+      this.toRandom(); // 初期化
+    }
+
+    this.ignoredPlaylistIds[playlistId] = playlistId;
+  }
+
+  /**
+   * プレイリストの無視を解除する
+   *
+   * @param string playlistId
+   */
+  unignoreByPlaylistId(playlistId) {
+    if (this.isRandom) {
+      this.toRandom(); // 初期化
+    }
+
+    delete this.ignoredPlaylistIds[playlistId];
   }
 
   /**
@@ -158,49 +200,74 @@ export default class {
   // private
 
   /**
-   * プレイリスト位置を前進させる
+   * 再生位置を移動させる
+   *
+   * @param callable pickIndexFunction index前進/後退の処理
+   */
+  seek_(pickIndexFunction) {
+    let playlistNum = Object.keys(this.playlistIds).length;
+    let ignoredNum  = Object.keys(this.ignoredPlaylistIds).length;
+    if (0 < ignoredNum && playlistNum === ignoredNum) {
+      // 全て無視されているとき
+      return;
+    }
+
+    pickIndexFunction();
+
+    if (undefined !== this.ignoredPlaylistIds[this.getCurrentVideo().playlistId]) {
+      // 無視リストの動画であるとき、再帰する
+      this.seek_(pickIndexFunction);
+    }
+  }
+
+  /**
+   * 再生位置を前進させる
    *
    * @return this
    */
   forwardIndex_() {
-    if (!this.isRandom) {
-      this.index++;
-      if (this.maxIndex < this.index) {
-        this.index = 0;
-      }
-    } else {
-      this.prevIndexesOnRandom.push(this.index);
-
-      if (0 < this.nextIndexesOnRandom.length) {
-        this.index = this.nextIndexesOnRandom.pop();
+    this.seek_(() => {
+      if (!this.isRandom) {
+        this.index++;
+        if (this.maxIndex < this.index) {
+          this.index = 0;
+        }
       } else {
-        this.pickAtRandom_();
+        this.prevIndexesOnRandom.push(this.index);
+
+        if (0 < this.nextIndexesOnRandom.length) {
+          this.index = this.nextIndexesOnRandom.pop();
+        } else {
+          this.pickAtRandom_();
+        }
       }
-    }
+    });
 
     return this;
   }
 
   /**
-   * プレイリスト位置を後退させる
+   * 再生位置を後退させる
    *
    * @return this
    */
   backwardIndex_() {
-    if (!this.isRandom) {
-      this.index--;
-      if (0 > this.index) {
-        this.index = this.maxIndex;
-      }
-    } else {
-      this.nextIndexesOnRandom.push(this.index);
-
-      if (0 < this.prevIndexesOnRandom.length) {
-        this.index = this.prevIndexesOnRandom.pop();
+    this.seek_(() => {
+      if (!this.isRandom) {
+        this.index--;
+        if (0 > this.index) {
+          this.index = this.maxIndex;
+        }
       } else {
-        this.pickAtRandom_();
+        this.nextIndexesOnRandom.push(this.index);
+
+        if (0 < this.prevIndexesOnRandom.length) {
+          this.index = this.prevIndexesOnRandom.pop();
+        } else {
+          this.pickAtRandom_();
+        }
       }
-    }
+    });
 
     return this;
   }

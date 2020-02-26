@@ -261,3 +261,14 @@ button span.glyphicon {
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
   background-color: #ddd;
 }
+
+/** ----------------------------------------------------------------------------
+ * playlist-ignore
+ */
+#playlist-ignore-control button {
+  color: #444;
+}
+
+#playlist-ignore-control button.active {
+  color: #999;
+}
