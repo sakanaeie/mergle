@@ -65,8 +65,14 @@ import VideoHandler from './modules/VideoHandler.js';
         processing: true,
       });
 
-      // ダブルクリックで再生するように、イベントリスナーを追加する
-      $('#merged-playlist-table tbody').on('dblclick', 'tr', function() {
+      // タップかダブルクリックで再生するように、イベントリスナーを追加する
+      let clickEventName;
+      if (-1 !== window.navigator.userAgent.search(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
+        clickEventName = 'click';
+      } else {
+        clickEventName = 'dblclick';
+      }
+      $('#merged-playlist-table tbody').on(clickEventName, 'tr', function() {
         if (keeper.isPlayable()) {
             let clickedVideo = Video.fromObject(dataTable.row(this).data());
             updatePlayingInfo(keeper.playAtDirect(clickedVideo));
@@ -121,6 +127,9 @@ import VideoHandler from './modules/VideoHandler.js';
         // プレイヤーを作成する
         player = new YT.Player('youtube-player', {
           videoId: '51CH3dPaWXc',
+          playerVars: {
+            playsinline: 1,
+          },
           events: {
             'onStateChange': onPlayerStateChange,
             'onError': e => {
