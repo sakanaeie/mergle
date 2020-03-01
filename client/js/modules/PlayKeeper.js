@@ -20,6 +20,8 @@ export default class {
 
     this.playlistIds        = {};
     this.ignoredPlaylistIds = {};
+
+    this.staredIndexes = {};
   }
 
   // public
@@ -67,7 +69,7 @@ export default class {
   }
 
   /**
-   * 動画を全て取得する
+   * 全ての動画を取得する
    *
    * @return Video[]
    */
@@ -82,6 +84,18 @@ export default class {
    */
   getUnignoredVideos() {
     return this.videos.filter(video => undefined === this.ignoredPlaylistIds[video.playlistId]);
+  }
+
+  /**
+   * スター付き動画を取得する
+   *
+   * @return Video[]
+   */
+  getStaredVideos() {
+    return Object.keys(this.staredIndexes).reduce((acc, staredIndex) => {
+      acc.push(this.videos[staredIndex]);
+      return acc;
+    }, []);
   }
 
   /**
@@ -149,6 +163,49 @@ export default class {
   }
 
   /**
+   * スターが付いているか
+   *
+   * @return bool
+   */
+  hasStars() {
+    for (const staredIndex in this.staredIndexes) {
+      let staredVideo = this.videos[staredIndex]
+      if (undefined === this.ignoredPlaylistIds[staredVideo.playlistId]) {
+        // 無視されてないプレイリストにあるとき
+        return true;
+      }
+    }
+  }
+
+  /**
+   * スターを付ける
+   *
+   * @param Video video
+   */
+  starByVideo(video) {
+    if (this.isRandom) {
+      this.toRandom(); // 初期化
+    }
+
+    let staredIndex = this.uniqueKeyToIndex[video.getUniqueKey()];
+    this.staredIndexes[staredIndex] = staredIndex;
+  }
+
+  /**
+   * スターを外す
+   *
+   * @param Video video
+   */
+  unstarByVideo(video) {
+    if (this.isRandom) {
+      this.toRandom(); // 初期化
+    }
+
+    let unstaredIndex = this.uniqueKeyToIndex[video.getUniqueKey()];
+    delete this.staredIndexes[unstaredIndex];
+  }
+
+  /**
    * 再生する
    *
    * @return Video video
@@ -213,6 +270,11 @@ export default class {
     }
 
     pickIndexFunction();
+
+    if (this.hasStars() && undefined === this.staredIndexes[this.index]) {
+      // スターは付いているが、この動画には付いてないとき、再起する
+      this.seek_(pickIndexFunction)
+    }
 
     if (undefined !== this.ignoredPlaylistIds[this.getCurrentVideo().playlistId]) {
       // 無視リストの動画であるとき、再帰する

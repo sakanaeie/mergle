@@ -262,6 +262,44 @@ table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
   background-color: #ddd;
 }
 
+div.dataTables_wrapper div.dataTables_filter label {
+  width: 100%;
+  text-align: right;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+  width: 60%;
+}
+
+/** ----------------------------------------------------------------------------
+ * merged-playlist checkbox
+ */
+#merged-playlist-table label {
+  font-size: 12px;
+  margin: 0;
+}
+
+#merged-playlist-table label input[type="checkbox"] {
+  display: none;
+}
+
+/* 初期 */
+#merged-playlist-table label input[type="checkbox"] ~ i.unstared {
+  display: inline;
+}
+#merged-playlist-table label input[type="checkbox"] ~ i.stared {
+  display: none;
+}
+
+/* チェックした */
+#merged-playlist-table label input[type="checkbox"]:checked ~ i.unstared {
+  display: none;
+}
+#merged-playlist-table label input[type="checkbox"]:checked ~ i.stared {
+  color: orange;
+  display: inline;
+}
+
 /** ----------------------------------------------------------------------------
  * playlist-ignore
  */

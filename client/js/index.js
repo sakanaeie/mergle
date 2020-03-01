@@ -12,7 +12,7 @@ import VideoHandler from './modules/VideoHandler.js';
   // GETパラメータを取得する
   let urlGetParams = (() => {
     let data, params = {}, blocks = location.search.substring(1).split('&');
-    for (let i in blocks) {
+    for (const i in blocks) {
       data            = blocks[i].split('=');
       params[data[0]] = data[1];
     }
@@ -27,7 +27,7 @@ import VideoHandler from './modules/VideoHandler.js';
       plid_csv: urlGetParams.plid_csv,
     },
     dataType: 'jsonp',
-    success: function(response) {
+    success: response => {
       let videoHandler = new VideoHandler();
       let videos       = videoHandler.convertToFlatListFromPlaylists(response);
 
@@ -42,8 +42,16 @@ import VideoHandler from './modules/VideoHandler.js';
       dataTable = $('#merged-playlist-table').DataTable({
         data: keeper.getUnignoredVideos(),
         columns: [
+          { data: 'getUniqueKey()', visible: false },
+          { searchable: false, className: 'dt-text-align-center', render: function(data, type, row, meta) {
+            return `<label class="dt-star-toggle">
+                      <input type="checkbox">
+                      <i class="fas fa-star stared"></i>
+                      <i class="far fa-star unstared"></i>
+                    </label>`;
+          }},
           { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
-          { data: 'title' },
+          { data: 'title', className: 'dt-click-to-play' },
           { data: 'playlistTitle', className: 'dt-text-align-center' },
         ],
         rowId: 'getUniqueKey()',
@@ -53,16 +61,34 @@ import VideoHandler from './modules/VideoHandler.js';
           infoEmpty: 'Showing 0 - 0',
           infoFiltered: ' (total _MAX_)',
           search: '',
-          searchPlaceholder: 'Input Video Title',
+          searchPlaceholder: 'Video or Playlist Title, "@star"',
           paginate: {
             previous: '<',
             next:     '>',
           },
         },
         lengthChange: false,
-        order: [[0, 'desc']],
+        order: [[2, 'desc']],
         pageLength: 20,
         processing: true,
+      });
+
+      // スターに絞り込むためのメタワード(@star)を検索処理に設定する
+      dataTable.on('search.dt', function () {
+        if ('@star' === dataTable.search()) {
+          let regexpStr = keeper.getStaredVideos().map(video => video.getUniqueKey()).join('|');
+          dataTable.search(regexpStr, true, false).draw();
+        }
+      });
+
+      // スターの付け外しイベントリスナーを追加する
+      $('#merged-playlist-table tbody').on('click', '.dt-star-toggle', function() {
+        let clickedVideo = Video.fromObject(dataTable.row($(this).parent()).data());
+        if ($(this).children('input').prop('checked')) {
+          keeper.starByVideo(clickedVideo);
+        } else {
+          keeper.unstarByVideo(clickedVideo);
+        }
       });
 
       // タップかダブルクリックで再生するように、イベントリスナーを追加する
@@ -72,7 +98,7 @@ import VideoHandler from './modules/VideoHandler.js';
       } else {
         clickEventName = 'dblclick';
       }
-      $('#merged-playlist-table tbody').on(clickEventName, 'tr', function() {
+      $('#merged-playlist-table tbody').on(clickEventName, '.dt-click-to-play', function() {
         if (keeper.isPlayable()) {
             let clickedVideo = Video.fromObject(dataTable.row(this).data());
             updatePlayingInfo(keeper.playAtDirect(clickedVideo));
@@ -109,6 +135,14 @@ import VideoHandler from './modules/VideoHandler.js';
 
           // datatableの再生位置を再描画する
           updatePlayingInfo(keeper.getCurrentVideo());
+
+          // datatableのスターを再描画する
+          let staredVideos = keeper.getStaredVideos();
+          if (0 < staredVideos.length) {
+            staredVideos.forEach(staredVideo => {
+              $('#' + staredVideo.getUniqueKey() + ' .dt-star-toggle input').prop('checked', true);
+            });
+          }
         });
 
         // ボタン構造を生成する
@@ -264,9 +298,9 @@ import VideoHandler from './modules/VideoHandler.js';
    * 拡張コントロールを有効化させる
    */
   function enablePlayerControlExtention() {
-    $('#back-button').attr('disabled', false);
-    $('#next-button').attr('disabled', false);
-    $('#random-button').attr('disabled', false);
+    $('#back-button').prop('disabled', false);
+    $('#next-button').prop('disabled', false);
+    $('#random-button').prop('disabled', false);
   }
 
   // binding
