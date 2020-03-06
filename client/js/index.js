@@ -41,15 +41,21 @@ import VideoHandler from './modules/VideoHandler.js';
       $('#merged-playlist-wrap').show();
       dataTable = $('#merged-playlist-table').DataTable({
         data: keeper.getUnignoredVideos(),
+        columnDefs: [{
+          targets: 0,
+          defaultContent: `
+            <label class="dt-star-toggle">
+              <input type="checkbox">
+              <i class="fas fa-star stared"></i>
+              <i class="far fa-star unstared"></i>
+            </label>`,
+          searchable: false,
+          orderable: true,
+          orderDataType: 'dom-checkbox',
+          orderSequence: ['desc', 'asc'],
+        }],
         columns: [
-          { data: 'getUniqueKey()', visible: false },
-          { searchable: false, className: 'dt-text-align-center', render: function(data, type, row, meta) {
-            return `<label class="dt-star-toggle">
-                      <input type="checkbox">
-                      <i class="fas fa-star stared"></i>
-                      <i class="far fa-star unstared"></i>
-                    </label>`;
-          }},
+          { data: null, className: 'dt-text-align-center' },
           { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
           { data: 'title', className: 'dt-click-to-play' },
           { data: 'playlistTitle', className: 'dt-text-align-center' },
@@ -61,25 +67,25 @@ import VideoHandler from './modules/VideoHandler.js';
           infoEmpty: 'Showing 0 - 0',
           infoFiltered: ' (total _MAX_)',
           search: '',
-          searchPlaceholder: 'Video or Playlist Title, "@star"',
+          searchPlaceholder: 'Video or Playlist Title',
           paginate: {
             previous: '<',
             next:     '>',
           },
         },
         lengthChange: false,
-        order: [[2, 'desc']],
+        order: [[1, 'desc']],
         pageLength: 20,
         processing: true,
       });
 
-      // スターに絞り込むためのメタワード(@star)を検索処理に設定する
-      dataTable.on('search.dt', function () {
-        if ('@star' === dataTable.search()) {
-          let regexpStr = keeper.getStaredVideos().map(video => video.getUniqueKey()).join('|');
-          dataTable.search(regexpStr, true, false).draw();
-        }
-      });
+      // スターのソートルールを作成する
+      $.fn.dataTable.ext.order['dom-checkbox'] = function(settings, column) {
+        return this.api().column(column, { order: 'index' }).nodes().map(function (td, i) {
+          let publishedAt = dataTable.row(td).data().publishedAt;
+          return $('input', td).prop('checked') ? `1 ${publishedAt}` : `0 ${publishedAt}`;
+        });
+      }
 
       // スターの付け外しイベントリスナーを追加する
       $('#merged-playlist-table tbody').on('click', '.dt-star-toggle', function() {
@@ -215,7 +221,7 @@ import VideoHandler from './modules/VideoHandler.js';
 
     if (e.data == YT.PlayerState.ENDED) {
       if (isLoop) {
-        player.seekTo(0); // 冒頭にシークする
+        player.seekTo(0); // 先頭にシークする
       } else {
         if (keeper.isPlayable()) {
           updatePlayingInfoWithNotification(keeper.next());
@@ -298,6 +304,7 @@ import VideoHandler from './modules/VideoHandler.js';
    * 拡張コントロールを有効化させる
    */
   function enablePlayerControlExtention() {
+    $('#head-button').prop('disabled', false);
     $('#back-button').prop('disabled', false);
     $('#next-button').prop('disabled', false);
     $('#random-button').prop('disabled', false);
@@ -334,6 +341,13 @@ import VideoHandler from './modules/VideoHandler.js';
       } else {
         // 停止ボタンであるとき
         player.pauseVideo();
+      }
+    });
+
+    // 先頭へ
+    $('#head-button').click(function() {
+      if (keeper.isPlayable()) {
+        player.seekTo(0); // 先頭にシークする
       }
     });
 

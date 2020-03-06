@@ -60,7 +60,7 @@
         </div>
 
         <div id="player-mask">
-          <table><tr><td><span class="glyphicon glyphicon-eye-close"></span></td></tr></table>
+          <table><tr><td><i class="fas fa-eye-slash"></i></td></tr></table>
         </div>
 
         <div id="player-control">
@@ -68,8 +68,8 @@
             <tr>
               <td class="player-play-pause-body">
                 <button id="player-play-pause" class="btn btn-sm">
-                  <span id="player-play-icon" class="glyphicon glyphicon-play"></span>
-                  <span id="player-pause-icon" class="glyphicon glyphicon-pause"></span>
+                  <i id="player-play-icon" class="fas fa-play"></i>
+                  <i id="player-pause-icon" class="fas fa-pause"></i>
                 </button>
               </td>
               <td id="player-volume-body">
@@ -82,27 +82,32 @@
         <div id="player-control-extention" class="btn-group btn-group-justified" role="group">
           <div class="btn-group" role="group">
             <button id="back-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Back" disabled="disabled">
-              <span class="glyphicon glyphicon-step-backward"></span>
+              <i class="fas fa-fast-backward"></i>
+            </button>
+          </div>
+          <div class="btn-group" role="group">
+            <button id="head-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Head" disabled="disabled">
+              <i class="fas fa-step-backward"></i>
             </button>
           </div>
           <div class="btn-group" role="group">
             <button id="next-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Next" disabled="disabled">
-              <span class="glyphicon glyphicon-step-forward"></span>
+              <i class="fas fa-fast-forward"></i>
             </button>
           </div>
           <div class="btn-group" role="group">
             <button id="random-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Random" disabled="disabled">
-              <span class="glyphicon glyphicon-random"></span>
+              <i class="fas fa-random"></i>
             </button>
           </div>
           <div class="btn-group" role="group">
             <button id="loop-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Loop">
-              <span class="glyphicon glyphicon-retweet"></span>
+              <i class="fas fa-retweet"></i>
             </button>
           </div>
           <div class="btn-group" role="group">
             <button id="hide-button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Hide">
-              <span class="glyphicon glyphicon-eye-close"></span>
+              <i class="fas fa-eye-slash"></i>
             </button>
           </div>
         </div>
@@ -127,8 +132,7 @@
           <table id="merged-playlist-table" class="table table-bordered table-striped table-hover">
             <thead>
               <tr>
-                <th class="merged-playlist-table-th"></th>
-                <th class="merged-playlist-table-th"></th>
+                <th class="merged-playlist-table-th"><i class="fas fa-star-half-alt"></i></th>
                 <th class="merged-playlist-table-th">PublishedAt</th>
                 <th class="merged-playlist-table-th">Video</th>
                 <th class="merged-playlist-table-th">Playlist</th>

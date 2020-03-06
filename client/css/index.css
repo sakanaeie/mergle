@@ -67,7 +67,7 @@ button.btn {
 }
 
 /** ----------------------------------------------------------------------------
- * glyphicon
+ * icon
  */
 .notify-icon {
   padding-right: 6px;
@@ -78,56 +78,10 @@ button.btn {
   padding-left: 20px;
 }
 
-button span.glyphicon {
+button i {
   color: #444;
+  font-size: 15px;
   vertical-align: -1px;
-}
-
-.glyphicon-info-sign {
-  padding-top: 4px;
-}
-
-.glyphicon-refresh {
-  display: none;
-}
-
-.spin {
-  display: inline-block;
-  vertical-align: middle;
-
-  -webkit-transform-origin: 50% 48%;
-  -ms-transform-origin:     50% 48%;
-  transform-origin:         50% 48%;
-  -webkit-animation: spin 1s linear infinite;
-  -moz-animation:    spin 1s linear infinite;
-  -ms-animation:     spin 1s linear infinite;
-  -o-animation:      spin 1s linear infinite;
-  animation:         spin 1s linear infinite;
-}
-
-@-webkit-keyframes spin {
-  0%   { -webkit-transform: rotate(0deg);   }
-  100% { -webkit-transform: rotate(359deg); }
-}
-
-@-moz-keyframes spin {
-  0%   { -moz-transform: rotate(0deg);   }
-  100% { -moz-transform: rotate(359deg); }
-}
-
-@-ms-keyframes spin {
-  0%   { -ms-transform: rotate(0deg);   }
-  100% { -ms-transform: rotate(359deg); }
-}
-
-@-o-keyframes spin {
-  0%   { -o-transform: rotate(0deg);   }
-  100% { -o-transform: rotate(359deg); }
-}
-
-@keyframes spin {
-  0%   { transform: rotate(0deg);   }
-  100% { transform: rotate(359deg); }
 }
 
 /** ----------------------------------------------------------------------------
@@ -169,7 +123,7 @@ button span.glyphicon {
   vertical-align: middle;
 }
 
-#player-mask span {
+#player-mask i {
   color: #ccc;
   font-size: 100px;
 }
@@ -216,7 +170,7 @@ button span.glyphicon {
   background-color: #333;
 }
 
-#player-play-pause span {
+#player-play-pause i {
   color: #fff;
 }
 
@@ -249,7 +203,7 @@ button span.glyphicon {
   padding: 6px;
 }
 
-#merged-playlist td.dt-text-align-center {
+#merged-playlist .dt-text-align-center {
   text-align: center;
 }
 
@@ -271,12 +225,18 @@ div.dataTables_wrapper div.dataTables_filter input {
   width: 60%;
 }
 
+.dt-click-to-play {
+  cursor: default;
+}
+
 /** ----------------------------------------------------------------------------
  * merged-playlist checkbox
  */
 #merged-playlist-table label {
   font-size: 12px;
   margin: 0;
+  width: 100%;
+  cursor: pointer;
 }
 
 #merged-playlist-table label input[type="checkbox"] {

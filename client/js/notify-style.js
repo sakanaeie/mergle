@@ -12,9 +12,9 @@
   };
 
   function buildNotifyHtml(iconName, isAutoClose) {
-    var html = '<div><span class="notify-icon glyphicon glyphicon-' + iconName + '"></span><span data-notify-text></span>';
+    var html = `<div><i class="fas fa-${iconName} notify-icon"></i><span data-notify-text></span>`;
     if (!isAutoClose) {
-      html += '<span class="notify-close-icon glyphicon glyphicon-remove"><span>';
+      html += '<i class="fas fa-times notify-close-icon"></i>'
     }
     html += '</div>';
     return html;
@@ -25,13 +25,13 @@
   notifyStyleSettings['border-color']     = '#d6e9c6';
   notifyStyleSettings['color']            = '#3c763d';
   $.notify.addStyle('success-auto', {
-    html:    buildNotifyHtml('ok-sign', true),
+    html:    buildNotifyHtml('check-circle', true),
     classes: {
       base: notifyStyleSettings,
     },
   });
   $.notify.addStyle('success', {
-    html:    buildNotifyHtml('ok-sign', false),
+    html:    buildNotifyHtml('check-circle', false),
     classes: {
       base: notifyStyleSettings,
     },
@@ -42,13 +42,13 @@
   notifyStyleSettings['border-color']     = '#bce8f1';
   notifyStyleSettings['color']            = '#31708f';
   $.notify.addStyle('info-auto', {
-    html:    buildNotifyHtml('info-sign', true),
+    html:    buildNotifyHtml('info-circle', true),
     classes: {
       base: notifyStyleSettings,
     },
   });
   $.notify.addStyle('info', {
-    html:    buildNotifyHtml('info-sign', false),
+    html:    buildNotifyHtml('info-circle', false),
     classes: {
       base: notifyStyleSettings,
     },
@@ -59,13 +59,13 @@
   notifyStyleSettings['border-color']     = '#faebcc';
   notifyStyleSettings['color']            = '#8a6d3b';
   $.notify.addStyle('warning-auto', {
-    html:    buildNotifyHtml('alert', true),
+    html:    buildNotifyHtml('exclamation-triangle', true),
     classes: {
       base: notifyStyleSettings,
     },
   });
   $.notify.addStyle('warning', {
-    html:    buildNotifyHtml('alert', false),
+    html:    buildNotifyHtml('exclamation-triangle', false),
     classes: {
       base: notifyStyleSettings,
     },
@@ -76,13 +76,13 @@
   notifyStyleSettings['border-color']     = '#ebccd1';
   notifyStyleSettings['color']            = '#a94442';
   $.notify.addStyle('error-auto', {
-    html:    buildNotifyHtml('exclamation-sign', true),
+    html:    buildNotifyHtml('exclamation-circle', true),
     classes: {
       base: notifyStyleSettings,
     },
   });
   $.notify.addStyle('error', {
-    html:    buildNotifyHtml('exclamation-sign', false),
+    html:    buildNotifyHtml('exclamation-circle', false),
     classes: {
       base: notifyStyleSettings,
     },
