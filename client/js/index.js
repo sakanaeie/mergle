@@ -42,7 +42,7 @@ import VideoHandler from './modules/VideoHandler.js';
       dataTable = $('#merged-playlist-table').DataTable({
         data: keeper.getUnignoredVideos(),
         columnDefs: [{
-          targets: 0,
+          targets: 1,
           defaultContent: `
             <label class="dt-star-toggle">
               <input type="checkbox">
@@ -50,11 +50,10 @@ import VideoHandler from './modules/VideoHandler.js';
               <i class="far fa-star unstared"></i>
             </label>`,
           searchable: false,
-          orderable: true,
-          orderDataType: 'dom-checkbox',
-          orderSequence: ['desc', 'asc'],
+          orderable: false,
         }],
         columns: [
+          { data: 'getUniqueKey()', visible: false }, // 検索用
           { data: null, className: 'dt-text-align-center' },
           { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
           { data: 'title', className: 'dt-click-to-play' },
@@ -73,19 +72,29 @@ import VideoHandler from './modules/VideoHandler.js';
             next:     '>',
           },
         },
-        lengthChange: false,
-        order: [[1, 'desc']],
+        order: [[2, 'desc']],
         pageLength: 20,
+        lengthMenu: [20, 40, 80, 160],
         processing: true,
       });
 
-      // スターのソートルールを作成する
-      $.fn.dataTable.ext.order['dom-checkbox'] = function(settings, column) {
-        return this.api().column(column, { order: 'index' }).nodes().map(function (td, i) {
-          let publishedAt = dataTable.row(td).data().publishedAt;
-          return $('input', td).prop('checked') ? `1 ${publishedAt}` : `0 ${publishedAt}`;
-        });
-      }
+      // スターのみ表示するボタンを配置する
+      let button = $(`
+        <button class="btn btn-default btn-sm">
+          <i class="fas fa-star"></i>
+        </button>
+      `);
+      button.click(function() {
+        if (!$(this).hasClass('active')) {
+          $(this).addClass('active');
+          let regexpStr = keeper.getStaredVideos().map(video => video.getUniqueKey()).join('|');
+          dataTable.column(0).search(regexpStr, true, false).draw();
+        } else {
+          $(this).removeClass('active');
+          dataTable.column(0).search('').draw();
+        }
+      });
+      $('#merged-playlist-wrap input[type="search"]').parent().append(button);
 
       // スターの付け外しイベントリスナーを追加する
       $('#merged-playlist-table tbody').on('click', '.dt-star-toggle', function() {
@@ -115,16 +124,14 @@ import VideoHandler from './modules/VideoHandler.js';
       for (const playlistId in response) {
         let playlist = response[playlistId];
 
-        // ボタン構造
-        let html = `
+        // ボタン構造を作成する
+        let div = $(`
           <div class="btn-group" role="group">
             <button class="btn btn-default" value="${playlistId}">
               ${playlist.title}
             </button>
-          </div>`;
-
-        // ボタン構造を作成する
-        let div = $(html);
+          </div>
+        `);
 
         // ボタンに挙動を定義する
         let button = div.children('button').click(function() {

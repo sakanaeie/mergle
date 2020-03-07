@@ -141,8 +141,8 @@ button i {
  */
 #player-control {
   border-bottom: 1px solid #ddd;
-  margin: 6px 0 6px;
-  padding-bottom: 6px;
+  margin: 6px 0 12px;
+  padding-bottom: 12px;
 }
 
 #player-control table {
@@ -216,13 +216,23 @@ table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
   background-color: #ddd;
 }
 
+div.dataTables_wrapper div.dataTables_length label {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
 div.dataTables_wrapper div.dataTables_filter label {
+  margin-bottom: 0;
   width: 100%;
   text-align: right;
 }
 
 div.dataTables_wrapper div.dataTables_filter input {
   width: 60%;
+}
+
+div.dataTables_wrapper div.dataTables_filter button {
+  margin-left: 4px;
 }
 
 .dt-click-to-play {
