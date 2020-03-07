@@ -192,6 +192,66 @@ button i {
 }
 
 /** ----------------------------------------------------------------------------
+ * playlist-filter
+ */
+#playlist-filter-wrap {
+  margin-top: 14px;
+  margin-bottom: 0px;
+}
+
+#playlist-filter {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.playlist-filter-unit {
+  border-bottom: 1px solid #ddd;
+  margin: 8px 0;
+  padding-left: 4px;
+  width: 100%;
+}
+
+.playlist-filter-unit i {
+  font-size: 18px;
+}
+
+.playlist-filter-unit .playlist-title-in-filter {
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0 8px;
+}
+
+.playlist-filter-unit .number-of-videos-in-filter {
+  font-size: 14px;
+  font-weight: normal;
+  margin-right: 4px;
+}
+
+.playlist-filter-unit a i {
+  font-size: 14px;
+}
+
+#playlist-filter label input[type="checkbox"] {
+  display: none;
+}
+
+/* 初期 */
+#playlist-filter label input[type="checkbox"] ~ i.unchecked-box {
+  display: inline;
+}
+#playlist-filter label input[type="checkbox"] ~ i.checked-box {
+  display: none;
+}
+
+/* チェックした */
+#playlist-filter label input[type="checkbox"]:checked ~ i.unchecked-box {
+  display: none;
+}
+#playlist-filter label input[type="checkbox"]:checked ~ i.checked-box {
+  display: inline;
+}
+
+/** ----------------------------------------------------------------------------
  * merged-playlist
  */
 #merged-playlist-wrap {
@@ -268,15 +328,4 @@ div.dataTables_wrapper div.dataTables_filter button {
 #merged-playlist-table label input[type="checkbox"]:checked ~ i.stared {
   color: orange;
   display: inline;
-}
-
-/** ----------------------------------------------------------------------------
- * playlist-ignore
- */
-#playlist-ignore-control button {
-  color: #444;
-}
-
-#playlist-ignore-control button.active {
-  color: #999;
 }

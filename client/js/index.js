@@ -120,26 +120,31 @@ import VideoHandler from './modules/VideoHandler.js';
         }
       });
 
-      // プレイリスト除外ボタンを配置する
+      // プレイリスト毎にコントロールを配置する
       for (const playlistId in response) {
         let playlist = response[playlistId];
 
-        // ボタン構造を作成する
+        // コントロール構造を作成する
         let div = $(`
-          <div class="btn-group" role="group">
-            <button class="btn btn-default" value="${playlistId}">
-              ${playlist.title}
-            </button>
+          <div class="playlist-filter-unit">
+            <label class="playlist-toggle">
+              <input type="checkbox" value="${playlistId}" checked="checked">
+              <i class="fas fa-check-square checked-box"></i>
+              <i class="far fa-square unchecked-box"></i>
+              <span class="playlist-title-in-filter">${playlist.title}</span>
+              <span class="number-of-videos-in-filter">- ${playlist.items.length} videos</span>
+            </label>
+            <a href="https://www.youtube.com/playlist?list=${playlistId}" target="_blank" rel="noopener noreferrer">
+              <i class="fas fa-external-link-alt"></i>
+            </a>
           </div>
         `);
 
-        // ボタンに挙動を定義する
-        let button = div.children('button').click(function() {
-          if (!$(this).hasClass('active')) {
-            $(this).addClass('active');
+        // チェックボックスに挙動を定義する
+        let button = div.find('input').change(function() {
+          if (!$(this).prop('checked')) {
             keeper.ignoreByPlaylistId($(this).val());
           } else {
-            $(this).removeClass('active');
             keeper.unignoreByPlaylistId($(this).val());
           }
 
@@ -158,8 +163,8 @@ import VideoHandler from './modules/VideoHandler.js';
           }
         });
 
-        // ボタン構造を生成する
-        $('#playlist-ignore-control').append(div);
+        // コントロール構造を生成する
+        $('#playlist-filter').append(div);
       }
     },
   });
