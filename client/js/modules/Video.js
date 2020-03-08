@@ -17,6 +17,11 @@ export default class {
     this.publishedAt   = publishedAt;
     this.playlistId    = playlistId;
     this.playlistTitle = playlistTitle;
+
+    this.isIgnored = false;
+    this.isStared  = false;
+
+    this.duplicatedPlaylistTitles = [];
   }
 
   // public
@@ -47,15 +52,28 @@ export default class {
     }).join('-');
   }
 
-  // public static
+  /**
+   * プレイリスト名を重複込みで取得する
+   *
+   * @return string
+   */
+  getFormattedPlaylistTitle() {
+    return [this.playlistTitle].concat(this.duplicatedPlaylistTitles).join(', ');
+  }
 
   /**
-   * オブジェクトから生成する
+   * 重複プレイリスト名を追加する
    *
-   * @param object object
-   * @return Video
+   * @param string title
    */
-  static fromObject(object) {
-    return new this(object.id, object.title, object.publishedAt, object.playlistId, object.playlistTitle);
+  pushDuplicatedPlaylistTitle(title) {
+    this.duplicatedPlaylistTitles.push(title);
+  }
+
+  /**
+   * 重複プレイリスト名を削除する
+   */
+   removeDuplicatedPlaylistTitles() {
+    this.duplicatedPlaylistTitles = [];
   }
 }

@@ -7,21 +7,32 @@ export default class {
   constructor() {
     this.player = null;
 
+    // 再生情報
     this.videos           = [];
     this.indexes          = [];
     this.index            = 0;
-    this.maxIndex         = 0;
+    this.lastIndex        = 0;
+    this.videoIdToVideos  = {};
     this.uniqueKeyToIndex = {};
 
+    // 表示用動画情報
+    this.videosForDisplay = {};
+
+    // プレイリスト
+    this.playlistIds        = {};
+    this.playlistIdToVideos = {};
+
+    // ランダム
     this.isRandom            = false;
     this.indexesPoolOnRandom = [];
     this.prevIndexesOnRandom = [];
     this.nextIndexesOnRandom = [];
 
-    this.playlistIds        = {};
+    // プレイリスト無視
     this.ignoredPlaylistIds = {};
 
-    this.staredIndexes = {};
+    // スター
+    this.staredVideoIds = {};
   }
 
   // public
@@ -32,7 +43,7 @@ export default class {
    * @return bool
    */
   isPlayable() {
-    return null !== this.player && 0 < this.maxIndex;
+    return null !== this.player && 0 < this.lastIndex;
   };
 
   /**
@@ -53,37 +64,48 @@ export default class {
     this.videos = videos;
     this.videos.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1);
 
-    this.indexes  = Array.from(this.videos.keys());
-    this.index    = 0;
-    this.maxIndex = this.indexes.slice(-1)[0];
+    this.indexes   = Array.from(this.videos.keys());
+    this.index     = 0;
+    this.lastIndex = this.indexes.slice(-1)[0];
 
-    this.uniqueKeyToIndex = this.videos.reduce((acc, video, index) => {
-      acc[video.getUniqueKey()] = index;
-      return acc;
-    }, {});
+    this.videos.forEach((video, index) => {
+      if (!(this.videoIdToVideos[video.id] instanceof Array)) {
+        this.videoIdToVideos[video.id] = [];
+      }
+      this.videoIdToVideos[video.id].push(video);
 
-    this.playlistIds = this.videos.reduce((acc, video) => {
-      acc[video.playlistId] = video.playlistId;
-      return acc;
-    }, {});
+      this.uniqueKeyToIndex[video.getUniqueKey()] = index;
+
+      if (!(this.playlistIdToVideos[video.playlistId] instanceof Array)) {
+        this.playlistIdToVideos[video.playlistId] = [];
+      }
+      this.playlistIdToVideos[video.playlistId].push(video);
+    });
+
+    this.playlistIds = Object.keys(this.playlistIdToVideos);
   }
 
   /**
-   * 全ての動画を取得する
+   * 表示用動画情報を作成する
    *
    * @return Video[]
    */
-  getAllVideos() {
-    return this.videos;
-  }
+  buildVideosForDisplay() {
+    this.videosForDisplay = this.videos.reduce((acc, video) => {
+      video.removeDuplicatedPlaylistTitles();
+      if (!video.isIgnored) {
+        // 無視リストの動画ではないとき
+        if (undefined === acc[video.id]) {
+          acc[video.id] = video;
+        } else {
+          // 重複のとき、若い方にプレイリストタイトルを渡す
+          acc[video.id].pushDuplicatedPlaylistTitle(video.playlistTitle);
+        }
+      }
+      return acc;
+    }, {});
 
-  /**
-   * 無視されてないプレイリストの動画を取得する
-   *
-   * @return Video[]
-   */
-  getUnignoredVideos() {
-    return this.videos.filter(video => undefined === this.ignoredPlaylistIds[video.playlistId]);
+    return Object.values(this.videosForDisplay);
   }
 
   /**
@@ -92,8 +114,8 @@ export default class {
    * @return Video[]
    */
   getStaredVideos() {
-    return Object.keys(this.staredIndexes).reduce((acc, staredIndex) => {
-      acc.push(this.videos[staredIndex]);
+    return Object.keys(this.staredVideoIds).reduce((acc, staredVideoId) => {
+      acc = acc.concat(this.videoIdToVideos[staredVideoId]);
       return acc;
     }, []);
   }
@@ -147,6 +169,10 @@ export default class {
     }
 
     this.ignoredPlaylistIds[playlistId] = playlistId;
+
+    this.playlistIdToVideos[playlistId].map(video => {
+      video.isIgnored = true;
+    });
   }
 
   /**
@@ -160,49 +186,64 @@ export default class {
     }
 
     delete this.ignoredPlaylistIds[playlistId];
+
+    this.playlistIdToVideos[playlistId].map(video => {
+      video.isIgnored = false;
+    });
   }
 
   /**
-   * スターが付いているか
+   * スターで再生するべきか
    *
    * @return bool
    */
-  hasStars() {
-    for (const staredIndex in this.staredIndexes) {
-      let staredVideo = this.videos[staredIndex]
-      if (undefined === this.ignoredPlaylistIds[staredVideo.playlistId]) {
-        // 無視されてないプレイリストにあるとき
-        return true;
+  shouldPlayByStar() {
+    for (const staredVideoId in this.staredVideoIds) {
+      // スター付き動画のいずれかひとつでも
+      for (const i in this.videoIdToVideos[staredVideoId]) {
+        // 重複動画のいずれかひとつでも
+        if (!this.videoIdToVideos[staredVideoId][i].isIgnored) {
+          // 無視リストの動画でないとき
+          return true;
+        }
       }
     }
+
+    return false;
   }
 
   /**
    * スターを付ける
    *
-   * @param Video video
+   * @param string videoId
    */
-  starByVideo(video) {
+  starByVideoId(videoId) {
     if (this.isRandom) {
       this.toRandom(); // 初期化
     }
 
-    let staredIndex = this.uniqueKeyToIndex[video.getUniqueKey()];
-    this.staredIndexes[staredIndex] = staredIndex;
+    this.staredVideoIds[videoId] = videoId;
+
+    this.videoIdToVideos[videoId].map(video => {
+      video.isStared = true;
+    });
   }
 
   /**
    * スターを外す
    *
-   * @param Video video
+   * @param string videoId
    */
-  unstarByVideo(video) {
+  unstarByVideoId(videoId) {
     if (this.isRandom) {
       this.toRandom(); // 初期化
     }
 
-    let unstaredIndex = this.uniqueKeyToIndex[video.getUniqueKey()];
-    delete this.staredIndexes[unstaredIndex];
+    delete this.staredVideoIds[videoId];
+
+    this.videoIdToVideos[videoId].map(video => {
+      video.isStared = false;
+    });
   }
 
   /**
@@ -259,6 +300,8 @@ export default class {
   /**
    * 再生位置を移動させる
    *
+   * 再起させると stack size exceeded になるため、素直な while に設計を変更した
+   *
    * @param callable pickIndexFunction index前進/後退の処理
    */
   seek_(pickIndexFunction) {
@@ -269,16 +312,28 @@ export default class {
       return;
     }
 
-    pickIndexFunction();
+    let loop = 0; // 念の為の無限ループ対策
+    while (100000 > loop++) {
+      pickIndexFunction();
 
-    if (this.hasStars() && undefined === this.staredIndexes[this.index]) {
-      // スターは付いているが、この動画には付いてないとき、再起する
-      this.seek_(pickIndexFunction)
-    }
+      let currentVideo = this.getCurrentVideo();
+      if (this.shouldPlayByStar() && !currentVideo.isStared) {
+        // スターで再生するべきだが、この動画には付いてないとき
+        continue;
+      }
 
-    if (undefined !== this.ignoredPlaylistIds[this.getCurrentVideo().playlistId]) {
-      // 無視リストの動画であるとき、再帰する
-      this.seek_(pickIndexFunction);
+      if (currentVideo.isIgnored) {
+        // 無視リストの動画であるとき
+        continue;
+      }
+
+      let sameVideoForDisplay = this.videosForDisplay[currentVideo.id];
+      if (currentVideo.getUniqueKey() !== sameVideoForDisplay.getUniqueKey()) {
+        // 表示用動画情報にある同動画が、この動画とは別の個体であるとき
+        continue;
+      }
+
+      break;
     }
   }
 
@@ -291,7 +346,7 @@ export default class {
     this.seek_(() => {
       if (!this.isRandom) {
         this.index++;
-        if (this.maxIndex < this.index) {
+        if (this.lastIndex < this.index) {
           this.index = 0;
         }
       } else {
@@ -318,7 +373,7 @@ export default class {
       if (!this.isRandom) {
         this.index--;
         if (0 > this.index) {
-          this.index = this.maxIndex;
+          this.index = this.lastIndex;
         }
       } else {
         this.nextIndexesOnRandom.push(this.index);

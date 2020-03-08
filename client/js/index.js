@@ -40,7 +40,7 @@ import VideoHandler from './modules/VideoHandler.js';
       // datatableを表示する
       $('#merged-playlist-wrap').show();
       dataTable = $('#merged-playlist-table').DataTable({
-        data: keeper.getUnignoredVideos(),
+        data: keeper.buildVideosForDisplay(),
         columnDefs: [{
           targets: 1,
           defaultContent: `
@@ -57,7 +57,7 @@ import VideoHandler from './modules/VideoHandler.js';
           { data: null, className: 'dt-text-align-center' },
           { data: { display: 'getFormattedPublishedAt()', sort: 'publishedAt' }, className: 'dt-text-align-center' },
           { data: 'title', className: 'dt-click-to-play' },
-          { data: 'playlistTitle', className: 'dt-text-align-center' },
+          { data: 'getFormattedPlaylistTitle()', className: 'dt-text-align-center' },
         ],
         rowId: 'getUniqueKey()',
         language: {
@@ -98,11 +98,11 @@ import VideoHandler from './modules/VideoHandler.js';
 
       // スターの付け外しイベントリスナーを追加する
       $('#merged-playlist-table tbody').on('click', '.dt-star-toggle', function() {
-        let clickedVideo = Video.fromObject(dataTable.row($(this).parent()).data());
+        let clickedVideo = dataTable.row($(this).parent()).data();
         if ($(this).children('input').prop('checked')) {
-          keeper.starByVideo(clickedVideo);
+          keeper.starByVideoId(clickedVideo.id);
         } else {
-          keeper.unstarByVideo(clickedVideo);
+          keeper.unstarByVideoId(clickedVideo.id);
         }
       });
 
@@ -115,7 +115,7 @@ import VideoHandler from './modules/VideoHandler.js';
       }
       $('#merged-playlist-table tbody').on(clickEventName, '.dt-click-to-play', function() {
         if (keeper.isPlayable()) {
-            let clickedVideo = Video.fromObject(dataTable.row(this).data());
+            let clickedVideo = dataTable.row(this).data();
             updatePlayingInfo(keeper.playAtDirect(clickedVideo));
         }
       });
@@ -123,6 +123,7 @@ import VideoHandler from './modules/VideoHandler.js';
       // プレイリスト毎にコントロールを配置する
       for (const playlistId in response) {
         let playlist = response[playlistId];
+        let link     = `https://www.youtube.com/playlist?list=${playlistId}`;
 
         // コントロール構造を作成する
         let div = $(`
@@ -134,7 +135,7 @@ import VideoHandler from './modules/VideoHandler.js';
               <span class="playlist-title-in-filter">${playlist.title}</span>
               <span class="number-of-videos-in-filter">- ${playlist.items.length} videos</span>
             </label>
-            <a href="https://www.youtube.com/playlist?list=${playlistId}" target="_blank" rel="noopener noreferrer">
+            <a href="${link}" target="_blank" rel="noopener noreferrer">
               <i class="fas fa-external-link-alt"></i>
             </a>
           </div>
@@ -149,7 +150,7 @@ import VideoHandler from './modules/VideoHandler.js';
           }
 
           // datatableを再描画する
-          dataTable.clear().rows.add(keeper.getUnignoredVideos()).draw();
+          dataTable.clear().rows.add(keeper.buildVideosForDisplay()).draw();
 
           // datatableの再生位置を再描画する
           updatePlayingInfo(keeper.getCurrentVideo());

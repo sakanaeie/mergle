@@ -231,6 +231,10 @@ button i {
   font-size: 14px;
 }
 
+#playlist-filter label {
+  cursor: pointer;
+}
+
 #playlist-filter label input[type="checkbox"] {
   display: none;
 }
