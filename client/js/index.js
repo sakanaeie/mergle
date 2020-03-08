@@ -76,6 +76,16 @@ import VideoHandler from './modules/VideoHandler.js';
         pageLength: 20,
         lengthMenu: [20, 40, 80, 160],
         processing: true,
+        fnDrawCallback: () => {
+          // ページャやプレイリスト無視の切り替え時にコールバックされる処理
+          // datatableのスターを再描画する
+          let staredVideos = keeper.getStaredVideos();
+          if (0 < staredVideos.length) {
+            staredVideos.forEach(staredVideo => {
+              $('#' + staredVideo.getUniqueKey() + ' .dt-star-toggle input').prop('checked', true);
+            });
+          }
+        },
       });
 
       // スターのみ表示するボタンを配置する
@@ -96,7 +106,7 @@ import VideoHandler from './modules/VideoHandler.js';
       });
       $('#merged-playlist-wrap input[type="search"]').parent().append(button);
 
-      // スターの付け外しイベントリスナーを追加する
+      // スター付け外しイベントリスナーを追加する
       $('#merged-playlist-table tbody').on('click', '.dt-star-toggle', function() {
         let clickedVideo = dataTable.row($(this).parent()).data();
         if ($(this).children('input').prop('checked')) {
@@ -154,14 +164,6 @@ import VideoHandler from './modules/VideoHandler.js';
 
           // datatableの再生位置を再描画する
           updatePlayingInfo(keeper.getCurrentVideo());
-
-          // datatableのスターを再描画する
-          let staredVideos = keeper.getStaredVideos();
-          if (0 < staredVideos.length) {
-            staredVideos.forEach(staredVideo => {
-              $('#' + staredVideo.getUniqueKey() + ' .dt-star-toggle input').prop('checked', true);
-            });
-          }
         });
 
         // コントロール構造を生成する
