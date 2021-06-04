@@ -308,7 +308,7 @@ div.dataTables_wrapper div.dataTables_filter button {
 
 /* 検索 */
 #merged-playlist-table_filter {
-  display: flex; /* テキストボックスとスタートボタンを横並び */
+  display: flex; /* テキストボックスとスターボタンを横並び */
   margin-top: 5px;
 }
 

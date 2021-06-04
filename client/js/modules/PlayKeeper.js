@@ -267,12 +267,14 @@ export default class {
       }
     });
 
-    // シークする
-    for (const videoId of videoIds) {
-      let first = this.videosForDisplay[videoId];
-      if (undefined !== first) {
-        this.index = this.uniqueKeyToIndex[first.getUniqueKey()];
-        break;
+    if (null === this.player) {
+      // 再生されてないとき、最初のスター付き動画までシークする
+      for (const videoId of videoIds) {
+        let first = this.videosForDisplay[videoId];
+        if (undefined !== first) {
+          this.index = this.uniqueKeyToIndex[first.getUniqueKey()];
+          break;
+        }
       }
     }
   }
