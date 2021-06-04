@@ -223,7 +223,6 @@ export default class {
     }
 
     this.staredVideoIds[videoId] = videoId;
-
     this.videoIdToVideos[videoId].map(video => {
       video.isStared = true;
     });
@@ -240,10 +239,42 @@ export default class {
     }
 
     delete this.staredVideoIds[videoId];
-
     this.videoIdToVideos[videoId].map(video => {
       video.isStared = false;
     });
+  }
+
+  /**
+   * スターを上書きする
+   *
+   * @param string[] videoIds
+   */
+  overwriteStarByVideoIds(videoIds) {
+    if (this.isRandom) {
+      this.toRandom(); // 初期化
+    }
+
+    this.staredVideoIds = {};
+    this.videos.map(video => {
+      let videoId = video.id;
+      if (videoIds.includes(videoId)) {
+        this.staredVideoIds[videoId] = videoId;
+        this.videoIdToVideos[videoId].map(video => {
+          video.isStared = true;
+        });
+      } else {
+        video.isStared = false;
+      }
+    });
+
+    // シークする
+    for (const videoId of videoIds) {
+      let first = this.videosForDisplay[videoId];
+      if (undefined !== first) {
+        this.index = this.uniqueKeyToIndex[first.getUniqueKey()];
+        break;
+      }
+    }
   }
 
   /**

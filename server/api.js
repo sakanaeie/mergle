@@ -1,12 +1,48 @@
 const MAX_NUM_OF_PLAYLIST = 10;
 
 function doGet(e) {
-  let items = getPlaylists(e.parameter.plid_csv);
+  let items;
+  switch (e.parameter.type) {
+    case 'star':
+      items = saveLoadStar(e.parameter.pass, e.parameter.vid_csv);
+      break;
+    default:
+      items = getPlaylists(e.parameter.plid_csv);
+      break;
+  }
 
   // jsonpレスポンスを返す
   return ContentService.createTextOutput(
     e.parameter.callback + '(' + JSON.stringify(items) + ')'
   ).setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function saveLoadStar(pass, idsCsv) {
+  let sheet  = SpreadsheetApp.openById('1ylXqZBXBLUMSSQ73yqto--EIce-T4yiR9WTFXnu5Jr4').getSheetByName('list');
+  let data   = sheet.getDataRange().getValues();
+  let result = {};
+  if (idsCsv.length > 0) {
+    // 重複行を削除する
+    data.forEach((row, i) => {
+      if (pass.toString() === row[0]) {
+        sheet.deleteRow(i + 1);
+      }
+    });
+
+    // 保存する
+    sheet.appendRow([pass, idsCsv]);
+    result.saveSucceeded = true;
+  } else {
+    let picked = '';
+    data.forEach((row, i) => {
+      if (pass.toString() === row[0]) {
+        picked = row[1];
+      }
+    });
+    result.idsCsv = picked;
+  }
+
+  return result;
 }
 
 function getPlaylists(idsCSV) {

@@ -78,13 +78,7 @@ import VideoHandler from './modules/VideoHandler.js';
         processing: true,
         fnDrawCallback: () => {
           // ページャやプレイリスト無視の切り替え時にコールバックされる処理
-          // datatableのスターを再描画する
-          let staredVideos = keeper.getStaredVideos();
-          if (0 < staredVideos.length) {
-            staredVideos.forEach(staredVideo => {
-              $('#' + staredVideo.getUniqueKey() + ' .dt-star-toggle input').prop('checked', true);
-            });
-          }
+          redrawStar();
         },
       });
 
@@ -104,7 +98,7 @@ import VideoHandler from './modules/VideoHandler.js';
           dataTable.column(0).search('').draw();
         }
       });
-      $('#merged-playlist-wrap input[type="search"]').parent().append(button);
+      $('#merged-playlist-wrap input[type="search"]').parent().parent().append(button);
 
       // スター付け外しイベントリスナーを追加する
       $('#merged-playlist-table tbody').on('click', '.dt-star-toggle', function() {
@@ -127,6 +121,13 @@ import VideoHandler from './modules/VideoHandler.js';
         if (keeper.isPlayable()) {
             let clickedVideo = dataTable.row(this).data();
             updatePlayingInfo(keeper.playAtDirect(clickedVideo));
+        }
+      });
+
+      // ページャの切り替え時にテーブルの上部までスクロールするように、イベントリスナーを追加する
+      $('#merged-playlist-wrap').click(function(e) {
+        if (e.target.parentElement.classList.contains('paginate_button')) {
+          $('#merged-playlist-wrap')[0].scrollIntoView();
         }
       });
 
@@ -249,6 +250,18 @@ import VideoHandler from './modules/VideoHandler.js';
   }
 
   /**
+   * datatableのスターを再描画する
+   */
+  function redrawStar() {
+    let staredVideos = keeper.getStaredVideos();
+    if (0 < staredVideos.length) {
+      staredVideos.forEach(staredVideo => {
+        $('#' + staredVideo.getUniqueKey() + ' .dt-star-toggle input').prop('checked', true);
+      });
+    }
+  }
+
+  /**
    * フラッシュメッセージを表示する
    *
    * @param string body        本文
@@ -257,7 +270,7 @@ import VideoHandler from './modules/VideoHandler.js';
    */
   function showFlashMessage(body, level, isAutoClose) {
     if (isAutoClose) {
-      style += '-auto';
+      level += '-auto';
     }
     $.notify(body, { style: level, autoHide: isAutoClose });
   }
@@ -413,6 +426,32 @@ import VideoHandler from './modules/VideoHandler.js';
 
       frame.toggle();
       mask.toggle();
+    });
+
+    // スターの保存/読込
+    $('#save-load-star').click(function() {
+      let pass = $('#star-pass').val();
+      if ('' !== pass) {
+        $.ajax({
+          url: 'https://script.google.com/macros/s/' + urlGetParams.api + '/exec',
+          type: 'GET',
+          data: {
+            type: 'star',
+            pass: pass,
+            vid_csv: Object.values(keeper.staredVideoIds).join(','),
+          },
+          dataType: 'jsonp',
+          success: response => {
+            if (response.saveSucceeded) {
+              showFlashMessage('スターの保存に成功しました', 'success', true);
+            } else if ('' !== response.idsCsv) {
+              keeper.overwriteStarByVideoIds(response.idsCsv.split(','));
+              redrawStar();
+              showFlashMessage('スターの読込に成功しました', 'success', true);
+            }
+          },
+        });
+      }
     });
   }); // end binding
 })(jQuery);

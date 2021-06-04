@@ -25,6 +25,7 @@ body {
 #page-title {
   color: #fff;
   font-size: 28px;
+  margin-top: 5px;
 }
 
 .content-title {
@@ -97,7 +98,7 @@ button i {
  * コンテンツ
  */
 #content {
-  padding: 0 2%;
+  padding: 0 1%;
 }
 
 .content-block {
@@ -264,7 +265,8 @@ button i {
 
 #merged-playlist td {
   font-size: 12px;
-  padding: 6px;
+  padding: 7px 6px 5px 6px;
+  vertical-align: middle;
 }
 
 #merged-playlist .dt-text-align-center {
@@ -277,7 +279,8 @@ button i {
 }
 
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
-  background-color: #ddd;
+  color: #004085;
+  background-color: #cce5ff;
 }
 
 div.dataTables_wrapper div.dataTables_length label {
@@ -301,6 +304,12 @@ div.dataTables_wrapper div.dataTables_filter button {
 
 .dt-click-to-play {
   cursor: default;
+}
+
+/* 検索 */
+#merged-playlist-table_filter {
+  display: flex; /* テキストボックスとスタートボタンを横並び */
+  margin-top: 5px;
 }
 
 /** ----------------------------------------------------------------------------
