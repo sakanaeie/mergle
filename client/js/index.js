@@ -288,7 +288,14 @@ import VideoHandler from './modules/VideoHandler.js';
 
       let row = dataTable.row('#' + video.getUniqueKey());
       if (1 === row.length) {
-        row.select().show().draw(false);
+        // 検索 (スターのみ表示) を反映したうえでの行番号
+        let num = dataTable.rows({ search: 'applied' }).nodes().indexOf(row.node());
+
+        // 対象行の要素を選択状態にする
+        row.select();
+
+        // 便宜上、行番号の要素を表示させる
+        dataTable.row(num).show().draw(false);
       }
     }
   }
@@ -360,6 +367,11 @@ import VideoHandler from './modules/VideoHandler.js';
     }).change(function() {
       player.setVolume($(this).val());
     });
+
+    // スターパスを入力する
+    if (undefined !== urlGetParams.pass) {
+      $('#star-pass').val(urlGetParams.pass);
+    }
 
     // 再生/停止する
     $('#player-play-pause').click(function() {
