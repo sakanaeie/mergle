@@ -269,13 +269,8 @@ export default class {
 
     if (null === this.player) {
       // 再生されてないとき、最初のスター付き動画までシークする
-      for (const videoId of videoIds) {
-        let first = this.videosForDisplay[videoId];
-        if (undefined !== first) {
-          this.index = this.uniqueKeyToIndex[first.getUniqueKey()];
-          break;
-        }
-      }
+      this.backwardIndex_(); // 先に後退させる
+      this.forwardIndex_();
     }
   }
 
